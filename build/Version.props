@@ -1,0 +1,6 @@
+﻿<Project>
+  <PropertyGroup>
+    <!-- 版本号，人工指定。最终生成的版本号将是四位，最后一位由 git 提交数决定。 -->
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+</Project>

@@ -3,18 +3,52 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Walterlv.Terminal.Views.MainView">
+             x:Class="Walterlv.Terminal.Views.MainView"
+             UseLayoutRounding="True">
 
-    <Grid RowDefinitions="40,*,Auto" ColumnDefinitions="Auto,*">
-        <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Width="240">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="WindowSplitBorderBrush">#00000000</SolidColorBrush>
+        <SolidColorBrush x:Key="WindowSplitBackgroundBrush">#7F000000</SolidColorBrush>
+    </UserControl.Resources>
 
-        </Grid>
-        <Grid Grid.Row="1" Grid.Column="1" Background="Black">
+    <UserControl.Styles>
+        <Style Selector="Border.SplitGrid">
+            <Setter Property="BorderBrush" Value="{StaticResource WindowSplitBorderBrush}" />
+            <Setter Property="Background" Value="{StaticResource WindowSplitBackgroundBrush}" />
+        </Style>
+    </UserControl.Styles>
 
-        </Grid>
-        <Grid Grid.Row="2" Grid.Column="1" Height="240" Background="#111111">
+    <Grid RowDefinitions="40,40,*,Auto" ColumnDefinitions="*,Auto,40">
 
-        </Grid>
+        <!-- 标题栏/标签栏 -->
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+
+        </Border>
+
+        <!-- 功能区/提示栏 -->
+        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Classes="SplitGrid">
+
+        </Border>
+
+        <!-- 主外壳区 -->
+        <Border Grid.Row="2" Grid.Column="0" Background="Black">
+
+        </Border>
+
+        <!-- 命令键入区 -->
+        <Border Grid.Row="3" Grid.Column="0" Background="Black">
+            <TextBox CornerRadius="8" Margin="4" Height="160" />
+        </Border>
+
+        <!-- 常驻功能区 -->
+        <Border Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" Width="240" Classes="SplitGrid" BorderThickness="0 1 1 0">
+
+        </Border>
+
+        <!-- 常驻功能标签 -->
+        <Border Grid.Row="2" Grid.RowSpan="2" Grid.Column="2" Classes="SplitGrid" BorderThickness="0 1 0 0">
+
+        </Border>
     </Grid>
 
 </UserControl>

@@ -10,11 +10,22 @@
         Background="{x:Null}" TransparencyLevelHint="Mica"
         ExtendClientAreaChromeHints="PreferSystemChrome"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaTitleBarHeightHint="40">
+        ExtendClientAreaTitleBarHeightHint="40"
+        Width="1280" Height="960" WindowStartupLocation="CenterScreen">
     <Grid RowDefinitions="40,*">
         <views:MainView Grid.Row="0" Grid.RowSpan="2" />
         <TextBlock Grid.Row="0" IsHitTestVisible="False"
                    Margin="12 0" VerticalAlignment="Center"
                    Text="{Binding #MainWindowInstance.Title}" />
+        <Border x:Name="SunshineBorder" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0% 0%" EndPoint="50% 100%">
+                    <GradientStop Offset="0.00" Color="#1F000000" />
+                    <GradientStop Offset="0.50" Color="#1F000000" />
+                    <GradientStop Offset="0.53" Color="#00000000" />
+                    <GradientStop Offset="1.00" Color="#00000000" />
+                </LinearGradientBrush>
+            </Border.Background>
+        </Border>
     </Grid>
 </Window>

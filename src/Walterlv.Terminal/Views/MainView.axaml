@@ -17,6 +17,14 @@
             <Setter Property="BorderBrush" Value="{StaticResource WindowSplitBorderBrush}" />
             <Setter Property="Background" Value="{StaticResource WindowSplitBackgroundBrush}" />
         </Style>
+        <Style Selector="ToggleButton">
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="BorderThickness" Value="1 0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
     </UserControl.Styles>
 
     <Grid x:Name="RootPanel" RowDefinitions="40,40,*,Auto" ColumnDefinitions="Auto,*">
@@ -26,7 +34,10 @@
 
         <!-- 功能区/提示栏 -->
         <Border Grid.Row="1" Grid.Column="0" Classes="SplitGrid">
-
+            <UniformGrid Rows="1">
+                <ToggleButton Content="连接" />
+                <ToggleButton Content="文件" />
+            </UniformGrid>
         </Border>
 
         <!-- 常驻功能区 -->

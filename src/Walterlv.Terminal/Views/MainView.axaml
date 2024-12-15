@@ -7,8 +7,8 @@
              UseLayoutRounding="True">
 
     <UserControl.Resources>
-        <SolidColorBrush x:Key="WindowSplitBorderBrush">#7FCCCCCC</SolidColorBrush>
-        <SolidColorBrush x:Key="WindowSplitBackgroundBrush">#7FCCCCCC</SolidColorBrush>
+        <SolidColorBrush x:Key="WindowSplitBorderBrush">#0F666666</SolidColorBrush>
+        <SolidColorBrush x:Key="WindowSplitBackgroundBrush">#1F666666</SolidColorBrush>
         <SolidColorBrush x:Key="ShellBackgroundBrush">#FF333333</SolidColorBrush>
     </UserControl.Resources>
 
@@ -56,23 +56,6 @@
             <TextBox CornerRadius="8" Margin="4" Height="160" />
         </Border>
 
-        <!-- 装饰区 -->
-        <Grid Grid.Row="0" Grid.RowSpan="4" Grid.Column="1" ZIndex="-1" RowDefinitions="*,Auto"
-              IsHitTestVisible="False" Background="{StaticResource ShellBackgroundBrush}">
-            <Border Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False"
-                    Width="1" Margin="-1 0 1 0" HorizontalAlignment="Left"
-                    Background="#EEEEEEEE" />
-            <Border Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False"
-                    Width="8" HorizontalAlignment="Left">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0% 0%" EndPoint="100% 0%">
-                        <GradientStop Offset="0.00" Color="#FF222222" />
-                        <GradientStop Offset="0.40" Color="#C0222222" />
-                        <GradientStop Offset="1.00" Color="#00222222" />
-                    </LinearGradientBrush>
-                </Border.Background>
-            </Border>
-        </Grid>
     </Grid>
 
 </UserControl>

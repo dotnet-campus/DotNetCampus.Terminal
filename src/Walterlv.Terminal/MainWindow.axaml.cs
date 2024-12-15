@@ -1,6 +1,4 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Media;
 
 namespace Walterlv.Terminal;
 
@@ -10,15 +8,6 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         InitializeWindowSize();
-
-        SunshineBorder.SizeChanged += OnSizeChanged;
-    }
-
-    private void OnSizeChanged(object? sender, SizeChangedEventArgs e)
-    {
-        var min = Math.Min(e.NewSize.Width, e.NewSize.Height);
-        var brush = (LinearGradientBrush)SunshineBorder.Background!;
-        brush.EndPoint = new RelativePoint(min / 2, min, RelativeUnit.Absolute);
     }
 
     private void InitializeWindowSize()

@@ -1,8 +1,6 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls;
 
-namespace Walterlv.Terminal.Views;
+namespace DotNetCampus.Terminal.Views;
 
 public partial class MainView : UserControl
 {

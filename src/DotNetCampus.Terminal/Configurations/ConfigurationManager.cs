@@ -1,6 +1,4 @@
-﻿using Tomlet;
-
-namespace Walterlv.Terminal.Configurations;
+﻿namespace DotNetCampus.Terminal.Configurations;
 
 public class ConfigurationManager
 {

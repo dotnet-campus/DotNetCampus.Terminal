@@ -14,13 +14,13 @@
 
   <!--库信息 -->
   <PropertyGroup>
-    <Description>walterlv 的专属终端。</Description>
-    <Authors>walterlv</Authors>
+    <Description>dotnet-campus 组织出品的终端，优势在于在大量的 Linux 设备间调试你的跨平台项目。</Description>
+    <Authors>dotnet-campus</Authors>
     <Company>dotnet campus（.NET 职业技术学院）</Company>
     <Copyright>Copyright $([System.DateTime]::Now.ToString(`yyyy`)) &#169; dotnet campus, All Rights Reserved.</Copyright>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/walterlv/Walterlv.Terminal</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/walterlv/Walterlv.Terminal</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dotnet-campus/DotNetCampus.Terminal</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/dotnet-campus/DotNetCampus.Terminal</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>

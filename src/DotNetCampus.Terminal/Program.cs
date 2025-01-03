@@ -1,7 +1,6 @@
 ﻿using Avalonia;
-using System;
 
-namespace Walterlv.Terminal;
+namespace DotNetCampus.Terminal;
 
 class Program
 {

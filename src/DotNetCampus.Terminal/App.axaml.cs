@@ -2,7 +2,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-namespace Walterlv.Terminal;
+namespace DotNetCampus.Terminal;
 
 public partial class App : Application
 {

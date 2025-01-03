@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace Walterlv.Terminal;
+namespace DotNetCampus.Terminal;
 
 public partial class MainWindow : Window
 {

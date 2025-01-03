@@ -1,0 +1,63 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Walterlv.Terminal.Views.ConnectionListPage">
+
+    <UserControl.Styles>
+        <Style Selector="TreeViewItem">
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Foreground" Value="#CCCCCC" />
+            <Setter Property="Margin" Value="8 0" />
+            <Setter Property="Padding" Value="16 0" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="IsExpanded" Value="True" />
+            <Style Selector="^ /template/ Border#PART_LayoutRoot">
+                <Setter Property="Height" Value="40" />
+                <Setter Property="Margin" Value="4 4 4 0" />
+            </Style>
+            <Style Selector="^ /template/ Panel#PART_ExpandCollapseChevronContainer">
+                <Setter Property="Grid.Column" Value="1" />
+                <Setter Property="HorizontalAlignment" Value="Right" />
+            </Style>
+            <Style Selector="^[Level=0]">
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="Foreground" Value="#EEEEEE" />
+                <Setter Property="Padding" Value="12 4 12 0" />
+                <Setter Property="CornerRadius" Value="0" />
+                <Setter Property="Margin" Value="-8 0" />
+                <Setter Property="BorderThickness" Value="0 0.6 0 0" />
+                <Setter Property="BorderBrush" Value="#80000000" />
+                <Style Selector="^ /template/ Border#PART_LayoutRoot">
+                    <Setter Property="Height" Value="48" />
+                    <Setter Property="IsEnabled" Value="False" />
+                </Style>
+                <Style Selector="^:nth-child(1)">
+                    <Setter Property="BorderThickness" Value="0" />
+                </Style>
+            </Style>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="32,Auto,*,Auto" ColumnDefinitions="*,2*,3*,*">
+
+        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Classes="SplitGrid">
+            <Button Content="1" />
+        </Grid>
+
+        <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                 Margin="0 16 0 0"
+                 Background="#20FFFFFF"
+                 Watermark="搜索连接配置" />
+
+        <TreeView Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">
+            <TreeViewItem Header="示例 1">
+                <TreeViewItem Header="ss" />
+            </TreeViewItem>
+        </TreeView>
+
+    </Grid>
+
+</UserControl>

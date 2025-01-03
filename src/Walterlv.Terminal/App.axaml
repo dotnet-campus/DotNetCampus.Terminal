@@ -2,10 +2,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Walterlv.Terminal.App"
              RequestedThemeVariant="Dark">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
-    <Application.Styles>
-        <FluentTheme />
-    </Application.Styles>
+     <Application.Resources>
+         <SolidColorBrush x:Key="WindowSplitBorderBrush">#0F666666</SolidColorBrush>
+         <SolidColorBrush x:Key="WindowSplitBackgroundBrush">#1F666666</SolidColorBrush>
+         <SolidColorBrush x:Key="ShellBackgroundBrush">#FF333333</SolidColorBrush>
+     </Application.Resources>
+
+     <Application.Styles>
+         <FluentTheme />
+         <Style Selector="Grid.SplitGrid">
+             <Setter Property="Background" Value="{StaticResource WindowSplitBackgroundBrush}" />
+         </Style>
+         <Style Selector="Border.SplitGrid">
+             <Setter Property="BorderBrush" Value="{StaticResource WindowSplitBorderBrush}" />
+             <Setter Property="Background" Value="{StaticResource WindowSplitBackgroundBrush}" />
+         </Style>
+     </Application.Styles>
 
 </Application>

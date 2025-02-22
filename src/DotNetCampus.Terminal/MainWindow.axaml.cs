@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using DotNetCampus.Terminal.ViewModels;
 
 namespace DotNetCampus.Terminal;
 
@@ -8,6 +9,8 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         InitializeWindowSize();
+
+        DataContext = new MainViewModel();
     }
 
     private void InitializeWindowSize()

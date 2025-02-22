@@ -2,10 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:views="clr-namespace:DotNetCampus.Terminal.Views"
+             xmlns:views="using:DotNetCampus.Terminal.Views"
+             xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="DotNetCampus.Terminal.Views.MainView"
-             UseLayoutRounding="True">
+             UseLayoutRounding="True"
+             x:DataType="vm:MainViewModel">
 
     <UserControl.Styles>
         <Style Selector="ToggleButton">
@@ -21,7 +23,33 @@
     <Grid x:Name="RootPanel" RowDefinitions="40,*">
 
         <!-- 标题栏/标签栏 -->
-        <Border Grid.Row="0" Grid.Column="0" IsHitTestVisible="False" Classes="SplitGrid" />
+        <Border Grid.Row="0" Grid.Column="0" IsHitTestVisible="False"
+                DataContext="{Binding Tabs, Mode=OneTime}">
+            <ListBox Height="32" Margin="0" Padding="0" VerticalAlignment="Bottom"
+                     Background="Transparent" ItemsSource="{Binding CurrentConnections, Mode=OneTime}">
+                <ListBox.Styles>
+                    <Style Selector="ListBoxItem">
+                        <Setter Property="Padding" Value="0" />
+                    </Style>
+                </ListBox.Styles>
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <views:HorizontalTabPanel MaxTabLength="320" MinTabLength="240" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:TabModel">
+                        <Grid VerticalAlignment="Bottom">
+                            <views:TabView CornerRadius="4" BorderThickness="1"
+                                           BorderBrush="#40FFFFFF"
+                                           Background="{StaticResource WindowSplitBackgroundBrush}" />
+                            <TextBlock Text="{Binding Name, Mode=OneTime}" />
+                            <Button Content="×" HorizontalAlignment="Right" Background="Transparent" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
 
         <!-- 页面区 -->
         <Border Grid.Row="1">

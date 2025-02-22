@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="using:DotNetCampus.Terminal.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="DotNetCampus.Terminal.Views.ConnectionListPage">
 
@@ -43,9 +44,10 @@
 
     <Grid RowDefinitions="32,Auto,*,Auto" ColumnDefinitions="*,2*,3*,*">
 
-        <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Classes="SplitGrid">
-            <Button Content="1" />
-        </Grid>
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Classes="SplitGrid" BorderThickness="0 0 0 1">
+            <Grid>
+            </Grid>
+        </Border>
 
         <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
                  Margin="0 16 0 0"

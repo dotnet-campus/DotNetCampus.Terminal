@@ -43,7 +43,8 @@
                             <views:TabView CornerRadius="4" BorderThickness="1"
                                            BorderBrush="#40FFFFFF"
                                            Background="{StaticResource WindowSplitBackgroundBrush}" />
-                            <TextBlock Text="{Binding Name, Mode=OneTime}" />
+                            <TextBlock Margin="12 0" VerticalAlignment="Center"
+                                       Text="{Binding Name, Mode=OneTime}" />
                             <Button Content="×" HorizontalAlignment="Right" Background="Transparent" />
                         </Grid>
                     </DataTemplate>
@@ -53,7 +54,8 @@
 
         <!-- 页面区 -->
         <Border Grid.Row="1">
-            <views:ConnectionListPage />
+            <!-- <views:ConnectionListPage /> -->
+            <views:ShellPage />
         </Border>
 
     </Grid>

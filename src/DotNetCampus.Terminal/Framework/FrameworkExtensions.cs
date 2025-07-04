@@ -1,5 +1,4 @@
-﻿using Avalonia;
-using DotNetCampus.Terminal.Framework.DependencyInjection;
+﻿using DotNetCampus.Terminal.Framework.DependencyInjection;
 
 namespace DotNetCampus.Terminal.Framework;
 
@@ -35,4 +34,8 @@ public static class FrameworkExtensions
             });
         return builder;
     }
+}
+
+public class AppBuilder
+{
 }

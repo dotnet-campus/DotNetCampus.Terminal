@@ -4,11 +4,16 @@
 
 ## 知识文档结构
 
-- [Tomlet库使用指南](tomlet-guide.md) - TOML配置文件解析库
-- [Terminal.Gui使用指南](terminal-gui-guide.md) - 控制台UI框架
-- [SSH.NET使用指南](ssh-net-guide.md) - SSH连接库
-- [.NET 9.0新特性](dotnet9-features.md) - .NET 9.0在项目中的应用
-- [常见问题解答](faq.md) - 开发中的常见问题和解决方案
+### 技术库使用指南
+- [Terminal.Gui-使用指南](Terminal.Gui-使用指南.md) - 控制台UI框架使用指南
+- [Terminal.Gui-常见错误解决方案](Terminal.Gui-常见错误解决方案.md) - Terminal.Gui开发中的问题解决
+- [SSH.NET-使用指南](SSH.NET-使用指南.md) - SSH连接库使用指南
+- [Tomlet-使用指南](Tomlet-使用指南.md) - TOML配置文件解析库
+- [DotNet9-新特性](DotNet9-新特性.md) - .NET 9.0在项目中的应用
+
+### 项目协作经验
+- [AI协作开发经验](AI协作开发经验.md) - 多AI协作过程中的经验教训
+- [常见问题解答](常见问题解答.md) - 开发中的常见问题和解决方案
 
 ## 贡献指南
 

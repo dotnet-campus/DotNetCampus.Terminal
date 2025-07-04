@@ -1,3 +1,13 @@
-﻿using System.Globalization;
+﻿using DotNetCampus.Terminal.Views;
+using Terminal.Gui.App;
 
-Console.WriteLine("");
+Application.Init();
+
+try
+{
+    Application.Run(new MainWindow());
+}
+finally
+{
+    Application.Shutdown();
+}

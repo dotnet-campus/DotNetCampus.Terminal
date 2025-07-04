@@ -28,6 +28,8 @@ DotNetCampus Terminal 计划提供这些功能。
 
 以上所有这些基本功能都计划仅使用控制台 UI 来实现。
 
+> **开发说明**：项目采用多AI协同开发模式，详细的任务分工请查看 [AI任务分工.md](.github/AI任务分工.md)。所有AI请遵循 [GitHub Copilot 指导文档](.github/copilot-instructions.md) 中的编码规范。
+
 ### 界面与交互
 
 1. [ ] 启动后，在当前 Shell 现实示一个控制台 UI 界面

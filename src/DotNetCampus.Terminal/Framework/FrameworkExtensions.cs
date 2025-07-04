@@ -35,7 +35,3 @@ public static class FrameworkExtensions
         return builder;
     }
 }
-
-public class AppBuilder
-{
-}

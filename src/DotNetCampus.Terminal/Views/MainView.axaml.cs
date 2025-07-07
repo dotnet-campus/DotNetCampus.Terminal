@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
+using Consolonia.Core.Infrastructure;
 using DotNetCampus.Terminal.ViewModels;
 
 namespace DotNetCampus.Terminal.Views
@@ -18,6 +19,9 @@ namespace DotNetCampus.Terminal.Views
 
         private void OnLoaded(object? sender, RoutedEventArgs e)
         {
+            var topLevel = (ConsoleWindow)TopLevel.GetTopLevel(this)!;
+            topLevel.Title = "DotNetCampus Terminal";
+
             ViewModel.ReloadDevicesCommand.Execute(null);
         }
 

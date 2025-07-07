@@ -13,23 +13,106 @@
         <vm:MainViewModel />
     </Design.DataContext>
 
-    <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="*,2*">
-        <ListBox Grid.Row="2" Grid.Column="0" BorderThickness="0"
-                 ItemsSource="{Binding RemoteDevices, Mode=OneTime}">
-            <ListBox.DataTemplates>
-                <DataTemplate x:DataType="m:SshRemoteDeviceInfo">
-                    <StackPanel>
-                        <TextBlock Text="{Binding ConnectionName, Mode=OneTime}" />
-                        <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}">
-                            <Run Text="{Binding HostName, Mode=OneTime}" />:<Run Text="{Binding Port, Mode=OneTime}" />
-                        </TextBlock>
-                    </StackPanel>
-                </DataTemplate>
-                <DataTemplate x:DataType="m:IRemoteDeviceInfo">
-                    <TextBlock Text="{Binding ConnectionName, Mode=OneTime}" />
-                </DataTemplate>
-            </ListBox.DataTemplates>
-        </ListBox>
-    </Grid>
+    <UserControl.Styles>
+        <Style Selector="TextBlock.Fn">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Padding" Value="1 0" />
+            <Setter Property="Margin" Value="0 0 1 0" />
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="console:ButtonExtensions.Shadow" Value="False" />
+            <Style Selector="^ /template/ Border#InternalBorder">
+                <Setter Property="Margin" Value="0" />
+            </Style>
+            <Style Selector="^:clickdelayed /template/ Border#InternalBorder">
+                <Setter Property="Margin" Value="0" />
+            </Style>
+        </Style>
+        <Style Selector="#StatusBarPanel>Button">
+            <Setter Property="Padding" Value="0 0 1 0" />
+            <Setter Property="Margin" Value="0 0 1 0" />
+        </Style>
+        <Style Selector="TabItem">
+            <Setter Property="MinWidth" Value="16" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="BorderThickness" Value="0 0 0 1" />
+        </Style>
+    </UserControl.Styles>
 
+    <Grid RowDefinitions="*,Auto">
+
+        <TabControl BorderThickness="0 1 0 0">
+
+            <TabItem Header="设备">
+
+                <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,2*">
+                    <Grid Grid.Row="1" Grid.Column="0" RowDefinitions="Auto,Auto,*">
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <DropDownButton>
+                                <DropDownButton.Flyout>
+                                    <MenuFlyout Placement="Bottom">
+                                        <MenuItem Header="+ 连接新设备" />
+                                        <MenuItem Header="+ 增加新源" />
+                                    </MenuFlyout>
+                                </DropDownButton.Flyout>
+                                <Button Content="+ 新设备" BorderThickness="0" />
+                            </DropDownButton>
+                        </StackPanel>
+                        <TextBox Grid.Row="1" Margin="0 1" Background="DarkGray" Watermark="搜索设备…" />
+                        <ListBox Grid.Row="2" BorderThickness="0"
+                                 ItemsSource="{Binding RemoteDevices, Mode=OneTime}">
+                            <ListBox.DataTemplates>
+                                <DataTemplate x:DataType="m:SshRemoteDeviceInfo">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding ConnectionName, Mode=OneTime}" />
+                                        <TextBlock>
+                                            <Run Text="{Binding HostName, Mode=OneTime}" />:<Run Text="{Binding Port, Mode=OneTime}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                                <DataTemplate x:DataType="m:IRemoteDeviceInfo">
+                                    <TextBlock Text="{Binding ConnectionName, Mode=OneTime}" />
+                                </DataTemplate>
+                            </ListBox.DataTemplates>
+                        </ListBox>
+                    </Grid>
+                </Grid>
+
+            </TabItem>
+
+            <TabItem Header="外壳">
+                <Image Source="avares://DotNetCampus.Terminal/Assets/Resources/happy.jpg" />
+            </TabItem>
+
+        </TabControl>
+
+        <StackPanel x:Name="StatusBarPanel" Grid.Row="1" Orientation="Horizontal">
+            <Button>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="F1" Classes="Fn" />
+                    <TextBlock Text="帮助" />
+                </StackPanel>
+            </Button>
+            <Button>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="F2" Classes="Fn" />
+                    <TextBlock Text="连接" />
+                </StackPanel>
+            </Button>
+            <Button>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="F3" Classes="Fn" />
+                    <TextBlock Text="同步" />
+                </StackPanel>
+            </Button>
+            <Button>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="F10" Classes="Fn" />
+                    <TextBlock Text="退出" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
 </UserControl>

@@ -13,4 +13,9 @@
     <PackageReference Include="SSH.NET" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\Resources\happy.jpg" />
+    <AvaloniaResource Include="Resources\**" />
+  </ItemGroup>
+
 </Project>

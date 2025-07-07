@@ -11,7 +11,7 @@ try
     new AppBuilder()
         .UseContainer(s => s
             .AddSingleton<ConfigurationManager>());
-    Application.Run(new RootView(Container.Current.EnsureGet<ConfigurationManager>()));
+    Application.Run(new RootView(Container.Current));
 }
 finally
 {

@@ -11,17 +11,12 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
         _configurationPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "terminal.toml");
     }
 
-    public void Reload()
-    {
-        if (!File.Exists(_configurationPath))
-        {
-            return;
-        }
+    public string GroupName => "桌面配置文件";
 
-    }
-
-    public IReadOnlyList<IRemoteDeviceInfo> FetchRemoteDevicesAsync()
+    public async Task<IReadOnlyList<IRemoteDeviceInfo>> FetchRemoteDevicesAsync()
     {
+        await Task.Yield();
+
         if (!File.Exists(_configurationPath))
         {
             return [];

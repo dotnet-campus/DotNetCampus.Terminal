@@ -3,7 +3,9 @@ using Terminal.Gui.Input;
 using Terminal.Gui.App;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using DotNetCampus.Terminal.Framework.DependencyInjection;
 using DotNetCampus.Terminal.Modules.Configurations;
+using DotNetCampus.Terminal.Modules.Configurations.Models;
 using Terminal.Gui.ViewBase;
 
 namespace DotNetCampus.Terminal.Views
@@ -22,9 +24,9 @@ namespace DotNetCampus.Terminal.Views
         private ListView _syncStatusView;
         private TextField _commandInput;
 
-        public RootView(ConfigurationManager configurationManager)
+        public RootView(IServiceProvider serviceProvider)
         {
-            _configurationManager = configurationManager ?? throw new ArgumentNullException(nameof(configurationManager));
+            _configurationManager = serviceProvider.EnsureGet<ConfigurationManager>();
             InitializeComponent();
             SetupMenuBar();
             SetupStatusBar();
@@ -84,7 +86,7 @@ namespace DotNetCampus.Terminal.Views
                         {
                             Title = "_刷新设备列表",
                             Key = Key.F5,
-                            Action = RefreshDeviceList,
+                            Action = () => _ = RefreshDeviceList(),
                         },
                     ]),
                 },
@@ -221,7 +223,7 @@ namespace DotNetCampus.Terminal.Views
             Add(_commandInput);
 
             // 初始化数据
-            RefreshDeviceList();
+            _ = RefreshDeviceList();
             RefreshSyncStatus();
         }
 
@@ -310,17 +312,22 @@ namespace DotNetCampus.Terminal.Views
 
         #region 数据刷新
 
-        private void RefreshDeviceList()
+        private async Task RefreshDeviceList()
         {
-            // TODO: 从配置管理器获取设备列表
-            var devices = new ObservableCollection<string>
+            var remoteDevices = await _configurationManager.FetchRemoteDevicesAsync();
+            var devices = new ObservableCollection<string>();
+            foreach (var group in remoteDevices)
             {
-                "开发服务器 (192.168.1.100)",
-                "测试服务器 (192.168.1.101)",
-                "生产服务器 (192.168.1.102)",
-            };
-
-            _deviceListView.SetSource(devices);
+                foreach (var device in group.Devices)
+                {
+                    devices.Add($"{device.ConnectionName} ({device switch
+                    {
+                        SshRemoteDeviceInfo ssh => $"{ssh.HostName}:{ssh.Port}",
+                        _ => "Unknown",
+                    }})");
+                }
+            }
+            await _deviceListView.SetSourceAsync(devices);
         }
 
         private void RefreshSyncStatus()

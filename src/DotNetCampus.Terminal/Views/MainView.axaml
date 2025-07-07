@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:console="https://github.com/jinek/consolonia"
+             xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
+             xmlns:m="using:DotNetCampus.Terminal.Modules.Configurations.Models"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="DotNetCampus.Terminal.Views.MainView"
+             Background="Black">
+
+    <Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="*,2*">
+        <ListBox Grid.Row="2" Grid.Column="0" BorderThickness="0"
+                 ItemsSource="{Binding RemoteDevices, Mode=OneTime}">
+            <ListBox.DataTemplates>
+                <DataTemplate x:DataType="m:SshRemoteDeviceInfo">
+                    <StackPanel>
+                        <TextBlock Text="{Binding ConnectionName, Mode=OneTime}" />
+                        <TextBlock Foreground="{DynamicResource ThemeForegroundBrush}">
+                            <Run Text="{Binding HostName, Mode=OneTime}" />:<Run Text="{Binding Port, Mode=OneTime}" />
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+                <DataTemplate x:DataType="m:IRemoteDeviceInfo">
+                    <TextBlock Text="{Binding ConnectionName, Mode=OneTime}" />
+                </DataTemplate>
+            </ListBox.DataTemplates>
+        </ListBox>
+    </Grid>
+
+</UserControl>

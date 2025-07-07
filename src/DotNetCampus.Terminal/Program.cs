@@ -1,19 +1,24 @@
-﻿using DotNetCampus.Terminal.Framework;
-using DotNetCampus.Terminal.Framework.DependencyInjection;
-using DotNetCampus.Terminal.Modules.Configurations;
-using DotNetCampus.Terminal.Views;
-using Terminal.Gui.App;
+using Avalonia;
+using Consolonia;
+using DotNetCampus.Terminal.Modules;
 
-Application.Init();
+namespace DotNetCampus.Terminal
+{
+    public static class Program
+    {
+        private static void Main(string[] args)
+        {
+            BuildAvaloniaApp()
+                .StartWithConsoleLifetime(args);
+        }
 
-try
-{
-    new AppBuilder()
-        .UseContainer(s => s
-            .AddSingleton<ConfigurationManager>());
-    Application.Run(new RootView(Container.Current));
-}
-finally
-{
-    Application.Shutdown();
+        public static AppBuilder BuildAvaloniaApp()
+        {
+            return AppBuilder.Configure<App>()
+                .UseConsolonia()
+                .UseAutoDetectedConsole()
+                .UseContainerServices()
+                .LogToException();
+        }
+    }
 }

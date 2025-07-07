@@ -1,4 +1,5 @@
-﻿using DotNetCampus.Terminal.Framework.DependencyInjection;
+﻿using Avalonia;
+using DotNetCampus.Terminal.Framework.DependencyInjection;
 
 namespace DotNetCampus.Terminal.Framework;
 

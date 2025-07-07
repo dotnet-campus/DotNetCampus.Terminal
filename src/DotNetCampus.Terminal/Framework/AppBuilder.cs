@@ -1,5 +1,5 @@
 namespace DotNetCampus.Terminal.Framework;
 
-public class AppBuilder
+file class AppBuilder
 {
 }

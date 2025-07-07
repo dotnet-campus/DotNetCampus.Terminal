@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Consolonia" />
     <PackageReference Include="Samboy063.Tomlet" />
     <PackageReference Include="SSH.NET" />
-    <PackageReference Include="Terminal.Gui" />
   </ItemGroup>
 
 </Project>

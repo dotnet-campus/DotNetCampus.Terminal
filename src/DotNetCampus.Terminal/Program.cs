@@ -1,6 +1,6 @@
-﻿using DotNetCampus.Terminal.Configurations;
-using DotNetCampus.Terminal.Framework;
+﻿using DotNetCampus.Terminal.Framework;
 using DotNetCampus.Terminal.Framework.DependencyInjection;
+using DotNetCampus.Terminal.Modules.Configurations;
 using DotNetCampus.Terminal.Views;
 using Terminal.Gui.App;
 

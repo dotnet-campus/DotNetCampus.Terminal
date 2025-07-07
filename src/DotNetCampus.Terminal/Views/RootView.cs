@@ -1,9 +1,9 @@
 using Terminal.Gui.Views;
 using Terminal.Gui.Input;
 using Terminal.Gui.App;
-using DotNetCampus.Terminal.Configurations;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using DotNetCampus.Terminal.Modules.Configurations;
 using Terminal.Gui.ViewBase;
 
 namespace DotNetCampus.Terminal.Views

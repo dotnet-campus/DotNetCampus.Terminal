@@ -59,52 +59,117 @@
                 <Setter Property="Margin" Value="0" />
             </Style>
         </Style>
+        <Style Selector="ListBoxItem">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
     </UserControl.Styles>
 
     <ScrollViewer>
-        <Grid Margin="1" RowDefinitions="Auto,Auto,Auto,Auto,*" ColumnDefinitions="*">
-            <!-- 连接名称标题，单独一行加粗加大 -->
-            <TextBox Grid.Row="0" Grid.Column="0" FontWeight="Bold"
-                     TextAlignment="Center" Background="White"
-                     Text="{Binding ConnectionName, Mode=TwoWay}" />
+        <Grid Margin="1" RowDefinitions="Auto,*" ColumnDefinitions="*">
 
-            <!-- 连接状态 -->
-            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,1">
-                <TextBlock Width="2"
-                           Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToSymbolConverter}, Mode=OneWay}"
-                           Foreground="{Binding ConnectionState, Converter={StaticResource ConnectionStateToForegroundConverter}, Mode=OneWay}" />
-                <TextBlock Width="8"
-                           Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToStringConverter}, Mode=OneWay}" />
-                <Button Content="连接" Margin="1,0" />
+            <StackPanel Grid.Row="0">
+
+                <!-- 连接名称标题 -->
+                <TextBox FontWeight="Bold"
+                         TextAlignment="Center" Background="White"
+                         Text="{Binding ConnectionName, Mode=TwoWay}" />
+
+                <!-- 连接状态 -->
+                <StackPanel Orientation="Horizontal" Margin="0,1">
+                    <TextBlock Width="2"
+                               Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToSymbolConverter}, Mode=OneWay}"
+                               Foreground="{Binding ConnectionState, Converter={StaticResource ConnectionStateToForegroundConverter}, Mode=OneWay}" />
+                    <TextBlock Width="8"
+                               Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToStringConverter}, Mode=OneWay}" />
+                    <Button Content="连接" Margin="1,0" />
+                </StackPanel>
+
+                <!-- 主机地址/端口、用户名/密码分组 -->
+                <UniformGrid Columns="2">
+                    <!-- 主机地址+端口分组 -->
+                    <Border BorderThickness="1" BorderBrush="DimGray">
+                        <StackPanel Margin="1">
+                            <TextBlock Text="主机地址" />
+                            <TextBox Text="{Binding Host, Mode=TwoWay}" />
+                            <TextBlock Text="端口" />
+                            <TextBox Text="{Binding Port, Mode=TwoWay}" />
+                        </StackPanel>
+                    </Border>
+                    <!-- 用户名+密码分组 -->
+                    <Border BorderThickness="1" BorderBrush="DimGray">
+                        <StackPanel Margin="1">
+                            <TextBlock Text="用户名" />
+                            <TextBox Text="{Binding UserName, Mode=TwoWay}" />
+                            <TextBlock Text="密码" />
+                            <TextBox Text="{Binding Password, Mode=TwoWay}" />
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <!-- 保存与重置 -->
+                <StackPanel Orientation="Horizontal" Spacing="2" Margin="0,1">
+                    <Button Content="保存" Margin="1,0" />
+                    <Button Content="重置" Margin="1,0" />
+                </StackPanel>
             </StackPanel>
 
-            <!-- 主机地址/端口、用户名/密码分组 -->
-            <UniformGrid Grid.Row="2" Grid.Column="0" Columns="2">
-                <!-- 主机地址+端口分组 -->
-                <Border BorderThickness="1" BorderBrush="DimGray">
-                    <StackPanel Margin="1">
-                        <TextBlock Text="主机地址" />
-                        <TextBox Text="{Binding Host, Mode=TwoWay}" />
-                        <TextBlock Text="端口" />
-                        <TextBox Text="{Binding Port, Mode=TwoWay}" />
-                    </StackPanel>
-                </Border>
-                <!-- 用户名+密码分组 -->
-                <Border BorderThickness="1" BorderBrush="DimGray">
-                    <StackPanel Margin="1">
-                        <TextBlock Text="用户名" />
-                        <TextBox Text="{Binding UserName, Mode=TwoWay}" />
-                        <TextBlock Text="密码" />
-                        <TextBox Text="{Binding Password, Mode=TwoWay}" />
-                    </StackPanel>
-                </Border>
-            </UniformGrid>
+            <!-- 目录同步配置区 -->
+            <Grid Grid.Row="1" RowDefinitions="Auto,Auto,*" Margin="0,1">
 
-            <!-- 保存与重置 -->
-            <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="2" Margin="0,1">
-                <Button Content="保存" Margin="1,0" />
-                <Button Content="重置" Margin="1,0" />
-            </StackPanel>
+                <!-- 同步组列表标题 -->
+                <TextBlock Grid.Row="0" Text="目录同步配置"
+                           FontWeight="Bold" TextAlignment="Center"
+                           Background="White" Foreground="Black"
+                           Margin="0,0,0,1" />
+
+                <!-- 操作按钮 -->
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="2" Margin="0,1">
+                    <Button Content="新增同步目录" />
+                    <Button Content="立即同步" />
+                    <Button Content="全部启用" />
+                    <Button Content="全部禁用" />
+                </StackPanel>
+
+                <!-- 同步组列表 -->
+                <ListBox Grid.Row="2" BorderThickness="0"
+                         ItemsSource="{Binding SyncGroups}"
+                         SelectedItem="{Binding SelectedSyncGroup}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:SyncGroupViewModel">
+                            <Border BorderThickness="1" BorderBrush="DimGray">
+                                <StackPanel Margin="1">
+                                    <!-- 同步组名称和状态 -->
+                                    <Grid ColumnDefinitions="3,Auto,*,Auto,Auto,Auto">
+                                        <TextBlock Grid.Column="0" Width="3"
+                                                   TextAlignment="Center"
+                                                   Text="{Binding StatusSymbol}"
+                                                   Foreground="{Binding StatusColor}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Name}" />
+                                        <TextBlock Grid.Column="2" Text="{Binding StatusText}" Margin="1,0,0,0" />
+                                        <ToggleSwitch Grid.Column="3" Margin="1,0" OnContent="已启用" OffContent="已禁用" />
+                                        <Button Grid.Column="4" Content="编辑" Margin="1,0" />
+                                        <Button Grid.Column="5" Content="✗" Margin="1,0" />
+                                    </Grid>
+                                    <!-- 远程路径 -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,1,0,0">
+                                        <TextBlock Width="3" Text="📁" />
+                                        <TextBlock Text="{Binding RemotePath}" />
+                                    </StackPanel>
+                                    <!-- 同步方向 -->
+                                    <TextBlock Width="3" Text="↑" TextAlignment="Center" />
+                                    <!-- 本地路径 -->
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Width="3" Text="📁" />
+                                        <TextBlock Text="{Binding LocalPath}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+            </Grid>
         </Grid>
     </ScrollViewer>
 

@@ -1,5 +1,6 @@
 ﻿using DotNetCampus.Terminal.Modules.Configurations.Models;
 using DotNetCampus.Terminal.Utils;
+using Avalonia.Collections;
 
 namespace DotNetCampus.Terminal.ViewModels;
 
@@ -10,6 +11,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     private int _port;
     private string _userName;
     private string? _password;
+    private SyncGroupViewModel? _selectedSyncGroup;
 
     public SshRemoteDeviceInfoViewModel() : base(new SshRemoteDeviceInfo
     {
@@ -25,6 +27,23 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         _port = 22;
         _userName = "username";
         _password = "password";
+
+        // 添加设计时示例数据
+        SyncGroups.Add(new SyncGroupViewModel
+        {
+            Name = "MyVeryLongProjectName",
+            RemotePath = "/home/user/projects/myproject/src/main/java/com/example/...",
+            LocalPath = @"D:\Projects\MyVeryLongProjectName\src\main\java\com\example\...",
+            Status = SyncGroupStatus.Normal
+        });
+
+        SyncGroups.Add(new SyncGroupViewModel
+        {
+            Name = "VeryLongDepartment",
+            RemotePath = "/home/user/documents/work/department/reports/...",
+            LocalPath = @"D:\Documents\Work\VeryLongDepartment\reports\...",
+            Status = SyncGroupStatus.Error
+        });
     }
 
     public SshRemoteDeviceInfoViewModel(SshRemoteDeviceInfo info) : base(info)
@@ -34,6 +53,37 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         _port = info.Port;
         _userName = info.UserName;
         _password = info.Password;
+
+        // 添加设计时示例数据
+        SyncGroups.Add(new SyncGroupViewModel
+        {
+            Name = "MyVeryLongProjectName",
+            RemotePath = "/home/user/projects/myproject/src/main/java/com/example/...",
+            LocalPath = @"D:\Projects\MyVeryLongProjectName\src\main\java\com\example\...",
+            Status = SyncGroupStatus.Normal
+        });
+
+        SyncGroups.Add(new SyncGroupViewModel
+        {
+            Name = "VeryLongDepartment",
+            RemotePath = "/home/user/documents/work/department/reports/...",
+            LocalPath = @"D:\Documents\Work\VeryLongDepartment\reports\...",
+            Status = SyncGroupStatus.Error
+        });
+    }
+
+    /// <summary>
+    /// 同步组列表
+    /// </summary>
+    public AvaloniaList<SyncGroupViewModel> SyncGroups { get; } = new();
+
+    /// <summary>
+    /// 选中的同步组
+    /// </summary>
+    public SyncGroupViewModel? SelectedSyncGroup
+    {
+        get => _selectedSyncGroup;
+        set => SetField(ref _selectedSyncGroup, value);
     }
 
     public string ConnectionName

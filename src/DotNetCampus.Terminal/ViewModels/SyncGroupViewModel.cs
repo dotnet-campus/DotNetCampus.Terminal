@@ -1,3 +1,5 @@
+using DotNetCampus.Terminal.FileSync;
+using DotNetCampus.Terminal.Framework.Input.Commands;
 using DotNetCampus.Terminal.Framework.Mvvm;
 
 namespace DotNetCampus.Terminal.ViewModels;
@@ -12,6 +14,19 @@ public record SyncGroupViewModel : BindableRecord
     private string _localPath = string.Empty;
     private SyncGroupStatus _status = SyncGroupStatus.Normal;
     private string _statusText = string.Empty;
+    private double _syncProgress;
+    private bool _isEnabled = true;
+    private bool _isSyncing;
+
+    public SyncGroupViewModel()
+    {
+        SyncCommand = new AsyncCommand(OnSyncAsync);
+    }
+
+    /// <summary>
+    /// 同步命令
+    /// </summary>
+    public AsyncCommand SyncCommand { get; }
 
     /// <summary>
     /// 同步组名称
@@ -65,6 +80,39 @@ public record SyncGroupViewModel : BindableRecord
     }
 
     /// <summary>
+    /// 是否启用
+    /// </summary>
+    public bool IsEnabled
+    {
+        get => _isEnabled;
+        set
+        {
+            if (SetField(ref _isEnabled, value))
+            {
+                Status = value ? SyncGroupStatus.Normal : SyncGroupStatus.Disabled;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 是否正在同步
+    /// </summary>
+    public bool IsSyncing
+    {
+        get => _isSyncing;
+        private set => SetField(ref _isSyncing, value);
+    }
+
+    /// <summary>
+    /// 同步进度 (0-100)
+    /// </summary>
+    public double SyncProgress
+    {
+        get => _syncProgress;
+        set => SetField(ref _syncProgress, value);
+    }
+
+    /// <summary>
     /// 状态符号
     /// </summary>
     public string StatusSymbol => Status switch
@@ -98,6 +146,42 @@ public record SyncGroupViewModel : BindableRecord
             SyncGroupStatus.Syncing => "(同步中)",
             _ => string.Empty
         };
+
+        IsSyncing = Status == SyncGroupStatus.Syncing;
+    }
+
+    /// <summary>
+    /// 执行同步操作
+    /// </summary>
+    private async Task OnSyncAsync()
+    {
+        if (Status == SyncGroupStatus.Syncing)
+        {
+            return;
+        }
+
+        Status = SyncGroupStatus.Syncing;
+        SyncProgress = 0;
+
+        try
+        {
+            // 这里需要获取父ViewModel中的SshInfo和FileSyncService
+            // 当前直接通过UpdateStatus模拟进度展示
+
+            for (int i = 0; i <= 10; i++)
+            {
+                SyncProgress = i * 10;
+                await Task.Delay(200); // 模拟同步过程
+            }
+
+            Status = SyncGroupStatus.Normal;
+            SyncProgress = 100;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"同步过程中发生错误: {ex.Message}");
+            Status = SyncGroupStatus.Error;
+        }
     }
 }
 

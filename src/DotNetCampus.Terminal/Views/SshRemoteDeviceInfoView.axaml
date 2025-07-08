@@ -126,9 +126,9 @@
                 <!-- 操作按钮 -->
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="2" Margin="0,1">
                     <Button Content="新增同步目录" />
-                    <Button Content="立即同步" />
-                    <Button Content="全部启用" />
-                    <Button Content="全部禁用" />
+                    <Button Content="立即同步" Command="{Binding SyncAllCommand}" />
+                    <Button Content="全部启用" Command="{Binding EnableAllCommand}" />
+                    <Button Content="全部禁用" Command="{Binding DisableAllCommand}" />
                 </StackPanel>
 
                 <!-- 同步组列表 -->
@@ -147,9 +147,11 @@
                                                    Foreground="{Binding StatusColor}" />
                                         <TextBlock Grid.Column="1" Text="{Binding Name}" />
                                         <TextBlock Grid.Column="2" Text="{Binding StatusText}" Margin="1,0,0,0" />
-                                        <ToggleSwitch Grid.Column="3" Margin="1,0" OnContent="已启用" OffContent="已禁用" />
+                                        <ToggleSwitch Grid.Column="3" Margin="1,0" 
+                                                      OnContent="已启用" OffContent="已禁用"
+                                                      IsChecked="{Binding IsEnabled}" />
                                         <Button Grid.Column="4" Content="编辑" Margin="1,0" />
-                                        <Button Grid.Column="5" Content="✗" Margin="1,0" />
+                                        <Button Grid.Column="5" Content="同步" Margin="1,0" Command="{Binding SyncCommand}" />
                                     </Grid>
                                     <!-- 远程路径 -->
                                     <StackPanel Orientation="Horizontal" Margin="0,1,0,0">

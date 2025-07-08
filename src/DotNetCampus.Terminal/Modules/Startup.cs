@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using DotNetCampus.Terminal.FileSync;
 using DotNetCampus.Terminal.Framework;
 using DotNetCampus.Terminal.Framework.DependencyInjection;
 using DotNetCampus.Terminal.Modules.Configurations;
@@ -10,6 +11,7 @@ public static class Startup
     public static AppBuilder UseContainerServices(this AppBuilder appBuilder)
     {
         return appBuilder.UseContainer(s => s
-            .AddSingleton<ConfigurationManager>());
+            .AddSingleton<ConfigurationManager>()
+            .AddSingleton<IFileSyncService>(provider => new FileSyncService()));
     }
 }

@@ -11,8 +11,8 @@ Password = "123"
 
 [[SshDevices.SyncGroups]]
 Name = "测试项目"
-RemotePath = "/home/seewo/test-project"
-LocalPath = "D:\\TestProject"
+RemotePath = "/home/seewo/lvyi/TestProject"
+LocalPath = "D:\\WIP\\Desktop\\xxxxx"
 Enabled = true
 
 # 测试设备 2

@@ -1,0 +1,57 @@
+# DotNetCampus Terminal 设备配置文件
+# 这是一个示例配置文件，展示了如何配置SSH设备和同步组
+
+# 开发服务器配置
+[[SshDevices]]
+ConnectionName = "开发服务器"
+Host = "192.168.1.100"
+Port = 22
+UserName = "developer"
+Password = "dev123"
+
+# 开发服务器的同步组配置
+[[SshDevices.SyncGroups]]
+Name = "项目源码"
+RemotePath = "/home/developer/projects/myproject"
+LocalPath = "D:\\Projects\\MyProject"
+Enabled = true
+
+[[SshDevices.SyncGroups]]
+Name = "配置文件"
+RemotePath = "/etc/myapp"
+LocalPath = "D:\\Config\\MyApp"
+Enabled = false
+
+# 测试服务器配置
+[[SshDevices]]
+ConnectionName = "测试服务器"
+Host = "test.example.com"
+Port = 2222
+UserName = "testuser"
+# 密码留空，需要在UI中输入
+
+[[SshDevices.SyncGroups]]
+Name = "测试数据"
+RemotePath = "/home/testuser/testdata"
+LocalPath = "D:\\TestData"
+Enabled = true
+
+[[SshDevices.SyncGroups]]
+Name = "日志文件"
+RemotePath = "/var/log/testapp"
+LocalPath = "D:\\Logs\\TestApp"
+Enabled = false
+
+# 生产服务器配置
+[[SshDevices]]
+ConnectionName = "生产服务器"
+Host = "prod.example.com"
+Port = 22
+UserName = "produser"
+# 生产环境建议使用密钥认证，不要在配置文件中存储密码
+
+[[SshDevices.SyncGroups]]
+Name = "备份数据"
+RemotePath = "/backup/myapp"
+LocalPath = "D:\\Backup\\MyApp"
+Enabled = true

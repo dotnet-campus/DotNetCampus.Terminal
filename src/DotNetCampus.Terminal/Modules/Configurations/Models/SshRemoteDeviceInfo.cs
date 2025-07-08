@@ -35,6 +35,11 @@ public record SshRemoteDeviceInfo : IRemoteDeviceInfo
     /// 远程连接所使用的密码。
     /// </summary>
     public string? Password { get; init; }
+
+    /// <summary>
+    /// 同步组配置列表
+    /// </summary>
+    public IReadOnlyList<SyncGroupConfiguration> SyncGroups { get; init; } = [];
 }
 
 /// <summary>

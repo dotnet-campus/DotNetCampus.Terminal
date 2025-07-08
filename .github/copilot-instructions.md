@@ -318,19 +318,40 @@ public async Task GetDevicesAsync_ShouldReturnDeviceList()
 
 ### 1. 配置文件格式（TOML）
 ```toml
-[app]
-name = "DotNetCampus Terminal"
-version = "1.0.0"
+# 使用 PascalCase 命名与代码保持一致
+[[SshDevices]]
+ConnectionName = "开发服务器"
+Host = "192.168.1.100"
+Port = 22
+UserName = "developer"
+Password = "dev123"
 
-[[devices]]
-id = "dev-server-1"
-name = "开发服务器1"
-type = "Linux"
+[[SshDevices.SyncGroups]]
+Name = "项目源码"
+RemotePath = "/home/developer/projects"
+LocalPath = "D:\\Projects"
+Enabled = true
+```
 
-[devices.ssh]
-host = "192.168.1.100"
-port = 22
-username = "developer"
+### 2. 配置源设计
+```csharp
+// 配置源作为设备集合提供者，与 DebugSource 并列
+public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSource
+{
+    public string GroupName => "TOML 配置文件";
+    public async Task<IReadOnlyList<IRemoteDeviceInfo>> FetchRemoteDevicesAsync()
+    {
+        // 解析 TOML 文件返回设备列表
+        var deviceConfiguration = TomletMain.To<TomlDeviceConfiguration>(tomlContent);
+        return devices;
+    }
+}
+```
+
+### 3. 错误处理原则
+- 配置文件不存在时返回空列表
+- 解析失败时记录错误但不中断程序
+- 单个设备配置错误时跳过该设备
 ```
 
 ### 2. 配置类定义

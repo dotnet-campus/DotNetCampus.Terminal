@@ -20,6 +20,22 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         Port = 22,
         UserName = "username",
         Password = "password",
+        SyncGroups = [
+            new SyncGroupConfiguration
+            {
+                Name = "设计时项目",
+                RemotePath = "/home/user/projects/design",
+                LocalPath = @"D:\Projects\Design",
+                Enabled = true
+            },
+            new SyncGroupConfiguration
+            {
+                Name = "设计时文档",
+                RemotePath = "/home/user/documents",
+                LocalPath = @"D:\Documents",
+                Enabled = false
+            }
+        ]
     })
     {
         _connectionName = "设计时设备";
@@ -31,18 +47,18 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         // 添加设计时示例数据
         SyncGroups.Add(new SyncGroupViewModel
         {
-            Name = "MyVeryLongProjectName",
-            RemotePath = "/home/user/projects/myproject/src/main/java/com/example/...",
-            LocalPath = @"D:\Projects\MyVeryLongProjectName\src\main\java\com\example\...",
+            Name = "设计时项目",
+            RemotePath = "/home/user/projects/design",
+            LocalPath = @"D:\Projects\Design",
             Status = SyncGroupStatus.Normal
         });
 
         SyncGroups.Add(new SyncGroupViewModel
         {
-            Name = "VeryLongDepartment",
-            RemotePath = "/home/user/documents/work/department/reports/...",
-            LocalPath = @"D:\Documents\Work\VeryLongDepartment\reports\...",
-            Status = SyncGroupStatus.Error
+            Name = "设计时文档",
+            RemotePath = "/home/user/documents",
+            LocalPath = @"D:\Documents",
+            Status = SyncGroupStatus.Disabled
         });
     }
 
@@ -54,22 +70,29 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         _userName = info.UserName;
         _password = info.Password;
 
-        // 添加设计时示例数据
-        SyncGroups.Add(new SyncGroupViewModel
+        // 从配置中加载同步组数据
+        foreach (var syncGroup in info.SyncGroups)
         {
-            Name = "MyVeryLongProjectName",
-            RemotePath = "/home/user/projects/myproject/src/main/java/com/example/...",
-            LocalPath = @"D:\Projects\MyVeryLongProjectName\src\main\java\com\example\...",
-            Status = SyncGroupStatus.Normal
-        });
+            SyncGroups.Add(new SyncGroupViewModel
+            {
+                Name = syncGroup.Name,
+                RemotePath = syncGroup.RemotePath,
+                LocalPath = syncGroup.LocalPath,
+                Status = syncGroup.Enabled ? SyncGroupStatus.Normal : SyncGroupStatus.Disabled
+            });
+        }
 
-        SyncGroups.Add(new SyncGroupViewModel
+        // 如果没有配置同步组，添加一个示例（仅用于演示）
+        if (SyncGroups.Count == 0)
         {
-            Name = "VeryLongDepartment",
-            RemotePath = "/home/user/documents/work/department/reports/...",
-            LocalPath = @"D:\Documents\Work\VeryLongDepartment\reports\...",
-            Status = SyncGroupStatus.Error
-        });
+            SyncGroups.Add(new SyncGroupViewModel
+            {
+                Name = "示例同步组",
+                RemotePath = "/home/user/example",
+                LocalPath = @"D:\Example",
+                Status = SyncGroupStatus.Normal
+            });
+        }
     }
 
     /// <summary>

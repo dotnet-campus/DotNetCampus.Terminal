@@ -37,15 +37,37 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 ### 2. 配置管理专家 (Configuration AI)
 **职责**：负责配置系统的设计和实现
 **任务**：
+- [x] 设计 TOML 配置文件格式
+- [x] 创建示例 TOML 文件并配置自动复制
+- [x] 实现 TOML 文件解析到数据模型
+- [x] 扩展 SshRemoteDeviceInfo 支持同步组配置
+- [x] 更新 SshRemoteDeviceInfoViewModel 使用配置数据
 - [ ] 完善 `ConfigurationManager` 类
 - [ ] 实现个人设备配置的存储和管理
 - [ ] 实现基于Git仓库的团队设备配置同步
-- [ ] 设计配置文件格式（TOML）
 - [ ] 实现配置的加密存储（密码等敏感信息）
 
 **输出文件**：
 - `src/DotNetCampus.Terminal/Configurations/`
 - `src/DotNetCampus.Terminal/Models/Configuration/`
+- `src/DotNetCampus.Terminal/Assets/terminal.toml` ✅
+- `.github/knowledge/Terminal-TOML-Configuration-Design.md` ✅
+
+**最新进展** (2025-07-08)：
+- ✅ 设计了 TOML 配置文件格式，采用 PascalCase 命名与代码保持一致
+- ✅ 创建了示例 TOML 文件 `Assets/terminal.toml`，配置了编译时自动复制
+- ✅ 实现了 `TomlDeviceConfiguration` 数据模型，专注于设备集合配置
+- ✅ 完善了 `TomlRemoteDeviceConfigurationSource` 的 TOML 解析功能
+- ✅ 扩展了 `SshRemoteDeviceInfo` 添加同步组配置支持
+- ✅ 更新了 `SshRemoteDeviceInfoViewModel` 从配置加载同步组数据
+- ✅ 项目可正常编译运行，TOML 配置功能基本可用
+
+**技术要点**：
+- 使用 Tomlet 库解析 TOML 配置文件
+- 采用 PascalCase 命名规则与 C# 代码保持一致
+- TOML 文件作为设备集合配置源，与 DebugSource 并列
+- 支持多个 SSH 设备和每个设备的多个同步组配置
+- 错误处理：配置文件不存在或解析失败时返回空列表
 
 ### 3. SSH连接专家 (SSH Connection AI)
 **职责**：负责SSH连接功能的实现

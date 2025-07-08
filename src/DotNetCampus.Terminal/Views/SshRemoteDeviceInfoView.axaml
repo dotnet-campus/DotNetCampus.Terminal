@@ -65,7 +65,7 @@
         </Style>
     </UserControl.Styles>
 
-    <ScrollViewer>
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
         <Grid Margin="1" RowDefinitions="Auto,*" ColumnDefinitions="*">
 
             <StackPanel Grid.Row="0">
@@ -157,7 +157,7 @@
                                         <TextBlock Text="{Binding RemotePath}" />
                                     </StackPanel>
                                     <!-- 同步方向 -->
-                                    <TextBlock Width="3" Text="↑" TextAlignment="Center" />
+                                    <TextBlock Width="3" Text=" ↑" TextAlignment="Left" />
                                     <!-- 本地路径 -->
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Width="3" Text="📁" />

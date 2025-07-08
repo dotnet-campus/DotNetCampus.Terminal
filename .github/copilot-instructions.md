@@ -352,22 +352,6 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
 - 配置文件不存在时返回空列表
 - 解析失败时记录错误但不中断程序
 - 单个设备配置错误时跳过该设备
-```
-
-### 2. 配置类定义
-```csharp
-public class AppConfiguration
-{
-    public AppInfo App { get; set; } = new();
-    public List<DeviceConfiguration> Devices { get; set; } = new();
-}
-
-public class AppInfo
-{
-    public string Name { get; set; } = string.Empty;
-    public string Version { get; set; } = string.Empty;
-}
-```
 
 ## 日志规范
 

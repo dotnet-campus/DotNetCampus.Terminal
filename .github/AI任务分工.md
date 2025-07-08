@@ -60,14 +60,17 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - ✅ 完善了 `TomlRemoteDeviceConfigurationSource` 的 TOML 解析功能
 - ✅ 扩展了 `SshRemoteDeviceInfo` 添加同步组配置支持
 - ✅ 更新了 `SshRemoteDeviceInfoViewModel` 从配置加载同步组数据
-- ✅ 项目可正常编译运行，TOML 配置功能基本可用
+- ✅ 将 DebugSource 中的设备配置完全迁移到 TOML 文件
+- ✅ 移除了 DebugRemoteDeviceConfigurationSource，简化了架构
+- ✅ 项目可正常编译运行，TOML 配置功能完全可用
 
 **技术要点**：
 - 使用 Tomlet 库解析 TOML 配置文件
 - 采用 PascalCase 命名规则与 C# 代码保持一致
-- TOML 文件作为设备集合配置源，与 DebugSource 并列
+- TOML 文件作为唯一的设备集合配置源
 - 支持多个 SSH 设备和每个设备的多个同步组配置
 - 错误处理：配置文件不存在或解析失败时返回空列表
+- 配置迁移：将原 Debug 源的真实可用设备配置迁移到 TOML 文件
 
 ### 3. SSH连接专家 (SSH Connection AI)
 **职责**：负责SSH连接功能的实现

@@ -157,7 +157,7 @@
                                         <TextBlock Text="{Binding RemotePath}" />
                                     </StackPanel>
                                     <!-- 同步方向 -->
-                                    <TextBlock Width="3" Text=" ↑" TextAlignment="Left" />
+                                    <TextBlock Width="3" Text=" ↑" HorizontalAlignment="Left" />
                                     <!-- 本地路径 -->
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Width="3" Text="📁" />

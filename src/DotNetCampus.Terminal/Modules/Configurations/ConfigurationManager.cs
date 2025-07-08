@@ -1,5 +1,4 @@
-﻿using DotNetCampus.Terminal.Modules.Configurations.DebugSource;
-using DotNetCampus.Terminal.Modules.Configurations.Models;
+﻿using DotNetCampus.Terminal.Modules.Configurations.Models;
 using DotNetCampus.Terminal.Modules.Configurations.TomlSource;
 
 namespace DotNetCampus.Terminal.Modules.Configurations;
@@ -8,7 +7,6 @@ public class ConfigurationManager
 {
     private readonly List<IRemoteDeviceConfigurationSource> _remoteDeviceSources =
     [
-        new DebugRemoteDeviceConfigurationSource(),
         new TomlRemoteDeviceConfigurationSource(),
     ];
 

@@ -1,0 +1,149 @@
+# 配置源迁移记录
+
+## 迁移内容
+
+### 从 DebugSource 迁移到 TOML 配置文件
+
+**迁移时间**: 2025-07-08
+
+### 迁移的设备配置
+
+从 `DebugRemoteDeviceConfigurationSource` 迁移了以下设备配置：
+
+```csharp
+// 原 Debug 配置
+new SshRemoteDeviceInfo
+{
+    ConnectionName = "测试设备 1",
+    Host = "172.20.114.71",
+    Port = 22,
+    UserName = "seewo",
+    Password = "123",
+},
+new SshRemoteDeviceInfo
+{
+    ConnectionName = "测试设备 2", 
+    Host = "172.20.114.72",
+    Port = 22,
+    UserName = "seewo",
+    Password = "123",
+},
+new SshRemoteDeviceInfo
+{
+    ConnectionName = "测试设备 3",
+    Host = "172.20.114.73",
+    Port = 22,
+    UserName = "seewo",
+    Password = "123",
+},
+```
+
+### 对应的 TOML 配置
+
+```toml
+# 测试设备 1
+[[SshDevices]]
+ConnectionName = "测试设备 1"
+Host = "172.20.114.71"
+Port = 22
+UserName = "seewo"
+Password = "123"
+
+[[SshDevices.SyncGroups]]
+Name = "测试项目"
+RemotePath = "/home/seewo/test-project"
+LocalPath = "D:\\TestProject"
+Enabled = true
+
+# 测试设备 2
+[[SshDevices]]
+ConnectionName = "测试设备 2"
+Host = "172.20.114.72"
+Port = 22
+UserName = "seewo"
+Password = "123"
+
+[[SshDevices.SyncGroups]]
+Name = "开发环境"
+RemotePath = "/home/seewo/development"
+LocalPath = "D:\\Development"
+Enabled = true
+
+# 测试设备 3
+[[SshDevices]]
+ConnectionName = "测试设备 3"
+Host = "172.20.114.73"
+Port = 22
+UserName = "seewo"
+Password = "123"
+
+[[SshDevices.SyncGroups]]
+Name = "生产备份"
+RemotePath = "/home/seewo/backup"
+LocalPath = "D:\\Backup"
+Enabled = false
+```
+
+## 架构变更
+
+### 配置源简化
+
+**之前**: 
+- DebugRemoteDeviceConfigurationSource (调试用)
+- TomlRemoteDeviceConfigurationSource (TOML 文件)
+
+**现在**:
+- TomlRemoteDeviceConfigurationSource (统一配置源)
+
+### 配置管理简化
+
+```csharp
+// 之前
+private readonly List<IRemoteDeviceConfigurationSource> _remoteDeviceSources =
+[
+    new DebugRemoteDeviceConfigurationSource(),
+    new TomlRemoteDeviceConfigurationSource(),
+];
+
+// 现在
+private readonly List<IRemoteDeviceConfigurationSource> _remoteDeviceSources =
+[
+    new TomlRemoteDeviceConfigurationSource(),
+];
+```
+
+## 迁移带来的好处
+
+### 1. 配置统一化
+- 所有设备配置都在一个 TOML 文件中管理
+- 用户可以直接编辑配置文件，无需修改代码
+- 便于版本控制和团队共享
+
+### 2. 简化架构
+- 减少了配置源的数量和复杂性
+- 统一了配置管理逻辑
+- 降低了维护成本
+
+### 3. 功能增强
+- TOML 配置支持同步组配置，Debug 源不支持
+- 配置文件支持注释，便于文档化
+- 支持更灵活的配置结构
+
+## 注意事项
+
+### 1. 配置文件位置
+- 配置文件位于 `Assets/terminal.toml`
+- 编译时自动复制到输出目录
+- 用户可以直接修改输出目录中的配置文件
+
+### 2. 密码安全
+- 迁移后的配置文件中包含明文密码
+- 建议用户在生产环境中使用密钥认证
+- 考虑在未来版本中实现密码加密存储
+
+### 3. 同步组配置
+- 为每个设备添加了示例同步组配置
+- 用户可以根据实际需要修改或删除
+- 同步组功能由 FileSync 模块实现
+
+这次迁移完成了从硬编码配置到文件配置的转换，为项目的配置管理提供了更大的灵活性和可维护性。

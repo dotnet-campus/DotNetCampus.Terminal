@@ -1,437 +1,207 @@
 # Tomlet 库使用指南
 
-Tomlet 是一个用于解析和生成 TOML 配置文件的 .NET 库。项目中使用版本：`5.4.0`
+Tomlet 是一个零依赖的 .NET TOML 解析库，完全实现 TOML 1.0.0 规范。
 
-## 基本概念
+## 核心 API
 
-TOML (Tom's Obvious, Minimal Language) 是一种配置文件格式，设计目标是易于阅读和编写。
-
-## 项目中的应用场景
-
-### 1. 应用程序配置
-```toml
-[app]
-name = "DotNetCampus Terminal"
-version = "1.0.0"
-theme = "dark"
-auto_save = true
-```
-
-### 2. 设备配置
-```toml
-[[devices]]
-id = "dev-server-1"
-name = "开发服务器1"
-type = "Linux"
-description = "主要开发环境"
-
-[devices.ssh]
-host = "192.168.1.100"
-port = 22
-username = "developer"
-private_key_path = "~/.ssh/id_rsa"
-
-[devices.sync]
-enabled = true
-local_path = "~/projects"
-remote_path = "/home/developer/projects"
-direction = "local_to_remote"
-```
-
-### 3. 团队配置（Git仓库）
-```toml
-[team]
-name = "DotNetCampus开发团队"
-repository = "git@github.com:dotnetcampus/terminal-configs.git"
-
-[[team.devices]]
-id = "shared-build-server"
-name = "共享构建服务器"
-type = "Linux"
-
-[team.devices.ssh]
-host = "build.dotnetcampus.com"
-port = 22
-username = "build"
-```
-
-## 核心用法
-
-### 1. 反序列化（读取配置）
-
+### 主要入口点
 ```csharp
-using Tomlet;
+// TomletMain - 主要API类
+TomletMain.To<T>(string tomlString)           // 字符串 → 对象
+TomletMain.To<T>(TomlValue value)             // TomlValue → 对象
+TomletMain.TomlStringFrom<T>(T obj)           // 对象 → 字符串
+TomletMain.DocumentFrom<T>(T obj)             // 对象 → TomlDocument
 
-// 定义配置类
-public class AppConfiguration
+// TomlParser - 解析器
+var parser = new TomlParser();
+TomlDocument doc = parser.Parse(tomlString);   // 字符串 → TomlDocument
+TomlDocument doc = TomlParser.ParseFile(path); // 文件 → TomlDocument
+```
+
+### 基本用法
+```csharp
+// 1. 反序列化
+var config = TomletMain.To<AppConfig>(tomlString);
+
+// 2. 序列化
+string toml = TomletMain.TomlStringFrom(config);
+
+// 3. 文件操作
+var doc = TomlParser.ParseFile("config.toml");
+var config = TomletMain.To<AppConfig>(doc);
+```
+
+## 属性映射
+
+### 基本属性特性
+```csharp
+public class DeviceConfig
 {
-    public AppInfo App { get; set; } = new();
-    public List<DeviceConfiguration> Devices { get; set; } = new();
+    [TomlProperty("device_name")]     // 映射到不同的TOML键名
+    public string Name { get; set; }
+    
+    [TomlNonSerialized]              // 跳过序列化
+    public string TempData { get; set; }
+    
+    [TomlDoNotInlineObject]          // 强制不内联表格
+    public SshConfig Ssh { get; set; }
 }
+```
 
-public class AppInfo
-{
-    public string Name { get; set; } = string.Empty;
-    public string Version { get; set; } = string.Empty;
-    public string Theme { get; set; } = "dark";
-    public bool AutoSave { get; set; } = true;
-}
+### 自定义序列化器
+```csharp
+// 注册自定义类型映射
+TomletMain.RegisterMapper<Color>(
+    // 序列化：Color → TomlValue
+    color => new TomlString($"#{color.R:X2}{color.G:X2}{color.B:X2}"),
+    // 反序列化：TomlValue → Color
+    value => Color.FromArgb(/* 解析十六进制 */)
+);
+```
 
-public class DeviceConfiguration
-{
-    public string Id { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string Type { get; set; } = string.Empty;
-    public string? Description { get; set; }
-    public SshConfiguration? Ssh { get; set; }
-    public SyncConfiguration? Sync { get; set; }
-}
+## 项目中的数据模型映射
 
-public class SshConfiguration
+### SSH 设备配置
+```csharp
+public class SshRemoteDeviceInfo
 {
-    public string Host { get; set; } = string.Empty;
+    public string ConnectionName { get; set; }
+    public string Host { get; set; }
     public int Port { get; set; } = 22;
-    public string Username { get; set; } = string.Empty;
-    public string? PrivateKeyPath { get; set; }
+    public string UserName { get; set; }
     public string? Password { get; set; }
 }
 
-public class SyncConfiguration
-{
-    public bool Enabled { get; set; } = false;
-    public string LocalPath { get; set; } = string.Empty;
-    public string RemotePath { get; set; } = string.Empty;
-    public string Direction { get; set; } = "local_to_remote";
-}
-
-// 读取配置文件
-public async Task<AppConfiguration> LoadConfigurationAsync(string filePath)
-{
-    try
-    {
-        if (!File.Exists(filePath))
-        {
-            return new AppConfiguration();
-        }
-
-        string tomlContent = await File.ReadAllTextAsync(filePath);
-        return TomletMain.To<AppConfiguration>(tomlContent);
-    }
-    catch (Exception ex)
-    {
-        throw new ConfigurationException($"读取配置文件失败: {ex.Message}", ex);
-    }
-}
+// 对应 TOML
+/*
+connection_name = "开发服务器"
+host = "192.168.1.100"
+port = 22
+user_name = "developer"
+password = "secret"
+*/
 ```
 
-### 2. 序列化（保存配置）
-
+### 同步组配置
 ```csharp
-// 保存配置文件
-public async Task SaveConfigurationAsync(AppConfiguration config, string filePath)
+public class SyncGroupConfig
 {
-    try
-    {
-        string tomlContent = TomletMain.ToTomlString(config);
-        
-        // 确保目录存在
-        var directory = Path.GetDirectoryName(filePath);
-        if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-        {
-            Directory.CreateDirectory(directory);
-        }
-        
-        await File.WriteAllTextAsync(filePath, tomlContent);
-    }
-    catch (Exception ex)
-    {
-        throw new ConfigurationException($"保存配置文件失败: {ex.Message}", ex);
-    }
+    public string Name { get; set; }
+    public string RemotePath { get; set; }
+    public string LocalPath { get; set; }
+    public bool Enabled { get; set; } = true;
 }
+
+// 对应 TOML 数组
+/*
+[[sync_groups]]
+name = "项目代码"
+remote_path = "/home/dev/projects"
+local_path = "D:\\Projects"
+enabled = true
+*/
 ```
 
-### 3. 配置验证
+## 关键语法要点
 
-```csharp
-public class ConfigurationValidator
-{
-    public static void ValidateConfiguration(AppConfiguration config)
-    {
-        // 验证应用配置
-        if (string.IsNullOrWhiteSpace(config.App.Name))
-        {
-            throw new ConfigurationException("应用名称不能为空");
-        }
+### 1. 表格数组语法
+```toml
+# 单个表格
+[ssh]
+host = "server1"
 
-        // 验证设备配置
-        var deviceIds = new HashSet<string>();
-        foreach (var device in config.Devices)
-        {
-            ValidateDevice(device);
-            
-            if (!deviceIds.Add(device.Id))
-            {
-                throw new ConfigurationException($"设备ID重复: {device.Id}");
-            }
-        }
-    }
+# 表格数组 - 对应 List<T>
+[[devices]]
+name = "Server1"
 
-    private static void ValidateDevice(DeviceConfiguration device)
-    {
-        if (string.IsNullOrWhiteSpace(device.Id))
-        {
-            throw new ConfigurationException("设备ID不能为空");
-        }
-
-        if (string.IsNullOrWhiteSpace(device.Name))
-        {
-            throw new ConfigurationException($"设备 {device.Id} 的名称不能为空");
-        }
-
-        if (device.Ssh != null)
-        {
-            ValidateSshConfiguration(device.Ssh, device.Id);
-        }
-    }
-
-    private static void ValidateSshConfiguration(SshConfiguration ssh, string deviceId)
-    {
-        if (string.IsNullOrWhiteSpace(ssh.Host))
-        {
-            throw new ConfigurationException($"设备 {deviceId} 的SSH主机地址不能为空");
-        }
-
-        if (ssh.Port <= 0 || ssh.Port > 65535)
-        {
-            throw new ConfigurationException($"设备 {deviceId} 的SSH端口无效: {ssh.Port}");
-        }
-
-        if (string.IsNullOrWhiteSpace(ssh.Username))
-        {
-            throw new ConfigurationException($"设备 {deviceId} 的SSH用户名不能为空");
-        }
-    }
-}
-
-public class ConfigurationException : Exception
-{
-    public ConfigurationException(string message) : base(message) { }
-    public ConfigurationException(string message, Exception innerException) : base(message, innerException) { }
-}
+[[devices]]
+name = "Server2"
 ```
 
-## 最佳实践
+### 2. 嵌套表格
+```toml
+# 正确的嵌套
+[[devices]]
+name = "Server1"
 
-### 1. 配置文件位置管理
-
-```csharp
-public static class ConfigurationPaths
-{
-    /// <summary>
-    /// 用户配置目录
-    /// </summary>
-    public static string UserConfigDirectory => Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "DotNetCampus.Terminal");
-
-    /// <summary>
-    /// 个人设备配置文件路径
-    /// </summary>
-    public static string PersonalDevicesConfigPath => Path.Combine(
-        UserConfigDirectory, "devices.toml");
-
-    /// <summary>
-    /// 应用配置文件路径
-    /// </summary>
-    public static string AppConfigPath => Path.Combine(
-        UserConfigDirectory, "app.toml");
-
-    /// <summary>
-    /// 团队配置缓存目录
-    /// </summary>
-    public static string TeamConfigCacheDirectory => Path.Combine(
-        UserConfigDirectory, "team-configs");
-}
+[devices.ssh]    # 属于最后一个 devices 条目
+host = "server1"
 ```
 
-### 2. 配置变更监听
+### 3. 数据类型
+```toml
+# 基本类型
+string_val = "text"
+int_val = 123
+float_val = 12.34
+bool_val = true
+datetime_val = 2025-07-08T10:30:00Z
 
-```csharp
-public class ConfigurationWatcher : IDisposable
-{
-    private readonly FileSystemWatcher _watcher;
-    private readonly string _configPath;
-    private bool _disposed;
-
-    public event EventHandler<ConfigurationChangedEventArgs>? ConfigurationChanged;
-
-    public ConfigurationWatcher(string configPath)
-    {
-        _configPath = configPath;
-        _watcher = new FileSystemWatcher(Path.GetDirectoryName(configPath)!)
-        {
-            Filter = Path.GetFileName(configPath),
-            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
-        };
-        
-        _watcher.Changed += OnConfigurationFileChanged;
-        _watcher.EnableRaisingEvents = true;
-    }
-
-    private void OnConfigurationFileChanged(object sender, FileSystemEventArgs e)
-    {
-        ConfigurationChanged?.Invoke(this, new ConfigurationChangedEventArgs(e.FullPath));
-    }
-
-    public void Dispose()
-    {
-        if (!_disposed)
-        {
-            _watcher?.Dispose();
-            _disposed = true;
-        }
-    }
-}
-
-public class ConfigurationChangedEventArgs : EventArgs
-{
-    public string FilePath { get; }
-    
-    public ConfigurationChangedEventArgs(string filePath)
-    {
-        FilePath = filePath;
-    }
-}
+# 数组
+array_val = ["item1", "item2"]
 ```
 
-### 3. 配置迁移支持
+## 错误处理
 
+### 常见异常类型
+- `TomlException` - 基础异常
+- `TomlParseException` - 解析错误
+- `TomlTypeMismatchException` - 类型不匹配
+- `TomlKeyRedefinitionException` - 键重复定义
+
+### 错误处理模式
 ```csharp
-public class ConfigurationMigrator
+public static class ConfigLoader
 {
-    public static AppConfiguration MigrateConfiguration(string tomlContent, string currentVersion)
+    public static Result<T> LoadConfig<T>(string filePath)
     {
-        // 尝试解析为当前版本
         try
         {
-            return TomletMain.To<AppConfiguration>(tomlContent);
+            if (!File.Exists(filePath))
+                return Result<T>.Failure("配置文件不存在");
+                
+            var content = File.ReadAllText(filePath);
+            var config = TomletMain.To<T>(content);
+            return Result<T>.Success(config);
         }
-        catch
+        catch (TomlException ex)
         {
-            // 如果解析失败，尝试旧版本格式
-            return MigrateFromLegacyFormat(tomlContent);
+            return Result<T>.Failure($"TOML解析错误: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return Result<T>.Failure($"读取配置失败: {ex.Message}");
         }
     }
+}
+```
 
-    private static AppConfiguration MigrateFromLegacyFormat(string tomlContent)
+## 性能要点
+
+1. **缓存解析结果** - 避免重复解析相同配置
+2. **使用异步I/O** - 文件操作使用异步方法
+3. **合理使用TomlDocument** - 中间格式便于多次转换
+4. **避免过度嵌套** - 深层嵌套影响性能
+
+## 项目集成示例
+
+```csharp
+// 配置管理器实现
+public class TomlConfigurationSource : IRemoteDeviceConfigurationSource
+{
+    private readonly string _filePath;
+    
+    public async Task<IReadOnlyList<IRemoteDeviceInfo>> FetchRemoteDevicesAsync()
     {
-        // 这里实现旧版本配置的迁移逻辑
-        // 例如：字段重命名、结构调整等
-        throw new NotImplementedException("配置迁移功能待实现");
+        if (!File.Exists(_filePath))
+            return Array.Empty<IRemoteDeviceInfo>();
+            
+        var content = await File.ReadAllTextAsync(_filePath);
+        var config = TomletMain.To<DeviceConfig>(content);
+        
+        return config.Devices.Cast<IRemoteDeviceInfo>().ToList();
     }
 }
 ```
 
-## 常见问题
-
-### 1. TOML 数组表格语法
-```toml
-# 这是数组表格语法，用于定义多个设备
-[[devices]]
-id = "server1"
-name = "服务器1"
-
-[[devices]]
-id = "server2"
-name = "服务器2"
-```
-
-对应的C#类需要定义为`List<DeviceConfiguration>`。
-
-### 2. 嵌套对象
-```toml
-[devices.ssh]  # 这种语法在数组表格中不能使用
-
-# 正确的方式是在每个设备块内定义
-[[devices]]
-id = "server1"
-
-[devices.ssh]
-host = "192.168.1.100"
-```
-
-### 3. 空值处理
-TOML不支持null值，在C#中对应的属性应该使用可空类型：
-```csharp
-public string? Description { get; set; }  // 可空字符串
-public SshConfiguration? Ssh { get; set; }  // 可空对象
-```
-
-### 4. 布尔值和数字
-```toml
-# 布尔值
-enabled = true
-auto_connect = false
-
-# 数字
-port = 22
-timeout = 30.5
-```
-
-### 5. 特殊字符处理
-```toml
-# 包含特殊字符的字符串需要引号
-name = "My \"Special\" Server"
-path = "C:\\Windows\\System32"
-
-# 或使用原始字符串
-path = 'C:\Windows\System32'
-```
-
-## 性能建议
-
-1. **缓存配置对象** - 避免频繁解析同一配置文件
-2. **异步I/O** - 使用异步方法读写文件
-3. **配置验证** - 在应用启动时验证配置，而不是每次使用时验证
-4. **增量更新** - 只在配置实际改变时重新加载
-
-## 错误处理模式
-
-```csharp
-public enum ConfigurationErrorType
-{
-    FileNotFound,
-    ParseError,
-    ValidationError,
-    IoError
-}
-
-public class ConfigurationError
-{
-    public ConfigurationErrorType Type { get; set; }
-    public string Message { get; set; } = string.Empty;
-    public Exception? InnerException { get; set; }
-    public string? FilePath { get; set; }
-}
-
-public class ConfigurationResult<T>
-{
-    public bool IsSuccess { get; set; }
-    public T? Value { get; set; }
-    public ConfigurationError? Error { get; set; }
-
-    public static ConfigurationResult<T> Success(T value) => new()
-    {
-        IsSuccess = true,
-        Value = value
-    };
-
-    public static ConfigurationResult<T> Failure(ConfigurationError error) => new()
-    {
-        IsSuccess = false,
-        Error = error
-    };
-}
-```
-
-这种模式有助于更好地处理配置相关的各种错误情况。
+这个指南涵盖了 Tomlet 在项目中的核心使用方法，重点关注实际应用场景。

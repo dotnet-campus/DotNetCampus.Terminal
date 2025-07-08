@@ -98,7 +98,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - `src/DotNetCampus.Terminal/ViewModels/SyncGroupViewModel.cs` ✅
 - `src/DotNetCampus.Terminal/Views/Converters/` (待实现)
 
-**最新进展** (2025-01-08)：
+**最新进展** (2025-07-08)：
 - ✅ 完成SshRemoteDeviceInfoView界面的完整布局
 - ✅ 实现设备基本信息编辑区（连接名称、主机地址、端口、用户名、密码、连接状态）
 - ✅ 实现目录同步配置区（同步组列表、状态指示、操作按钮）
@@ -162,9 +162,9 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 **任务**：
 - [x] 深入学习 Consolonia 库的使用技巧和最佳实践
 - [x] 学习 Consolonia 官方架构文档和主题系统
+- [x] 研究 Tomlet (TOML解析) 库的核心API和使用模式
 - [ ] 研究 SSH.NET 库的高级功能和性能优化
-- [ ] 掌握 Tomlet (TOML解析) 库的配置管理模式
-- [ ] 探索 .NET 9.0 的新特性在项目中的应用
+- [ ] 掌握 .NET 9.0 的新特性在项目中的应用
 - [ ] 整理常见问题和解决方案
 - [x] 维护技术知识库和最佳实践文档
 
@@ -182,6 +182,10 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - ✅ 为UI界面设计师提供了完整的技术支持文档
 - ✅ 学习了 Consolonia 官方架构文档，创建了 `Consolonia-Architecture-Essential.md`
 - ✅ 更新了快速参考指南，加入了主题系统和绘制系统的最新知识
+- ✅ 深入学习 Tomlet 库官方文档，重新整理了简洁实用的使用指南
+- ✅ 掌握了 Tomlet 的核心API、属性映射、自定义序列化器等关键功能
+- ✅ 结合项目数据模型，提供了针对性的TOML配置解析方案
+- ✅ 整理了错误处理和性能优化要点
 
 ### 10. 文档维护员 (Documentation AI)
 **职责**：负责项目文档和用户手册

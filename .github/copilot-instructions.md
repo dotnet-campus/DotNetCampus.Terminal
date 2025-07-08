@@ -159,16 +159,134 @@ public record Result<T>
 
 ## Consolonia 使用规范
 
-### 1. 视图结构
-```csharp
-// 待补充：Consolonia 视图结构示例
-// 此部分需要知识学习者重新学习 Consolonia 后填写
+### 1. 视图结构和命名空间
+```xml
+<!-- 基础命名空间 -->
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:console="https://github.com/jinek/consolonia"
+             xmlns:vm="using:DotNetCampus.Terminal.ViewModels">
 ```
 
-### 2. 数据绑定
-- 使用Observable模式更新UI
-- 避免直接在UI线程进行耗时操作
-- 合理使用数据绑定机制
+### 2. 应用程序配置
+```xml
+<!-- App.axaml 主题配置 -->
+<Application RequestedThemeVariant="Dark">
+    <Application.Styles>
+        <console:TurboVisionDarkTheme />
+    </Application.Styles>
+</Application>
+```
+
+### 3. 主要布局模式
+```xml
+<!-- 主-详细页模式 -->
+<Grid ColumnDefinitions="*,2*">
+    <TreeView Grid.Column="0" ItemsSource="{Binding Items}" />
+    <ContentControl Grid.Column="1" Content="{Binding SelectedItem}" />
+</Grid>
+
+<!-- 状态栏模式 -->
+<Grid RowDefinitions="*,Auto">
+    <TabControl Grid.Row="0" />
+    <StackPanel Grid.Row="1" Orientation="Horizontal">
+        <!-- 功能键 -->
+    </StackPanel>
+</Grid>
+```
+
+### 4. 控件样式规范
+```xml
+<!-- 按钮样式 -->
+<Style Selector="Button">
+    <Setter Property="console:ButtonExtensions.Shadow" Value="False" />
+    <Style Selector="^ /template/ Border#InternalBorder">
+        <Setter Property="Margin" Value="0" />
+    </Style>
+</Style>
+
+<!-- 边框样式 -->
+<Border BorderThickness="1">
+    <Border.BorderBrush>
+        <console:LineBrush LineStyle="EdgeWide" Brush="DimGray" />
+    </Border.BorderBrush>
+</Border>
+```
+
+### 5. 数据绑定最佳实践
+```xml
+<!-- 绑定模式选择 -->
+<TextBlock Text="{Binding ReadOnlyProperty, Mode=OneTime}" />  <!-- 不变数据 -->
+<TextBlock Text="{Binding StatusProperty, Mode=OneWay}" />     <!-- 状态数据 -->
+<TextBox Text="{Binding InputProperty, Mode=TwoWay}" />        <!-- 用户输入 -->
+```
+
+### 6. 转换器模式
+```csharp
+// 泛型转换器基类
+public class StateToObjectConverter<T> : IValueConverter where T : class
+{
+    public T? Online { get; set; }
+    public T? Offline { get; set; }
+    public T? Default { get; set; }
+}
+
+// 特化转换器
+public class StateToBrushConverter : StateToObjectConverter<IBrush>;
+```
+
+### 7. MVVM 模式
+```csharp
+// 使用 BindableRecord 作为 ViewModel 基类
+public record DeviceViewModel : BindableRecord
+{
+    private ConnectionState _state;
+    
+    public ConnectionState State
+    {
+        get => _state;
+        set => SetField(ref _state, value);
+    }
+}
+
+// 使用 AvaloniaList 而不是 ObservableCollection
+public AvaloniaList<DeviceNode> Devices { get; } = [];
+```
+
+### 8. 异步操作和UI更新
+```csharp
+// 确保UI更新在UI线程
+await Dispatcher.UIThread.InvokeAsync(() =>
+{
+    ConnectionState = ConnectionState.Online;
+});
+
+// 异步命令模式
+public AsyncCommand ConnectCommand { get; }
+```
+
+### 9. 虚拟化性能优化
+```xml
+<TreeView.ItemsPanel>
+    <ItemsPanelTemplate>
+        <VirtualizingStackPanel />
+    </ItemsPanelTemplate>
+</TreeView.ItemsPanel>
+```
+
+### 10. 数据模板切换
+```xml
+<ContentControl Content="{Binding SelectedItem}">
+    <ContentControl.DataTemplates>
+        <DataTemplate x:DataType="vm:DeviceNode">
+            <views:DeviceView />
+        </DataTemplate>
+        <DataTemplate x:DataType="vm:GroupNode">
+            <views:GroupView />
+        </DataTemplate>
+    </ContentControl.DataTemplates>
+</ContentControl>
+```
 
 ## 测试规范
 
@@ -298,8 +416,35 @@ Closes #123
 ## 常见问题解决
 
 ### 1. Consolonia 相关
-- 待补充：Consolonia 使用要点和常见问题
-- 此部分需要知识学习者重新学习 Consolonia 后填写
+#### 应用程序启动
+- 使用 `UseConsolonia()` 启用框架
+- 配置 `UseAutoDetectedConsole()` 和 `UseAutoDetectConsoleColorMode()`
+- 集成依赖注入 `UseContainerServices()`
+
+#### 样式问题
+- 检查 `console:` 命名空间是否正确引用
+- 确认 `TurboVisionDarkTheme` 是否正确应用
+- 验证选择器语法，特别是模板选择器 `^ /template/`
+
+#### 数据绑定问题
+- 确保 ViewModel 继承自 `BindableRecord`
+- 使用 `AvaloniaList<T>` 而非 `ObservableCollection<T>`
+- 检查 `x:DataType` 是否正确设置
+
+#### 性能问题
+- 使用 `VirtualizingStackPanel` 处理大数据集
+- 正确设置绑定模式（OneTime/OneWay/TwoWay）
+- 避免不必要的UI线程调用
+
+#### 布局问题
+- 检查 Grid 的 RowDefinitions 和 ColumnDefinitions
+- 确认控件的 Grid.Row 和 Grid.Column 属性
+- 验证 Margin 和 Padding 设置
+
+#### 控件不显示
+- 检查 DataTemplate 的 x:DataType 是否匹配
+- 确认 DataContext 是否正确设置
+- 验证 ItemsSource 绑定是否正确
 
 ### 2. SSH.NET 相关
 - 正确处理连接超时和异常
@@ -334,11 +479,31 @@ Closes #123
 
 ### 1. Consolonia 开发要点
 
-**重要提示**: 详细的 Consolonia 使用指南待知识学习者重新学习后完善
+#### 核心组件和用法
+- **应用程序配置**: 使用 `TurboVisionDarkTheme` 主题，支持深色模式
+- **布局控件**: Grid, StackPanel, TreeView, TabControl 等，支持控制台优化
+- **数据绑定**: 完全支持 MVVM，使用 `AvaloniaList<T>` 替代 `ObservableCollection<T>`
+- **样式系统**: 使用 CSS-like 选择器，支持伪类和模板选择器
+- **控制台特效**: `console:LineBrush` 用于边框，`console:ButtonExtensions` 用于按钮控制
 
-基本要点：
-- 待补充：Consolonia 基本使用要点
-- 此部分需要知识学习者重新学习 Consolonia 后填写
+#### 关键开发模式
+- **文件扩展名**: 使用 `.axaml` 而不是 `.xaml`
+- **命名空间**: `xmlns:console="https://github.com/jinek/consolonia"`
+- **缩放控制**: 使用 `LayoutTransformControl` 和 `ScaleTransform`
+- **虚拟化**: 使用 `VirtualizingStackPanel` 优化大数据集性能
+- **异步UI更新**: 使用 `Dispatcher.UIThread.InvokeAsync`
+
+#### 常见控件使用
+- **TreeView**: 支持分层数据展示，使用 `TreeDataTemplate` 和 `DataTemplates`
+- **ContentControl**: 实现视图切换，结合 `DataTemplate` 实现类型到视图的映射
+- **TabControl**: 标签页容器，支持动态内容切换
+- **按钮**: 禁用阴影效果 `console:ButtonExtensions.Shadow="False"`
+
+#### 性能优化要点
+- 使用合适的绑定模式（OneTime/OneWay/TwoWay）
+- 实现虚拟化滚动处理大数据集
+- 避免频繁的UI线程调用
+- 使用转换器优化数据转换逻辑
 
 ### 2. 错误处理策略
 
@@ -347,6 +512,29 @@ Closes #123
 - 多个命名空间冲突同时出现
 - API 版本兼容性问题
 - 复杂的泛型推断失败
+- 平台特定的显示问题
+
+### 3. 协作效率提升
+
+#### 知识复用原则
+- **开发前必读**: 先查看 `.github/knowledge/` 中的相关技术文档
+- **问题先查**: 遇到问题先查阅知识库中的解决方案
+- **及时更新**: 将新发现的问题和解决方案及时更新到知识库
+- **经验分享**: 在代码注释中说明特殊处理的原因
+
+#### 渐进式开发流程
+1. **架构优先**: 先设计接口和数据结构
+2. **功能分层**: 按 UI -> 业务逻辑 -> 数据访问 的顺序开发
+3. **及时测试**: 每完成一个模块立即进行编译和基本功能测试
+4. **知识积累**: 将开发过程中的经验及时记录到知识库
+
+#### 沟通机制
+- **依赖明确**: 在开始工作前检查依赖模块的接口状态
+- **变更通知**: 接口变更时主动通知相关 AI
+- **进度同步**: 定期更新 AI任务分工.md 中的任务状态
+- **知识共享**: 技术问题解决后及时更新到相应的知识文档
+
+这些经验总结来自实际开发过程中的问题和解决方案，具体的技术细节请参考 `.github/knowledge/` 目录下的专门文档。
 - 平台特定的显示问题
 
 ### 3. 协作效率提升

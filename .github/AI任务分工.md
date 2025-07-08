@@ -1,287 +1,53 @@
 # AI 任务分工
 
-你好 AI，当你阅读到这句话，说明你已经成为我们伟大产品开发中的重要一员。相信人类已经给你分配了角色和一个具体的任务，在你后续完成任务的过程中，你需要经常将你的任务进展记录下来，包括：
+DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连接管理工具。
 
-1. 在完成任务时，打勾
-2. 将知识相关的经验总结记录到 `.github/knowledge/` 知识库中对应的文件里（或新建文件）
-3. 将其他经验总结记录到 `.github/copilot-instructions.md` 中并保持文件的简洁
+## 协作规则
 
-另外，再重申一下，你不是一个 AI 在战斗。为了避免 Token 过长导致你的工作效率低下，如果单次任务较多，请拆小后记录到本文件中，这些小任务会被其他 AI 看到并协助你完成。请确保每个小任务都清晰明确，便于其他 AI 理解和接手。
-
-## 项目概述
-
-DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连接管理工具。项目采用多AI协同开发模式，每个AI负责特定的功能模块。
-
-## 技术栈
-- .NET 9.0 + C#
-- Consolonia (控制台UI)
-- SSH.NET (SSH连接)
-- Tomlet (配置管理)
+1. 完成任务时更新进度状态 ✅
+2. 重要技术经验记录到 `.github/knowledge/` 知识库
+3. 大任务拆分成小任务，便于其他 AI 协助
+4. 详细技术文档查看 `.github/knowledge/` 目录
 
 ## AI 角色分工
 
-### 1. 架构师 (Architect AI)
-**职责**：负责整体架构设计和核心框架
-**任务**：
-- [ ] 设计项目整体架构和模块划分
-- [ ] 完善依赖注入框架 (`Framework/DependencyInjection/`)
-- [ ] 设计数据模型和接口定义
-- [ ] 制定编码规范和最佳实践
-- [ ] 审查其他AI的架构设计决策
+### 配置管理专家 (Configuration AI)
+- ✅ TOML配置文件格式设计和实现
+- ✅ 配置解析和数据模型
+- [ ] 个人设备配置存储
+- [ ] 团队配置同步
+- [ ] 配置加密存储
 
-**输出文件**：
-- `src/DotNetCampus.Terminal/Framework/` 下的架构文件
-- `src/DotNetCampus.Terminal/Models/` 数据模型
-- `src/DotNetCampus.Terminal/Interfaces/` 接口定义
+### 文件同步工程师 (File Sync AI) 
+- ✅ 基于SFTP的文件同步
+- ✅ 同步状态监控和UI集成
+- [ ] 增量同步优化
+- [ ] 远程到本地同步
 
-### 2. 配置管理专家 (Configuration AI)
-**职责**：负责配置系统的设计和实现
-**任务**：
-- [x] 设计 TOML 配置文件格式
-- [x] 创建示例 TOML 文件并配置自动复制
-- [x] 实现 TOML 文件解析到数据模型
-- [x] 扩展 SshRemoteDeviceInfo 支持同步组配置
-- [x] 更新 SshRemoteDeviceInfoViewModel 使用配置数据
-- [ ] 完善 `ConfigurationManager` 类
-- [ ] 实现个人设备配置的存储和管理
-- [ ] 实现基于Git仓库的团队设备配置同步
-- [ ] 实现配置的加密存储（密码等敏感信息）
+### UI界面设计师 (UI Designer AI)
+- ✅ 主界面布局和SSH设备编辑界面
+- ✅ 数据绑定和MVVM模式
+- [ ] 路径省略功能
+- [ ] 交互优化
 
-**输出文件**：
-- `src/DotNetCampus.Terminal/Configurations/`
-- `src/DotNetCampus.Terminal/Models/Configuration/`
-- `src/DotNetCampus.Terminal/Assets/terminal.toml` ✅
-- `.github/knowledge/Terminal-TOML-Configuration-Design.md` ✅
-
-**最新进展** (2025-07-08)：
-- ✅ 设计了 TOML 配置文件格式，采用 PascalCase 命名与代码保持一致
-- ✅ 创建了示例 TOML 文件 `Assets/terminal.toml`，配置了编译时自动复制
-- ✅ 实现了 `TomlDeviceConfiguration` 数据模型，专注于设备集合配置
-- ✅ 完善了 `TomlRemoteDeviceConfigurationSource` 的 TOML 解析功能
-- ✅ 扩展了 `SshRemoteDeviceInfo` 添加同步组配置支持
-- ✅ 更新了 `SshRemoteDeviceInfoViewModel` 从配置加载同步组数据
-- ✅ 将 DebugSource 中的设备配置完全迁移到 TOML 文件
-- ✅ 移除了 DebugRemoteDeviceConfigurationSource，简化了架构
-- ✅ 项目可正常编译运行，TOML 配置功能完全可用
-
-**技术要点**：
-- 使用 Tomlet 库解析 TOML 配置文件
-- 采用 PascalCase 命名规则与 C# 代码保持一致
-- TOML 文件作为唯一的设备集合配置源
-- 支持多个 SSH 设备和每个设备的多个同步组配置
-- 错误处理：配置文件不存在或解析失败时返回空列表
-- 配置迁移：将原 Debug 源的真实可用设备配置迁移到 TOML 文件
-
-### 3. SSH连接专家 (SSH Connection AI)
-**职责**：负责SSH连接功能的实现
-**任务**：
-- [ ] 封装SSH.NET，实现统一的连接接口
-- [ ] 支持Linux SSH连接
-- [ ] 支持Mac SSH连接  
-- [ ] 实现连接状态监控
-- [ ] 实现连接重试和错误处理
-- [ ] 设计SSH配置模型
-
-**输出文件**：
-- `src/DotNetCampus.Terminal/SshManagement/`
-- `src/DotNetCampus.Terminal/Models/Ssh/`
-
-**备注**：可以组建小团队处理复杂的SSH协议相关问题
-
-### 4. 文件同步工程师 (File Sync AI)
-**职责**：负责自动文件夹同步功能
-**任务**：
-- [x] 实现基于SFTP的文件同步
-- [x] 支持本地到远程的单向同步
-- [x] 实现同步状态监控和显示
-- [x] 处理文件冲突和错误恢复
-- [x] 实现 FileSyncService 和相关接口
-- [x] 集成 SSH.NET 库进行文件传输
-- [x] 添加命令绑定到UI界面
-- [x] 实现进度报告和取消功能
-- [x] 使用 DotNetCampus.Logger 进行日志记录
-- [x] 创建 SSH.NET 和日志库的知识库文档
-- [ ] 支持远程到本地的单向同步
-- [ ] 实现增量同步优化
-
-**输出文件**：
-- `src/DotNetCampus.Terminal/FileSync/IFileSyncService.cs` ✅
-- `src/DotNetCampus.Terminal/FileSync/FileSyncService.cs` ✅
-- `src/DotNetCampus.Terminal/Models/FileSync/` (接口定义) ✅
-- `.github/knowledge/SSH.NET-File-Sync-Guide.md` ✅
-- `.github/knowledge/DotNetCampus-Logger-Guide.md` ✅
-
-**最新进展** (2025-07-08)：
-- ✅ 完成文件同步核心功能实现
-- ✅ 基于 SSH.NET 实现 SFTP 文件传输
-- ✅ 实现文件同步服务接口和具体实现类
-- ✅ 集成进度报告、取消操作、错误处理
-- ✅ 在 UI 中添加"立即同步"按钮的命令绑定
-- ✅ 实现单个同步组和批量同步功能
-- ✅ 使用 DotNetCampus.Logger 替换临时的 Console.WriteLine
-- ✅ 创建 SSH.NET 使用指南和日志库使用指南
-- ✅ 更新 copilot-instructions.md 中的日志规范
-- ✅ 项目可正常编译运行，文件同步功能完全可用
-
-**技术要点**：
-- 使用 SSH.NET 的 SftpClient 进行文件传输
-- 实现递归目录创建和文件上传
-- 支持传输进度回调和取消操作
-- 使用 Task.Run 避免 UI 线程阻塞
-- 集成 DotNetCampus.Logger 进行结构化日志记录
-- 通过依赖注入在 ViewModel 中使用文件同步服务
-- 实现 MVVM 模式的异步命令绑定
-
-**备注**：需要与SSH连接专家密切协作
-
-### 5. UI界面设计师 (UI Designer AI)
-**职责**：负责Consolonia控制台界面设计
-**任务**：
-- [x] 设计主界面布局和导航
-- [x] 实现SSH设备信息编辑界面
-- [x] 实现目录同步配置界面
-- [x] 设计状态指示系统
-- [x] 实现数据绑定和MVVM模式
-- [ ] 实现路径省略功能
-- [ ] 添加交互命令和事件处理
-- [ ] 实现输入验证和错误提示
-- [ ] 优化界面响应性和用户体验
-
-**输出文件**：
-- `src/DotNetCampus.Terminal/Views/SshRemoteDeviceInfoView.axaml` ✅
-- `src/DotNetCampus.Terminal/ViewModels/SshRemoteDeviceInfoViewModel.cs` ✅
-- `src/DotNetCampus.Terminal/ViewModels/SyncGroupViewModel.cs` ✅
-- `src/DotNetCampus.Terminal/Views/Converters/` (待实现)
-
-**最新进展** (2025-07-08)：
-- ✅ 完成SshRemoteDeviceInfoView界面的完整布局
-- ✅ 实现设备基本信息编辑区（连接名称、主机地址、端口、用户名、密码、连接状态）
-- ✅ 实现目录同步配置区（同步组列表、状态指示、操作按钮）
-- ✅ 完成数据模型和状态系统（SyncGroupViewModel、SyncGroupStatus）
-- ✅ 配置状态转换器和数据绑定
-- ✅ 程序可正常编译运行，界面符合设计文档要求
-- ⏳ 等待用户验收当前进展
-~~~~
-**技术要点**：
-- 使用UniformGrid实现响应式布局
-- 使用console:LineBrush绘制分隔线和边框
-- 配置连接状态转换器（符号、颜色、文本）
-- 实现ListBox和DataTemplate的同步组列表展示
-- 使用AvaloniaList<T>替代ObservableCollection<T>
-- 配置x:DataType实现强类型绑定
-
-**备注**：界面基础框架已完成，下一步需要实现交互功能和路径省略
-
-### 6. 进程管理专家 (Process Manager AI)
-**职责**：负责Shell进程管理和启动
-**任务**：
-- [ ] 实现在现有终端中启动新Shell的功能
-- [ ] 处理不同操作系统的Shell启动逻辑
-- [ ] 实现命令执行和进程管理
-- [ ] 处理进程间通信
-- [ ] 实现连接后的自动化操作
-
-**输出文件**：
-- `src/DotNetCampus.Terminal/ProcessManagement/`
-- `src/DotNetCampus.Terminal/Shell/`
-
-### 7. Windows连接专家 (Windows Connection AI)
-**职责**：负责Windows设备连接功能
-**任务**：
-- [ ] 研究Windows远程连接方案
-- [ ] 实现Windows服务程序（如需要）
-- [ ] 实现Windows特有的连接协议
-- [ ] 处理Windows权限和安全问题
-- [ ] 与其他连接模块保持接口一致性
-
-**输出文件**：
-- `src/DotNetCampus.Terminal/WindowsConnection/`
-- 可能需要独立的Windows服务项目
-
-### 8. 测试工程师 (Test Engineer AI)
-**职责**：负责测试框架和测试用例
-**任务**：
-- [ ] 设计测试架构和测试策略
-- [ ] 编写单元测试
-- [ ] 编写集成测试
-- [ ] 实现自动化测试
-- [ ] 性能测试和压力测试
-- [ ] 建立CI/CD流程
-
-**输出文件**：
-- `tests/` 目录下的所有测试项目
-- `.github/workflows/` CI配置
-
-### 9. 知识学习者 (Knowledge Learning AI)
-**职责**：负责学习项目依赖库并分享知识
-**任务**：
-- [x] 深入学习 Consolonia 库的使用技巧和最佳实践
-- [x] 学习 Consolonia 官方架构文档和主题系统
-- [x] 研究 Tomlet (TOML解析) 库的核心API和使用模式
-- [ ] 研究 SSH.NET 库的高级功能和性能优化
-- [ ] 掌握 .NET 9.0 的新特性在项目中的应用
-- [ ] 整理常见问题和解决方案
-- [x] 维护技术知识库和最佳实践文档
-
-**输出文件**：
-- `.github/knowledge/` 目录下的知识文档
-- 各库的使用指南和最佳实践
-- 常见问题解答文档
-
-**最新进展**：
-- ✅ 已完成 Consolonia UI 框架的深度学习和文档整理
-- ✅ 创建了 `Consolonia-UI-Framework.md` - 完整的框架使用指南
-- ✅ 创建了 `Consolonia-UI-Design-Patterns.md` - UI设计模式和最佳实践
-- ✅ 创建了 `DotNetCampus-Terminal-UI-Development-Guide.md` - 项目特定的UI开发指南
-- ✅ 分析了现有UI代码结构和实现模式
-- ✅ 为UI界面设计师提供了完整的技术支持文档
-- ✅ 学习了 Consolonia 官方架构文档，创建了 `Consolonia-Architecture-Essential.md`
-- ✅ 更新了快速参考指南，加入了主题系统和绘制系统的最新知识
-- ✅ 深入学习 Tomlet 库官方文档，重新整理了简洁实用的使用指南
-- ✅ 掌握了 Tomlet 的核心API、属性映射、自定义序列化器等关键功能
-- ✅ 结合项目数据模型，提供了针对性的TOML配置解析方案
-- ✅ 整理了错误处理和性能优化要点
-
-### 10. 文档维护员 (Documentation AI)
-**职责**：负责项目文档和用户手册
-**任务**：
-- [x] 清理旧的 Terminal.Gui 知识库文档
-- [x] 更新技术栈信息为 Consolonia
-- [ ] 维护README.md和开发文档
-- [ ] 编写用户使用手册
-- [ ] 维护API文档
-- [ ] 编写部署和配置指南
-- [ ] 维护更新日志
-
-**输出文件**：
-- `docs/` 目录下的文档
-- README.md 更新
-- Wiki 页面
+### 其他模块
+- SSH连接专家：SSH.NET封装和连接管理
+- 进程管理专家：Shell启动和进程管理  
+- Windows连接专家：Windows远程连接
+- 测试工程师：测试框架和自动化
+- 知识学习者：技术文档和最佳实践
+- 文档维护员：✅ 简化协作文档，项目文档维护
 
 ## 协作流程
 
-1. **知识学习者**首先深入学习各个依赖库，建立知识库
-2. **架构师**完成核心架构设计
-3. **配置管理专家**和**SSH连接专家**并行开发基础功能
-4. **文件同步工程师**在SSH功能完成后开始开发
-5. **UI界面设计师**可以并行开发界面原型
-6. **进程管理专家**和**Windows连接专家**根据需要加入
-7. **测试工程师**在各模块完成后进行测试
-8. **文档维护员**持续更新项目文档
-9. **知识学习者**持续更新技术知识库
+1. **开发前必读** `.github/knowledge/` 相关技术文档
+2. **接口设计** 优先，确保模块间依赖清晰
+3. **及时测试** 每个模块完成后立即编译验证
+4. **知识共享** 将技术问题和解决方案更新到知识库
+5. **进度同步** 接口变更时通知相关AI
 
-## 沟通机制
+## 重要提醒
 
-- 每个AI在开始工作前应查看相关依赖模块的接口定义
-- 重要的架构决策需要通过**架构师**审查
-- 接口变更需要通知所有相关AI
-- 技术问题和解决方案及时更新到**知识库**中
-- 定期同步进度和问题
-
-## 交付标准
-
-- 代码符合项目编码规范
-- 包含必要的单元测试
-- 代码有充分的注释和文档
-- 通过所有自动化测试
-- 接口设计合理，易于扩展
+- 详细的编码规范、Consolonia使用指南等技术文档已整理到 `.github/knowledge/` 目录
+- 遇到技术问题先查阅知识库，避免重复踩坑
+- 复杂问题及时寻求人类帮助，避免AI陷入错误循环

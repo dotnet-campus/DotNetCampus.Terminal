@@ -18,6 +18,8 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     private SyncGroupViewModel? _selectedSyncGroup;
     private readonly IFileSyncService? _fileSyncService;
     private CancellationTokenSource? _syncCancellationTokenSource;
+    private double _globalSyncProgress;
+    private bool _isGlobalSyncing;
 
     public SshRemoteDeviceInfoViewModel() : base(new SshRemoteDeviceInfo
     {
@@ -189,6 +191,24 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     }
 
     /// <summary>
+    /// 全局同步进度 (0-100)
+    /// </summary>
+    public double GlobalSyncProgress
+    {
+        get => _globalSyncProgress;
+        private set => SetField(ref _globalSyncProgress, value);
+    }
+
+    /// <summary>
+    /// 是否正在进行全局同步
+    /// </summary>
+    public bool IsGlobalSyncing
+    {
+        get => _isGlobalSyncing;
+        private set => SetField(ref _isGlobalSyncing, value);
+    }
+
+    /// <summary>
     /// 初始化命令
     /// </summary>
     private void InitializeCommands()
@@ -238,6 +258,10 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         // 创建取消令牌
         _syncCancellationTokenSource = new CancellationTokenSource();
 
+        // 设置全局同步状态
+        IsGlobalSyncing = true;
+        GlobalSyncProgress = 0;
+
         // 将所有启用的同步组状态设置为同步中
         foreach (var group in enabledGroups)
         {
@@ -258,6 +282,9 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
             // 创建进度报告
             var progress = new Progress<FileSyncProgress>(p =>
             {
+                // 更新全局进度
+                GlobalSyncProgress = p.TotalProgress;
+
                 // 查找当前处理的文件所属的同步组
                 var currentGroup = enabledGroups.FirstOrDefault(
                     g => p.CurrentFile.StartsWith(g.LocalPath, StringComparison.OrdinalIgnoreCase));
@@ -317,6 +344,10 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
             // 清理取消令牌
             _syncCancellationTokenSource.Dispose();
             _syncCancellationTokenSource = null;
+            
+            // 重置全局同步状态
+            IsGlobalSyncing = false;
+            GlobalSyncProgress = 0;
         }
     }
 

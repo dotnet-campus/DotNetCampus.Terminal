@@ -1,0 +1,198 @@
+# Consolonia UI 进度条和数据绑定最佳实践
+
+本文档总结了在 Consolonia 应用程序中实现进度条和解决数据绑定问题的最佳实践。
+
+## 数据绑定更新通知问题
+
+### 问题描述
+当 ViewModel 中的只读属性依赖于其他属性时，如果不主动触发属性更改通知，UI 可能不会自动更新。
+
+### 解决方案
+在依赖属性发生变化时，主动调用 `OnPropertyChanged` 触发只读属性的更新通知：
+
+```csharp
+public SyncGroupStatus Status
+{
+    get => _status;
+    set
+    {
+        if (SetField(ref _status, value))
+        {
+            UpdateStatusDisplay();
+            // 手动触发只读属性的更新通知
+            OnPropertyChanged(nameof(StatusSymbol));
+            OnPropertyChanged(nameof(StatusColor));
+        }
+    }
+}
+
+// 只读属性，根据 Status 计算
+public string StatusSymbol => Status switch
+{
+    SyncGroupStatus.Normal => "✓",
+    SyncGroupStatus.Error => "⚠",
+    SyncGroupStatus.Disabled => "✗",
+    SyncGroupStatus.Syncing => "◐",
+    _ => "○"
+};
+```
+
+## Consolonia 进度条实现
+
+### 基本语法
+```xml
+<ProgressBar Value="{Binding Progress}" 
+             Minimum="0" Maximum="100"
+             Width="30" Height="1"
+             Background="DimGray" 
+             Foreground="Green" />
+```
+
+### 要点说明
+1. **高度**: 在 TUI 中，进度条高度通常设置为 `Height="1"`（1个字符高度）
+2. **宽度**: 根据界面空间调整，通常使用字符数量单位（如 `Width="30"`）
+3. **颜色**: 使用 `Background` 和 `Foreground` 设置进度条的背景和前景色
+4. **绑定**: 使用 `{Binding PropertyName}` 绑定到 ViewModel 的进度属性
+
+### 动态显示/隐藏
+```xml
+<StackPanel IsVisible="{Binding IsGlobalSyncing}">
+    <TextBlock Text="同步进度:" Width="8" />
+    <ProgressBar Value="{Binding GlobalSyncProgress}" 
+                 Minimum="0" Maximum="100"
+                 Width="30" Height="1"
+                 Background="DimGray" 
+                 Foreground="Green" />
+    <TextBlock Text="{Binding GlobalSyncProgress, StringFormat={}{0:F0}%}" Width="4" />
+</StackPanel>
+```
+
+## 进度报告最佳实践
+
+### ViewModel 设计
+```csharp
+public class SyncViewModel : BindableRecord
+{
+    private double _globalSyncProgress;
+    private bool _isGlobalSyncing;
+
+    public double GlobalSyncProgress
+    {
+        get => _globalSyncProgress;
+        private set => SetField(ref _globalSyncProgress, value);
+    }
+
+    public bool IsGlobalSyncing
+    {
+        get => _isGlobalSyncing;
+        private set => SetField(ref _isGlobalSyncing, value);
+    }
+}
+```
+
+### 进度更新模式
+```csharp
+// 创建进度报告器
+var progress = new Progress<FileSyncProgress>(p =>
+{
+    // 更新全局进度
+    GlobalSyncProgress = p.TotalProgress;
+    
+    // 更新个别项目进度
+    var currentItem = FindCurrentItem(p.CurrentFile);
+    if (currentItem != null)
+    {
+        currentItem.SyncProgress = p.CurrentFileProgress;
+    }
+});
+
+// 在操作开始时设置状态
+IsGlobalSyncing = true;
+GlobalSyncProgress = 0;
+
+try
+{
+    // 执行异步操作
+    await longRunningOperation(progress, cancellationToken);
+}
+finally
+{
+    // 清理状态
+    IsGlobalSyncing = false;
+    GlobalSyncProgress = 0;
+}
+```
+
+## 布局调整
+
+### 动态行定义
+当向现有 Grid 添加新行时，需要更新 `RowDefinitions`：
+
+```xml
+<!-- 原来的定义 -->
+<Grid RowDefinitions="Auto,Auto,*">
+
+<!-- 添加进度条后的定义 -->
+<Grid RowDefinitions="Auto,Auto,Auto,*">
+    <StackPanel Grid.Row="0"><!-- 原有内容 --></StackPanel>
+    <StackPanel Grid.Row="1"><!-- 原有内容 --></StackPanel>
+    <StackPanel Grid.Row="2"><!-- 新增进度条 --></StackPanel>
+    <ListBox Grid.Row="3"><!-- 原有内容，行号需要更新 --></ListBox>
+</Grid>
+```
+
+## 字符串格式化
+
+### 百分比显示
+```xml
+<TextBlock Text="{Binding Progress, StringFormat={}{0:F0}%}" />
+```
+
+### 要点
+- 使用 `StringFormat={}{0:F0}%` 格式化百分比
+- `{}` 用于转义 XAML 中的特殊字符
+- `F0` 表示保留0位小数
+- 可以根据需要调整小数位数（如 `F1` 保留1位小数）
+
+## 调试技巧
+
+### 编译验证
+```powershell
+cd "项目根目录"
+dotnet build
+```
+
+### 运行测试
+```powershell
+cd "项目根目录/src/ProjectName"
+dotnet run
+```
+
+### 日志记录
+```csharp
+Log.Debug($"[UI] 同步进度: {progress:F2}%, 当前文件: {currentFile}");
+```
+
+## 常见问题
+
+### 1. 进度条不显示
+检查 `IsVisible` 绑定和 `IsGlobalSyncing` 属性是否正确设置。
+
+### 2. 进度不更新
+确保 `Progress<T>` 回调中正确更新了绑定的属性，并且属性有 `OnPropertyChanged` 通知。
+
+### 3. 布局错乱
+检查 Grid 的 `RowDefinitions` 和各元素的 `Grid.Row` 属性是否匹配。
+
+### 4. 只读属性不更新
+在依赖属性变化时，手动调用 `OnPropertyChanged(nameof(ReadOnlyProperty))`。
+
+## 总结
+
+本次实现的关键点：
+1. 修复了 `StatusSymbol` 属性的绑定更新问题
+2. 添加了全局同步进度条功能
+3. 实现了进度条的动态显示/隐藏
+4. 确保了 UI 布局的正确性
+
+这些实践可以应用于其他需要进度指示和动态数据绑定的场景。

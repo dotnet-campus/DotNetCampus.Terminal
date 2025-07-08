@@ -27,6 +27,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 ### UI界面设计师 (UI Designer AI)
 - ✅ 主界面布局和SSH设备编辑界面
 - ✅ 数据绑定和MVVM模式
+- ✅ 同步状态显示和全局进度条
 - [ ] 路径省略功能
 - [ ] 交互优化
 

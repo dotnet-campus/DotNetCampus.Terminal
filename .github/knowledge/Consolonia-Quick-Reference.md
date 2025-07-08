@@ -378,4 +378,68 @@ public enum ConnectionState
            FontStyle="Italic"/>
 ```
 
+## 进度条和数据绑定
+
+### 1. 进度条基本用法
+```xml
+<ProgressBar Value="{Binding Progress}" 
+             Minimum="0" Maximum="100"
+             Width="30" Height="1"
+             Background="DimGray" 
+             Foreground="Green" />
+```
+
+### 2. 动态显示隐藏
+```xml
+<StackPanel IsVisible="{Binding IsOperationRunning}">
+    <TextBlock Text="进度:" Width="8" />
+    <ProgressBar Value="{Binding Progress}" Width="30" Height="1" />
+    <TextBlock Text="{Binding Progress, StringFormat={}{0:F0}%}" Width="4" />
+</StackPanel>
+```
+
+### 3. 只读属性绑定问题
+```csharp
+// 当只读属性依赖其他属性时，需要手动触发更新通知
+public SyncGroupStatus Status
+{
+    get => _status;
+    set
+    {
+        if (SetField(ref _status, value))
+        {
+            // 手动触发只读属性的更新通知
+            OnPropertyChanged(nameof(StatusSymbol));
+            OnPropertyChanged(nameof(StatusColor));
+        }
+    }
+}
+
+public string StatusSymbol => Status switch
+{
+    SyncGroupStatus.Normal => "✓",
+    SyncGroupStatus.Error => "⚠",
+    _ => "○"
+};
+```
+
+### 4. 进度报告模式
+```csharp
+var progress = new Progress<SyncProgress>(p =>
+{
+    GlobalProgress = p.TotalProgress;
+    CurrentItemProgress = p.CurrentProgress;
+});
+
+IsOperationRunning = true;
+try
+{
+    await longRunningOperation(progress);
+}
+finally
+{
+    IsOperationRunning = false;
+}
+```
+
 这个快速参考指南涵盖了 Consolonia 开发的核心要点，便于快速查阅和使用。

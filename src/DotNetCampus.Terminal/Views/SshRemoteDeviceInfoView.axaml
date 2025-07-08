@@ -66,113 +66,130 @@
     </UserControl.Styles>
 
     <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible">
-        <Grid Margin="1" RowDefinitions="Auto,*" ColumnDefinitions="*">
+        <StackPanel>
 
-            <StackPanel Grid.Row="0">
+            <Border BorderThickness="1" BorderBrush="DimGray">
+                <StackPanel>
 
-                <!-- 连接名称标题 -->
-                <TextBox FontWeight="Bold"
-                         TextAlignment="Center" Background="White"
-                         Text="{Binding ConnectionName, Mode=TwoWay}" />
+                    <!-- 连接名称标题 -->
+                    <TextBox FontWeight="Bold" Margin="2 -1 2 1"
+                             TextAlignment="Left" BorderBrush="DimGray" BorderThickness="1 0"
+                             Background="Transparent" Foreground="White"
+                             Text="{Binding ConnectionName, Mode=TwoWay}" />
 
-                <!-- 连接状态 -->
-                <StackPanel Orientation="Horizontal" Margin="0,1">
-                    <TextBlock Width="2"
-                               Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToSymbolConverter}, Mode=OneWay}"
-                               Foreground="{Binding ConnectionState, Converter={StaticResource ConnectionStateToForegroundConverter}, Mode=OneWay}" />
-                    <TextBlock Width="8"
-                               Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToStringConverter}, Mode=OneWay}" />
-                    <Button Content="连接" Margin="1,0" />
+                    <!-- 连接状态 -->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Width="2"
+                                   Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToSymbolConverter}, Mode=OneWay}"
+                                   Foreground="{Binding ConnectionState, Converter={StaticResource ConnectionStateToForegroundConverter}, Mode=OneWay}" />
+                        <TextBlock Width="8"
+                                   Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToStringConverter}, Mode=OneWay}" />
+                        <Button Content="连接" Margin="1,0" />
+                    </StackPanel>
+
+                    <!-- 主机地址/端口、用户名/密码分组 -->
+                    <UniformGrid Columns="2">
+                        <!-- 主机地址+端口分组 -->
+                        <Border BorderThickness="1" BorderBrush="DimGray">
+                            <StackPanel Margin="1">
+                                <TextBlock Text="主机地址" />
+                                <TextBox Text="{Binding Host, Mode=TwoWay}" />
+                                <TextBlock Text="端口" />
+                                <TextBox Text="{Binding Port, Mode=TwoWay}" />
+                            </StackPanel>
+                        </Border>
+                        <!-- 用户名+密码分组 -->
+                        <Border BorderThickness="1" BorderBrush="DimGray">
+                            <StackPanel Margin="1">
+                                <TextBlock Text="用户名" />
+                                <TextBox Text="{Binding UserName, Mode=TwoWay}" />
+                                <TextBlock Text="密码" />
+                                <TextBox Text="{Binding Password, Mode=TwoWay}" />
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <!-- 保存与重置 -->
+                    <StackPanel Orientation="Horizontal" Spacing="2">
+                        <Button Content="保存" Margin="1,0" />
+                        <Button Content="重置" Margin="1,0" />
+                    </StackPanel>
                 </StackPanel>
-
-                <!-- 主机地址/端口、用户名/密码分组 -->
-                <UniformGrid Columns="2">
-                    <!-- 主机地址+端口分组 -->
-                    <Border BorderThickness="1" BorderBrush="DimGray">
-                        <StackPanel Margin="1">
-                            <TextBlock Text="主机地址" />
-                            <TextBox Text="{Binding Host, Mode=TwoWay}" />
-                            <TextBlock Text="端口" />
-                            <TextBox Text="{Binding Port, Mode=TwoWay}" />
-                        </StackPanel>
-                    </Border>
-                    <!-- 用户名+密码分组 -->
-                    <Border BorderThickness="1" BorderBrush="DimGray">
-                        <StackPanel Margin="1">
-                            <TextBlock Text="用户名" />
-                            <TextBox Text="{Binding UserName, Mode=TwoWay}" />
-                            <TextBlock Text="密码" />
-                            <TextBox Text="{Binding Password, Mode=TwoWay}" />
-                        </StackPanel>
-                    </Border>
-                </UniformGrid>
-
-                <!-- 保存与重置 -->
-                <StackPanel Orientation="Horizontal" Spacing="2" Margin="0,1">
-                    <Button Content="保存" Margin="1,0" />
-                    <Button Content="重置" Margin="1,0" />
-                </StackPanel>
-            </StackPanel>
+            </Border>
 
             <!-- 目录同步配置区 -->
-            <Grid Grid.Row="1" RowDefinitions="Auto,Auto,*" Margin="0,1">
+            <Border BorderThickness="1" BorderBrush="DimGray">
+                <Grid RowDefinitions="Auto,Auto,Auto,*">
 
-                <!-- 同步组列表标题 -->
-                <TextBlock Grid.Row="0" Text="目录同步配置"
-                           FontWeight="Bold" TextAlignment="Center"
-                           Background="White" Foreground="Black"
-                           Margin="0,0,0,1" />
+                    <!-- 同步组列表标题 -->
+                    <Border Grid.Row="0" Margin="2 -1 2 1"
+                            HorizontalAlignment="Left" BorderBrush="DimGray" BorderThickness="1">
+                        <TextBlock Text="目录同步配置" Foreground="White" />
+                    </Border>
 
-                <!-- 操作按钮 -->
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="2" Margin="0,1">
-                    <Button Content="新增同步目录" />
-                    <Button Content="立即同步" Command="{Binding SyncAllCommand}" />
-                    <Button Content="全部启用" Command="{Binding EnableAllCommand}" />
-                    <Button Content="全部禁用" Command="{Binding DisableAllCommand}" />
-                </StackPanel>
+                    <!-- 操作按钮 -->
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="2"
+                                IsEnabled="{Binding !IsGlobalSyncing}">
+                        <Button Content="新增同步目录" />
+                        <Button Content="全部启用" Command="{Binding EnableAllCommand}" />
+                        <Button Content="全部禁用" Command="{Binding DisableAllCommand}" />
+                    </StackPanel>
 
-                <!-- 同步组列表 -->
-                <ListBox Grid.Row="2" BorderThickness="0"
-                         ItemsSource="{Binding SyncGroups}"
-                         SelectedItem="{Binding SelectedSyncGroup}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate x:DataType="vm:SyncGroupViewModel">
-                            <Border BorderThickness="1" BorderBrush="DimGray">
-                                <StackPanel Margin="1">
-                                    <!-- 同步组名称和状态 -->
-                                    <Grid ColumnDefinitions="3,Auto,*,Auto,Auto,Auto">
-                                        <TextBlock Grid.Column="0" Width="3"
-                                                   TextAlignment="Center"
-                                                   Text="{Binding StatusSymbol}"
-                                                   Foreground="{Binding StatusColor}" />
-                                        <TextBlock Grid.Column="1" Text="{Binding Name}" />
-                                        <TextBlock Grid.Column="2" Text="{Binding StatusText}" Margin="1,0,0,0" />
-                                        <ToggleSwitch Grid.Column="3" Margin="1,0" 
-                                                      OnContent="已启用" OffContent="已禁用"
-                                                      IsChecked="{Binding IsEnabled}" />
-                                        <Button Grid.Column="4" Content="编辑" Margin="1,0" />
-                                        <Button Grid.Column="5" Content="同步" Margin="1,0" Command="{Binding SyncCommand}" />
-                                    </Grid>
-                                    <!-- 远程路径 -->
-                                    <StackPanel Orientation="Horizontal" Margin="0,1,0,0">
-                                        <TextBlock Width="3" Text="📁" />
-                                        <TextBlock Text="{Binding RemotePath}" />
+                    <!-- 全局同步进度条 -->
+                    <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto">
+                        <TextBlock Grid.Column="0" Text="同步进度" Width="8" />
+                        <ProgressBar Grid.Column="1"
+                                     Value="{Binding GlobalSyncProgress}"
+                                     Minimum="0" Maximum="100" Margin="1 0" Height="1"
+                                     Background="DimGray"
+                                     Foreground="Green" />
+                        <Button Grid.Column="2" Content="立即同步" Command="{Binding SyncAllCommand}" />
+                    </Grid>
+
+                    <!-- 同步组列表 -->
+                    <ListBox Grid.Row="3" BorderThickness="0"
+                             ItemsSource="{Binding SyncGroups}"
+                             SelectedItem="{Binding SelectedSyncGroup}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="vm:SyncGroupViewModel">
+                                <Border BorderThickness="1" BorderBrush="DimGray">
+                                    <StackPanel Margin="1">
+                                        <!-- 同步组名称和状态 -->
+                                        <Grid ColumnDefinitions="3,Auto,*,Auto,Auto,Auto">
+                                            <TextBlock Grid.Column="0" Width="3"
+                                                       TextAlignment="Center"
+                                                       Text="{Binding StatusSymbol}"
+                                                       Foreground="{Binding StatusColor}" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Name}" />
+                                            <TextBlock Grid.Column="2" Text="{Binding StatusText}" Margin="1,0,0,0" />
+                                            <ToggleSwitch Grid.Column="3" Margin="1,0"
+                                                          OnContent="已启用" OffContent="已禁用"
+                                                          IsChecked="{Binding IsEnabled}" />
+                                            <Button Grid.Column="4" Content="编辑" Margin="1,0" />
+                                            <Button Grid.Column="5" Content="同步" Margin="1,0"
+                                                    Command="{Binding SyncCommand}" />
+                                        </Grid>
+                                        <!-- 远程路径 -->
+                                        <StackPanel Orientation="Horizontal" Margin="0,1,0,0">
+                                            <TextBlock Width="3" Text="📁" />
+                                            <TextBlock Text="{Binding RemotePath}" />
+                                        </StackPanel>
+                                        <!-- 同步方向 -->
+                                        <TextBlock Width="3" Text=" ↑" HorizontalAlignment="Left" />
+                                        <!-- 本地路径 -->
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Width="3" Text="📁" />
+                                            <TextBlock Text="{Binding LocalPath}" />
+                                        </StackPanel>
                                     </StackPanel>
-                                    <!-- 同步方向 -->
-                                    <TextBlock Width="3" Text=" ↑" HorizontalAlignment="Left" />
-                                    <!-- 本地路径 -->
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Width="3" Text="📁" />
-                                        <TextBlock Text="{Binding LocalPath}" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </Border>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
 
-            </Grid>
-        </Grid>
+        </StackPanel>
     </ScrollViewer>
 
 </UserControl>

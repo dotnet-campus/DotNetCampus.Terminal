@@ -66,6 +66,8 @@ public record SyncGroupViewModel : BindableRecord
             if (SetField(ref _status, value))
             {
                 UpdateStatusDisplay();
+                OnPropertyChanged(nameof(StatusSymbol));
+                OnPropertyChanged(nameof(StatusColor));
             }
         }
     }

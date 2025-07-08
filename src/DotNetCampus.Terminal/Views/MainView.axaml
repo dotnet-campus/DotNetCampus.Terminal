@@ -108,118 +108,120 @@
                 <Setter Property="Foreground" Value="White" />
             </Style>
         </Style>
+        <Style Selector="Border.GroupBox">
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="DimGray" />
+            <Style Selector="^ TextBlock.GroupBoxHeader">
+                <Setter Property="Margin" Value="1 -1 1 1" />
+            </Style>
+        </Style>
     </UserControl.Styles>
 
-    <Grid RowDefinitions="*,Auto">
+    <Grid RowDefinitions="Auto,*,Auto">
 
-        <TabControl BorderThickness="0 1 0 0">
+        <Border Grid.Row="0" Margin="0 0 0 1">
+            <TextBlock Text="🎲 DotNetCampus Terminal" Foreground="DarkGray" />
+        </Border>
 
-            <TabItem Header="设备">
-
-                <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,1,2*">
-                    <Grid Grid.Row="1" Grid.Column="0" RowDefinitions="Auto,Auto,*">
-                        <TextBox Grid.Row="1" Background="Black" Padding="1 0" Watermark="搜索设备…" />
-                        <TreeView x:Name="DeviceTreeView" Grid.Row="2" BorderThickness="0"
-                                  ItemsSource="{Binding RemoteDevices, Mode=OneTime}"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
-                            <TreeView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <VirtualizingStackPanel Margin="0 1" />
-                                </ItemsPanelTemplate>
-                            </TreeView.ItemsPanel>
-                            <TreeView.ItemTemplate>
-                                <TreeDataTemplate ItemsSource="{Binding Children}">
-                                    <ContentControl Content="{Binding}" />
-                                </TreeDataTemplate>
-                            </TreeView.ItemTemplate>
-                            <TreeView.DataTemplates>
-                                <DataTemplate x:DataType="vm:CreateNewRemoteDeviceNode">
-                                    <Border BorderThickness="1">
+        <Grid Grid.Row="1" RowDefinitions="Auto,*" ColumnDefinitions="*,1,2*">
+            <Border Grid.Row="1" Grid.Column="0" Classes="GroupBox" BorderThickness="1" BorderBrush="DimGray">
+                <Grid RowDefinitions="Auto,Auto,Auto,*">
+                    <TextBlock Grid.Row="0" Classes="GroupBoxHeader" Text="远程设备列表" />
+                    <TextBox Grid.Row="1" Background="Black" Padding="1 0" Watermark="搜索设备…" />
+                    <TreeView x:Name="DeviceTreeView" Grid.Row="2" BorderThickness="0"
+                              ItemsSource="{Binding RemoteDevices, Mode=OneTime}"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <TreeView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel Margin="0 1" />
+                            </ItemsPanelTemplate>
+                        </TreeView.ItemsPanel>
+                        <TreeView.ItemTemplate>
+                            <TreeDataTemplate ItemsSource="{Binding Children}">
+                                <ContentControl Content="{Binding}" />
+                            </TreeDataTemplate>
+                        </TreeView.ItemTemplate>
+                        <TreeView.DataTemplates>
+                            <DataTemplate x:DataType="vm:CreateNewRemoteDeviceNode">
+                                <Border Background="DimGray">
+                                    <TextBlock Text="+ 连接到新设备" Padding="1 0"
+                                               Background="DimGray" Foreground="White" />
+                                </Border>
+                            </DataTemplate>
+                            <DataTemplate x:DataType="vm:FavoriteDeviceGroupNode">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Grid.Column="0" Padding="1 0"
+                                               Foreground="DarkGray"
+                                               Text="收藏" />
+                                    <Border Grid.Column="1" BorderThickness="0 0 0 1">
                                         <Border.BorderBrush>
-                                            <console:LineBrush LineStyle="EdgeWide" Brush="DimGray" />
+                                            <console:LineBrush LineStyle="DoubleLine" Brush="DarkGray" />
                                         </Border.BorderBrush>
-                                        <TextBlock Text="+ 连接到新设备" Padding="1 0"
-                                                   Background="DimGray" Foreground="White" />
                                     </Border>
-                                </DataTemplate>
-                                <DataTemplate x:DataType="vm:FavoriteDeviceGroupNode">
-                                    <Grid ColumnDefinitions="Auto,*,Auto">
-                                        <TextBlock Grid.Column="0" Padding="1 0"
-                                                   Foreground="DarkGray"
-                                                   Text="收藏" />
-                                        <Border Grid.Column="1" BorderThickness="0 0 0 1">
-                                            <Border.BorderBrush>
-                                                <console:LineBrush LineStyle="DoubleLine" Brush="DarkGray" />
-                                            </Border.BorderBrush>
-                                        </Border>
-                                        <TextBlock Grid.Column="2" Padding="1 0"
-                                                   Foreground="DarkGray"
-                                                   Text="^" />
-                                    </Grid>
-                                </DataTemplate>
-                                <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
-                                    <Grid ColumnDefinitions="Auto,*,Auto">
-                                        <TextBlock Grid.Column="0" Padding="1 0" Foreground="DimGray">
-                                            <Run Foreground="DarkGray"
-                                                 Text="{Binding Info.Name, Mode=OneTime}" />
-                                            <Run Text="(" /><Run Text="{Binding OnlineCount, Mode=OneWay}" /><Run Text="/" /><Run Text="{Binding Children.Count, Mode=OneWay}" /><Run Text=")" />
-                                        </TextBlock>
-                                        <Border Grid.Column="1" BorderThickness="0 0 0 1">
-                                            <Border.BorderBrush>
-                                                <console:LineBrush LineStyle="DoubleLine" Brush="DarkGray" />
-                                            </Border.BorderBrush>
-                                        </Border>
-                                        <TextBlock Grid.Column="2" Padding="1 0"
-                                                   Foreground="DarkGray"
-                                                   Text="^" />
-                                    </Grid>
-                                </DataTemplate>
-                                <DataTemplate x:DataType="vm:SshRemoteDeviceInfoViewModel">
-                                    <Grid RowDefinitions="*,*" ColumnDefinitions="Auto,*,Auto">
-                                        <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
-                                                   Width="1" Margin="0 0 1 0"
-                                                   Background="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToBackgroundConverter}}"
-                                                   Foreground="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToForegroundConverter}}"
-                                                   Text="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToStringConverter}}" />
-                                        <TextBlock Grid.Row="0" Grid.Column="1"
-                                                   Text="{Binding Info.ConnectionName, Mode=OneTime}" />
-                                        <TextBlock Grid.Row="1" Grid.Column="1" Classes="SecondaryDescription"
-                                                   Text="{Binding Info.Address, Mode=OneTime}" />
-                                        <ToggleButton Grid.Row="0" Grid.Column="2" Classes="FavoriteIcon"
-                                                      IsCheckedChanged="FavoriteButton_IsCheckedChanged" />
-                                    </Grid>
-                                </DataTemplate>
-                            </TreeView.DataTemplates>
-                        </TreeView>
-                    </Grid>
-                    <console:LineSeparator Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" />
-                    <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
-                          DataContext="{Binding #DeviceTreeView.SelectedItem}">
-                        <ContentControl Content="{Binding Mode=OneWay}">
-                            <ContentControl.DataTemplates>
-                                <DataTemplate x:DataType="vm:CreateNewRemoteDeviceNode">
-                                    <views:CreateNewRemoteDeviceView />
-                                </DataTemplate>
-                                <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
-                                    <views:RemoteDeviceGroupView DataContext="{Binding Info, Mode=OneWay}" />
-                                </DataTemplate>
-                                <DataTemplate x:DataType="vm:SshRemoteDeviceInfoViewModel">
-                                    <views:SshRemoteDeviceInfoView DataContext="{Binding Mode=OneWay}" />
-                                </DataTemplate>
-                            </ContentControl.DataTemplates>
-                        </ContentControl>
-                    </Grid>
+                                    <TextBlock Grid.Column="2" Padding="1 0"
+                                               Foreground="DarkGray"
+                                               Text="^" />
+                                </Grid>
+                            </DataTemplate>
+                            <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Grid.Column="0" Padding="1 0" Foreground="DimGray">
+                                        <Run Foreground="DarkGray"
+                                             Text="{Binding Info.Name, Mode=OneTime}" />
+                                        <Run Text="(" /><Run Text="{Binding OnlineCount, Mode=OneWay}" />
+                                        <Run Text="/" />
+                                        <Run Text="{Binding Children.Count, Mode=OneWay}" /><Run Text=")" />
+                                    </TextBlock>
+                                    <Border Grid.Column="1" BorderThickness="0 0 0 1">
+                                        <Border.BorderBrush>
+                                            <console:LineBrush LineStyle="DoubleLine" Brush="DarkGray" />
+                                        </Border.BorderBrush>
+                                    </Border>
+                                    <TextBlock Grid.Column="2" Padding="1 0"
+                                               Foreground="DarkGray"
+                                               Text="^" />
+                                </Grid>
+                            </DataTemplate>
+                            <DataTemplate x:DataType="vm:SshRemoteDeviceInfoViewModel">
+                                <Grid RowDefinitions="*,*" ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                                               Width="1" Margin="0 0 1 0"
+                                               Background="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToBackgroundConverter}}"
+                                               Foreground="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToForegroundConverter}}"
+                                               Text="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToStringConverter}}" />
+                                    <TextBlock Grid.Row="0" Grid.Column="1"
+                                               Text="{Binding Info.ConnectionName, Mode=OneTime}" />
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Classes="SecondaryDescription"
+                                               Text="{Binding Info.Address, Mode=OneTime}" />
+                                    <ToggleButton Grid.Row="0" Grid.Column="2" Classes="FavoriteIcon"
+                                                  IsCheckedChanged="FavoriteButton_IsCheckedChanged" />
+                                </Grid>
+                            </DataTemplate>
+                        </TreeView.DataTemplates>
+                    </TreeView>
                 </Grid>
+            </Border>
+            <console:LineSeparator Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Brush="DimGray" />
+            <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
+                  DataContext="{Binding #DeviceTreeView.SelectedItem}">
+                <ContentControl Content="{Binding Mode=OneWay}">
+                    <ContentControl.DataTemplates>
+                        <DataTemplate x:DataType="vm:CreateNewRemoteDeviceNode">
+                            <views:CreateNewRemoteDeviceView />
+                        </DataTemplate>
+                        <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
+                            <views:RemoteDeviceGroupView DataContext="{Binding Info, Mode=OneWay}" />
+                        </DataTemplate>
+                        <DataTemplate x:DataType="vm:SshRemoteDeviceInfoViewModel">
+                            <views:SshRemoteDeviceInfoView DataContext="{Binding Mode=OneWay}" />
+                        </DataTemplate>
+                    </ContentControl.DataTemplates>
+                </ContentControl>
+            </Grid>
+        </Grid>
 
-            </TabItem>
-
-            <TabItem Header="外壳">
-            </TabItem>
-
-        </TabControl>
-
-        <StackPanel x:Name="StatusBarPanel" Grid.Row="1" Orientation="Horizontal">
+        <StackPanel x:Name="StatusBarPanel" Grid.Row="2" Orientation="Horizontal">
             <Button>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="F1" Classes="Fn" />
@@ -245,5 +247,6 @@
                 </StackPanel>
             </Button>
         </StackPanel>
+
     </Grid>
 </UserControl>

@@ -12,6 +12,10 @@ public class MainViewModel
     public MainViewModel(IServiceProvider serviceProvider)
     {
         _configurationManager = serviceProvider.EnsureGet<ConfigurationManager>();
+
+        RemoteDevices.Add(new CreateNewRemoteDeviceNode());
+        RemoteDevices.Add(new FavoriteDeviceGroupNode());
+
         ReloadDevicesCommand = new AsyncCommand(OnReloadDevices);
     }
 
@@ -19,9 +23,10 @@ public class MainViewModel
 
     public AvaloniaList<IRemoteDeviceNode> RemoteDevices { get; } = [];
 
+    public AvaloniaList<IRemoteDeviceNode> FavoriteDevices => ((FavoriteDeviceGroupNode)RemoteDevices[1]).Children;
+
     private async Task OnReloadDevices()
     {
-        RemoteDevices.Add(new CreateNewRemoteDeviceNode());
         var remoteDevices = await _configurationManager.FetchRemoteDevicesAsync();
         foreach (var group in remoteDevices)
         {

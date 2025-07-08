@@ -2,7 +2,50 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:console="https://github.com/jinek/consolonia"
+             xmlns:models="clr-namespace:DotNetCampus.Terminal.Modules.Configurations.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="DotNetCampus.Terminal.Views.SshRemoteDeviceInfoView">
-    Welcome to Avalonia!
+             x:Class="DotNetCampus.Terminal.Views.SshRemoteDeviceInfoView"
+             x:DataType="models:SshRemoteDeviceInfo">
+
+    <Design.DataContext>
+        <models:SshRemoteDeviceInfo />
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <Style Selector="Button">
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush">
+                <console:LineBrush LineStyle="EdgeWide" Brush="Green" />
+            </Setter>
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="console:ButtonExtensions.Shadow" Value="False" />
+            <Style Selector="^ /template/ Border#InternalBorder">
+                <Setter Property="Margin" Value="0" />
+            </Style>
+            <Style Selector="^:clickdelayed /template/ Border#InternalBorder">
+                <Setter Property="Margin" Value="0" />
+            </Style>
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer>
+        <StackPanel>
+            <TextBlock Text="{Binding ConnectionName, Mode=OneWay}" />
+            <Button HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Padding="2 0" Text="连接"
+                           Background="Green" Foreground="White" />
+            </Button>
+            <TextBlock Text="同步的文件夹" />
+            <ListBox>
+                <ListBoxItem>
+                    D:\WIP\Desktop
+                </ListBoxItem>
+                <ListBoxItem>
+                    D:\Codes\GitHub\dotnet-campus\DotNetCampus.Terminal\src\DotNetCampus.Terminal
+                </ListBoxItem>
+            </ListBox>
+        </StackPanel>
+    </ScrollViewer>
+
 </UserControl>

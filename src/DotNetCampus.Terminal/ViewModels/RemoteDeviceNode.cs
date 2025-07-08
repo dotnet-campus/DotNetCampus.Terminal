@@ -1,4 +1,6 @@
-﻿using DotNetCampus.Terminal.Modules.Configurations;
+﻿using System.Collections.ObjectModel;
+using Avalonia.Collections;
+using DotNetCampus.Terminal.Modules.Configurations;
 using DotNetCampus.Terminal.Modules.Configurations.Models;
 
 namespace DotNetCampus.Terminal.ViewModels;
@@ -28,6 +30,13 @@ public interface IRemoteDeviceNode
 public record CreateNewRemoteDeviceNode : IRemoteDeviceNode
 {
     public IReadOnlyList<IRemoteDeviceNode> Children { get; } = [];
+}
+
+public record FavoriteDeviceGroupNode : IRemoteDeviceNode
+{
+    IReadOnlyList<IRemoteDeviceNode> IRemoteDeviceNode.Children => Children;
+
+    public AvaloniaList<IRemoteDeviceNode> Children { get; init; } = [];
 }
 
 public record RemoteDeviceGroupNode(RemoteDeviceGroup Info) : IRemoteDeviceNode

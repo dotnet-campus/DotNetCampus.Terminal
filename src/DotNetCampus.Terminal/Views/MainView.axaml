@@ -58,6 +58,38 @@
                 <Style Selector="^ /template/ ContentPresenter#PART_HeaderPresenter">
                     <Setter Property="Margin" Value="-1 0 0 0" />
                 </Style>
+                <Style Selector="^ ToggleButton.FavoriteIcon">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="IsVisible" Value="False" />
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Padding" Value="0 0 1 0" />
+                    <Setter Property="Foreground" Value="Orange" />
+                    <Setter Property="Content" Value="☆" />
+                    <Style Selector="^:checked">
+                        <Setter Property="Content" Value="★" />
+                    </Style>
+                    <Style Selector="^:checked /template/ ContentPresenter">
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                    <Style Selector="^:pressed  /template/ ContentPresenter">
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                </Style>
+                <Style Selector="^ ToggleButton.FavoriteIcon:checked">
+                    <Setter Property="IsVisible" Value="True" />
+                </Style>
+                <Style Selector="^:selected ToggleButton.FavoriteIcon">
+                    <Setter Property="IsVisible" Value="True" />
+                </Style>
+                <Style Selector="^:pointerover ToggleButton.FavoriteIcon">
+                    <Setter Property="IsVisible" Value="True" />
+                </Style>
+            </Style>
+            <Style Selector="^ TextBlock.SecondaryDescription">
+                <Setter Property="Foreground" Value="DarkGray" />
+            </Style>
+            <Style Selector="^:selected TextBlock.SecondaryDescription">
+                <Setter Property="Foreground" Value="White" />
             </Style>
         </Style>
     </UserControl.Styles>
@@ -72,7 +104,9 @@
                     <Grid Grid.Row="1" Grid.Column="0" RowDefinitions="Auto,Auto,*">
                         <TextBox Grid.Row="1" Background="Black" Padding="1 0" Watermark="搜索设备…" />
                         <TreeView x:Name="DeviceTreeView" Grid.Row="2" BorderThickness="0"
-                                  ItemsSource="{Binding RemoteDevices, Mode=OneTime}">
+                                  ItemsSource="{Binding RemoteDevices, Mode=OneTime}"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <TreeView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <VirtualizingStackPanel Margin="0 1" />
@@ -87,11 +121,26 @@
                                 <DataTemplate x:DataType="vm:CreateNewRemoteDeviceNode">
                                     <Border BorderThickness="1">
                                         <Border.BorderBrush>
-                                            <console:LineBrush LineStyle="EdgeWide" Brush="Green" />
+                                            <console:LineBrush LineStyle="EdgeWide" Brush="DimGray" />
                                         </Border.BorderBrush>
                                         <TextBlock Text="+ 连接到新设备" Padding="1 0"
-                                                   Background="Green" Foreground="White" />
+                                                   Background="DimGray" Foreground="White" />
                                     </Border>
+                                </DataTemplate>
+                                <DataTemplate x:DataType="vm:FavoriteDeviceGroupNode">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        <TextBlock Grid.Column="0" Padding="1 0"
+                                                   Foreground="DarkGray"
+                                                   Text="收藏" />
+                                        <Border Grid.Column="1" BorderThickness="0 0 0 1">
+                                            <Border.BorderBrush>
+                                                <console:LineBrush LineStyle="DoubleLine" Brush="DarkGray" />
+                                            </Border.BorderBrush>
+                                        </Border>
+                                        <TextBlock Grid.Column="2" Padding="1 0"
+                                                   Foreground="DarkGray"
+                                                   Text="^" />
+                                    </Grid>
                                 </DataTemplate>
                                 <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
                                     <Grid ColumnDefinitions="Auto,*,Auto">
@@ -112,16 +161,11 @@
                                     <Grid RowDefinitions="*,*" ColumnDefinitions="Auto,*,Auto" DataContext="{Binding Info, Mode=OneTime}">
                                         <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Width="1" Margin="0 0 1 0" Background="Green" />
                                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ConnectionName, Mode=OneTime}" />
-                                        <TextBlock Grid.Row="1" Grid.Column="1">
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Classes="SecondaryDescription">
                                             <Run x:DataType="m:SshRemoteDeviceInfo" Text="{Binding HostName, Mode=OneTime}" />:<Run x:DataType="m:SshRemoteDeviceInfo" Text="{Binding Port, Mode=OneTime}" />
                                         </TextBlock>
-                                        <TextBlock Grid.Row="0" Grid.Column="2"
-                                                   Margin="0 0 1 0" Foreground="Orange"
-                                                   Text="★" />
+                                        <ToggleButton Grid.Row="0" Grid.Column="2" Classes="FavoriteIcon" IsCheckedChanged="FavoriteButton_IsCheckedChanged" />
                                     </Grid>
-                                </DataTemplate>
-                                <DataTemplate x:DataType="m:IRemoteDeviceInfo">
-                                    <TextBlock Text="{Binding ConnectionName, Mode=OneTime}" />
                                 </DataTemplate>
                             </TreeView.DataTemplates>
                         </TreeView>
@@ -129,14 +173,14 @@
                     <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" DataContext="{Binding #DeviceTreeView.SelectedItem}">
                         <ContentControl Content="{Binding Mode=OneWay}">
                             <ContentControl.DataTemplates>
+                                <DataTemplate x:DataType="vm:CreateNewRemoteDeviceNode">
+                                    <views:CreateNewRemoteDeviceView />
+                                </DataTemplate>
                                 <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
-                                    <views:RemoteDeviceGroupView />
+                                    <views:RemoteDeviceGroupView DataContext="{Binding Info, Mode=OneWay}" />
                                 </DataTemplate>
                                 <DataTemplate x:DataType="vm:SshRemoteDeviceInfoNode">
-                                    <views:SshRemoteDeviceInfoView />
-                                </DataTemplate>
-                                <DataTemplate x:DataType="m:IRemoteDeviceInfo">
-                                    <views:RemoteDeviceInfoView />
+                                    <views:SshRemoteDeviceInfoView DataContext="{Binding Info, Mode=OneWay}" />
                                 </DataTemplate>
                             </ContentControl.DataTemplates>
                         </ContentControl>
@@ -146,7 +190,6 @@
             </TabItem>
 
             <TabItem Header="外壳">
-                <Image Source="avares://DotNetCampus.Terminal/Assets/Resources/happy.jpg" />
             </TabItem>
 
         </TabControl>

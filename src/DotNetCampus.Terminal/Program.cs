@@ -9,12 +9,15 @@ namespace DotNetCampus.Terminal
         private static void Main(string[] args)
         {
             BuildAvaloniaApp()
-                .StartWithConsoleLifetime(args);
+                .StartWithConsoleLifetime(args)
+                // .StartWithClassicDesktopLifetime(args)
+                ;
         }
 
         public static AppBuilder BuildAvaloniaApp()
         {
             return AppBuilder.Configure<App>()
+                // .UsePlatformDetect()
                 .UseConsolonia()
                 .UseAutoDetectedConsole()
                 .UseContainerServices()

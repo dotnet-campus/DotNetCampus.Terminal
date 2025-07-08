@@ -19,8 +19,11 @@ namespace DotNetCampus.Terminal.Views
 
         private void OnLoaded(object? sender, RoutedEventArgs e)
         {
-            var topLevel = (ConsoleWindow)TopLevel.GetTopLevel(this)!;
-            topLevel.Title = "DotNetCampus Terminal";
+            var topLevel = TopLevel.GetTopLevel(this)!;
+            if (topLevel is Window window)
+            {
+                window.Title = "DotNetCampus Terminal";
+            }
 
             ViewModel.ReloadDevicesCommand.Execute(null);
         }

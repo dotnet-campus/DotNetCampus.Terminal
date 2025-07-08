@@ -20,6 +20,7 @@ namespace DotNetCampus.Terminal
                 // .UsePlatformDetect()
                 .UseConsolonia()
                 .UseAutoDetectedConsole()
+                .UseAutoDetectConsoleColorMode()
                 .UseContainerServices()
                 .LogToException();
         }

@@ -5,6 +5,7 @@
              xmlns:console="https://github.com/jinek/consolonia"
              xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
              xmlns:m="using:DotNetCampus.Terminal.Modules.Configurations.Models"
+             xmlns:configurations="clr-namespace:DotNetCampus.Terminal.Modules.Configurations"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="DotNetCampus.Terminal.Views.MainView"
              Background="Black">
@@ -39,6 +40,22 @@
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="BorderThickness" Value="0 0 0 1" />
         </Style>
+        <Style Selector="TreeViewItem">
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="IsExpanded" Value="True" />
+            <Style Selector="^ /template/ ToggleButton#PART_ExpandCollapseChevron">
+                <Setter Property="IsVisible" Value="False" />
+            </Style>
+            <Style Selector="^[Level=0]">
+                <Setter Property="Margin" Value="0 1 0 0" />
+            </Style>
+            <Style Selector="^[Level=1]">
+                <Setter Property="Margin" Value="1 1 0 0" />
+                <Style Selector="^ /template/ ContentPresenter#PART_HeaderPresenter">
+                    <Setter Property="Margin" Value="-1 0 0 0" />
+                </Style>
+            </Style>
+        </Style>
     </UserControl.Styles>
 
     <Grid RowDefinitions="*,Auto">
@@ -60,23 +77,42 @@
                                 <Button Content="+ 新设备" BorderThickness="0" />
                             </DropDownButton>
                         </StackPanel>
-                        <TextBox Grid.Row="1" Margin="0 1" Background="DarkGray" Watermark="搜索设备…" />
-                        <ListBox Grid.Row="2" BorderThickness="0"
-                                 ItemsSource="{Binding RemoteDevices, Mode=OneTime}">
-                            <ListBox.DataTemplates>
-                                <DataTemplate x:DataType="m:SshRemoteDeviceInfo">
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding ConnectionName, Mode=OneTime}" />
-                                        <TextBlock>
-                                            <Run Text="{Binding HostName, Mode=OneTime}" />:<Run Text="{Binding Port, Mode=OneTime}" />
+                        <TextBox Grid.Row="1" Margin="0 1 0 0" Background="DarkGray" Watermark="搜索设备…" />
+                        <TreeView Grid.Row="2" BorderThickness="0"
+                                  ItemsSource="{Binding RemoteDevices, Mode=OneTime}">
+                            <TreeView.ItemTemplate>
+                                <TreeDataTemplate ItemsSource="{Binding Children}">
+                                    <ContentControl Content="{Binding}" />
+                                </TreeDataTemplate>
+                            </TreeView.ItemTemplate>
+                            <TreeView.DataTemplates>
+                                <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBlock Grid.Column="0" Padding="1 0"
+                                                   Background="Gray" Foreground="Black"
+                                                   Text="{Binding Info.Name, Mode=OneTime}" />
+                                        <TextBlock Grid.Column="1" Padding="1 0"
+                                                   Background="DarkGray" Foreground="Black"
+                                                   Text="^" />
+                                    </Grid>
+                                </DataTemplate>
+                                <DataTemplate x:DataType="vm:SshRemoteDeviceInfoNode">
+                                    <Grid RowDefinitions="*,*" ColumnDefinitions="Auto,*,Auto" DataContext="{Binding Info, Mode=OneTime}">
+                                        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Width="1" Margin="0 0 1 0" Background="Green" />
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ConnectionName, Mode=OneTime}" />
+                                        <TextBlock Grid.Row="1" Grid.Column="1">
+                                            <Run x:DataType="m:SshRemoteDeviceInfo" Text="{Binding HostName, Mode=OneTime}" />:<Run x:DataType="m:SshRemoteDeviceInfo" Text="{Binding Port, Mode=OneTime}" />
                                         </TextBlock>
-                                    </StackPanel>
+                                        <TextBlock Grid.Row="0" Grid.Column="2"
+                                                   Margin="0 0 1 0" Foreground="Orange"
+                                                   Text="★" />
+                                    </Grid>
                                 </DataTemplate>
                                 <DataTemplate x:DataType="m:IRemoteDeviceInfo">
                                     <TextBlock Text="{Binding ConnectionName, Mode=OneTime}" />
                                 </DataTemplate>
-                            </ListBox.DataTemplates>
-                        </ListBox>
+                            </TreeView.DataTemplates>
+                        </TreeView>
                     </Grid>
                 </Grid>
 

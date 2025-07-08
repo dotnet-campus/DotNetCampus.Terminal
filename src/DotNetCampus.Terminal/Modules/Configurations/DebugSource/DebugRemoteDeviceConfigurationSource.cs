@@ -18,6 +18,22 @@ public class DebugRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSo
                 UserName = "seewo",
                 Password = "123",
             },
+            new SshRemoteDeviceInfo
+            {
+                ConnectionName = "测试设备 2",
+                HostName = "172.20.114.71",
+                Port = "22",
+                UserName = "seewo",
+                Password = "123",
+            },
+            new SshRemoteDeviceInfo
+            {
+                ConnectionName = "测试设备 3",
+                HostName = "172.20.114.71",
+                Port = "22",
+                UserName = "seewo",
+                Password = "123",
+            },
         ]);
     }
 }

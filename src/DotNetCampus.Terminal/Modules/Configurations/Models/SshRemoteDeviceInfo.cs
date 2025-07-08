@@ -17,7 +17,7 @@ public record SshRemoteDeviceInfo : IRemoteDeviceInfo
     /// <summary>
     /// 远程设备端口号。
     /// </summary>
-    public required string Port { get; init; }
+    public required int Port { get; init; }
 
     /// <summary>
     /// 远程连接所使用的用户名。

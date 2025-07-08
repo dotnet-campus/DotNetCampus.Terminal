@@ -17,10 +17,18 @@
     </Design.DataContext>
 
     <UserControl.Resources>
-        <converters:ConnectionStateToBrushConverter x:Key="ConnectionStateToBrushConverter"
+        <converters:ConnectionStateToBrushConverter x:Key="ConnectionStateToBackgroundConverter"
                                                     Default="DimGray"
                                                     Online="Green"
                                                     Offline="DarkRed" />
+        <converters:ConnectionStateToBrushConverter x:Key="ConnectionStateToForegroundConverter"
+                                                    Default="White"
+                                                    Testing="DarkGray"
+                                                    Offline="Red" />
+        <converters:ConnectionStateToStringConverter x:Key="ConnectionStateToStringConverter"
+                                                     Default=" "
+                                                     Testing="o"
+                                                     Offline="x" />
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -167,9 +175,11 @@
                                 </DataTemplate>
                                 <DataTemplate x:DataType="vm:SshRemoteDeviceInfoNode">
                                     <Grid RowDefinitions="*,*" ColumnDefinitions="Auto,*,Auto">
-                                        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Width="1"
-                                                Margin="0 0 1 0"
-                                                Background="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToBrushConverter}}" />
+                                        <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                                                   Width="1" Margin="0 0 1 0"
+                                                   Background="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToBackgroundConverter}}"
+                                                   Foreground="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToForegroundConverter}}"
+                                                   Text="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToStringConverter}}" />
                                         <TextBlock Grid.Row="0" Grid.Column="1"
                                                    Text="{Binding Info.ConnectionName, Mode=OneTime}" />
                                         <TextBlock Grid.Row="1" Grid.Column="1" Classes="SecondaryDescription"

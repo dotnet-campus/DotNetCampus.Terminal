@@ -30,7 +30,23 @@ public class MainViewModel
         var remoteDevices = await _configurationManager.FetchRemoteDevicesAsync();
         foreach (var group in remoteDevices)
         {
-            RemoteDevices.Add(IRemoteDeviceNode.From(group));
+            var deviceGroupNode = IRemoteDeviceNode.From(group);
+            RemoteDevices.Add(deviceGroupNode);
         }
+
+        await TestConnectionAsync();
+    }
+
+    public async Task TestConnectionAsync()
+    {
+        var tasks = RemoteDevices.Skip(2)
+            .SelectMany(x => x.Children)
+            .OfType<RemoteDeviceInfoNode>()
+            .Select(device => Task.Run(async () =>
+            {
+                await device.TestConnectionAsync();
+            }))
+            .ToList();
+        await Task.WhenAll(tasks);
     }
 }

@@ -32,4 +32,6 @@ public class ConnectionStateToObjectConverter<T> : IValueConverter where T : cla
     }
 }
 
+public class ConnectionStateToStringConverter : ConnectionStateToObjectConverter<string>;
+
 public class ConnectionStateToBrushConverter : ConnectionStateToObjectConverter<IBrush>;

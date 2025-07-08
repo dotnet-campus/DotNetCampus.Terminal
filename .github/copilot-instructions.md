@@ -355,19 +355,56 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
 
 ## 日志规范
 
-### 1. 日志级别使用
-- **Trace**: 详细的调试信息
-- **Debug**: 调试信息
-- **Information**: 一般信息，重要的程序流程
-- **Warning**: 警告，程序可以继续运行
-- **Error**: 错误，但程序可以继续
-- **Critical**: 严重错误，程序可能需要停止
+### 1. 日志框架
+项目使用 **DotNetCampus.Logger** 日志库：
+- 支持源生成器，零运行时依赖
+- 使用静态 `Log` 类进行日志记录，无需依赖注入
+- 支持编译时条件编译优化
 
-### 2. 日志消息格式
+### 2. 日志级别使用
+- **Trace**: 最详细的调试信息，仅在追踪问题时使用
+- **Debug**: 调试信息，用于开发阶段问题诊断
+- **Info**: 一般信息，记录程序正常运行的关键节点
+- **Warn**: 警告信息，程序可以继续运行但存在潜在问题
+- **Error**: 错误信息，程序遇到错误但可以恢复
+- **Fatal**: 致命错误，程序无法继续运行
+
+### 3. 日志记录格式
 ```csharp
-_logger.LogInformation("开始连接到设备 {DeviceName} ({DeviceHost})", device.Name, device.Host);
-_logger.LogWarning("设备 {DeviceId} 连接超时，正在重试 ({RetryCount}/{MaxRetries})", deviceId, retryCount, maxRetries);
-_logger.LogError(ex, "连接到设备 {DeviceId} 失败", deviceId);
+// 使用标签进行分类，便于过滤和搜索
+Log.Info("[FileSync] 开始同步目录 {syncGroup.Name}");
+Log.Debug("[FileSync] 正在上传文件: {localFile} -> {remoteFile}");
+Log.Warn("[UI] 没有启用的同步组，跳过同步");
+Log.Error("[SSH] 连接到服务器失败: {host}:{port}");
+Log.Fatal("[System] 系统内存不足，程序即将退出");
+```
+
+### 4. 标签约定
+- `[FileSync]`: 文件同步相关操作
+- `[UI]`: 用户界面相关操作
+- `[SSH]`: SSH连接相关操作
+- `[Config]`: 配置管理相关操作
+- `[Network]`: 网络连接相关操作
+- `[System]`: 系统级别操作
+
+### 5. 使用指南
+```csharp
+// 推荐：使用插值字符串，简洁易读
+Log.Info($"[FileSync] 处理文件 {fileName}，大小 {fileSize} 字节");
+
+// 条件调试日志（仅在DEBUG模式编译）
+Log.DebugLogger.Debug("[FileSync] 详细的调试信息");
+
+// 错误日志包含异常信息
+try 
+{
+    // 操作代码
+}
+catch (Exception ex)
+{
+    Log.Error($"[FileSync] 操作失败: {ex.Message}");
+    throw;
+}
 ```
 
 ## Git 提交规范

@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Consolonia" />
+    <PackageReference Include="DotNetCampus.Logger" />
     <PackageReference Include="Samboy063.Tomlet" />
     <PackageReference Include="SSH.NET" />
   </ItemGroup>

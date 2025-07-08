@@ -1,4 +1,5 @@
-﻿using DotNetCampus.Terminal.FileSync;
+﻿using DotNetCampus.Logging;
+using DotNetCampus.Terminal.FileSync;
 using DotNetCampus.Terminal.Framework.Input.Commands;
 using DotNetCampus.Terminal.Modules.Configurations.Models;
 using DotNetCampus.Terminal.Utils;
@@ -214,14 +215,14 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         // 如果文件同步服务未注入，则直接返回
         if (_fileSyncService == null)
         {
-            Console.WriteLine("文件同步服务未初始化，无法执行同步操作");
+            Log.Error("[UI] 文件同步服务未初始化，无法执行同步操作");
             return;
         }
 
         // 如果已经有同步任务在进行中，则不执行新的同步
         if (_syncCancellationTokenSource != null)
         {
-            Console.WriteLine("已有同步任务正在进行中");
+            Log.Warn("[UI] 已有同步任务正在进行中");
             return;
         }
 
@@ -230,7 +231,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
 
         if (enabledGroups.Count == 0)
         {
-            Console.WriteLine("没有启用的同步组，跳过同步");
+            Log.Info("[UI] 没有启用的同步组，跳过同步");
             return;
         }
 
@@ -266,7 +267,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
                     currentGroup.SyncProgress = p.CurrentFileProgress;
                 }
 
-                Console.WriteLine($"同步进度: {p.TotalProgress:F2}%, 当前文件: {p.CurrentFile}");
+                Log.Debug($"[UI] 同步进度: {p.TotalProgress:F2}%, 当前文件: {p.CurrentFile}");
             });
 
             // 执行同步
@@ -281,24 +282,24 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
                     {
                         group.Status = SyncGroupStatus.Normal;
                     }
-                    Console.WriteLine("所有目录同步成功");
+                    Log.Info("[UI] 所有目录同步成功");
                     break;
                 case FileSyncResult.Failed:
                     foreach (var group in enabledGroups)
                     {
                         group.Status = SyncGroupStatus.Error;
                     }
-                    Console.WriteLine("目录同步失败");
+                    Log.Error("[UI] 目录同步失败");
                     break;
                 case FileSyncResult.PartialSuccess:
-                    Console.WriteLine("部分目录同步成功，部分失败");
+                    Log.Warn("[UI] 部分目录同步成功，部分失败");
                     break;
                 case FileSyncResult.Cancelled:
                     foreach (var group in enabledGroups)
                     {
                         group.Status = SyncGroupStatus.Normal;
                     }
-                    Console.WriteLine("同步操作被取消");
+                    Log.Info("[UI] 同步操作被取消");
                     break;
             }
         }
@@ -309,7 +310,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
             {
                 group.Status = SyncGroupStatus.Error;
             }
-            Console.WriteLine($"同步过程中发生错误: {ex.Message}");
+            Log.Error($"[UI] 同步过程中发生错误: {ex.Message}");
         }
         finally
         {
@@ -332,14 +333,14 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         try
         {
             _syncCancellationTokenSource.Cancel();
-            Console.WriteLine("已发送取消同步请求");
+            Log.Info("[UI] 已发送取消同步请求");
 
             // 等待取消完成
             await Task.Delay(500);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"取消同步时发生错误: {ex.Message}");
+            Log.Error($"[UI] 取消同步时发生错误: {ex.Message}");
         }
     }
 

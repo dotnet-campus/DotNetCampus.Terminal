@@ -1,4 +1,6 @@
-﻿using Avalonia;
+﻿using System.Diagnostics;
+using Avalonia;
+using DotNetCampus.Logging;
 using DotNetCampus.Terminal.FileSync;
 using DotNetCampus.Terminal.Framework;
 using DotNetCampus.Terminal.Framework.DependencyInjection;
@@ -12,6 +14,25 @@ public static class Startup
     {
         return appBuilder.UseContainer(s => s
             .AddSingleton<ConfigurationManager>()
-            .AddSingleton<IFileSyncService>(provider => new FileSyncService()));
+            .AddSingleton<IFileSyncService>(_ => new FileSyncService())
+            .AddSingleton<ILogger>(_ => new LoggerBuilder()
+                .WithLevel(LogLevel.Information)
+                .AddWriter(new EmptyLogger())
+                .Build()
+                .IntoGlobalStaticLog())
+        );
+    }
+}
+
+public class EmptyLogger : ILogger
+{
+    public bool IsEnabled(LogLevel logLevel)
+    {
+        return logLevel >= LogLevel.Information;
+    }
+
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    {
+        Debug.WriteLine(formatter(state, exception));
     }
 }

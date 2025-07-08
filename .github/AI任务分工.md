@@ -91,16 +91,46 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 ### 4. 文件同步工程师 (File Sync AI)
 **职责**：负责自动文件夹同步功能
 **任务**：
-- [ ] 实现基于SFTP的文件同步
-- [ ] 支持本地到远程的单向同步
+- [x] 实现基于SFTP的文件同步
+- [x] 支持本地到远程的单向同步
+- [x] 实现同步状态监控和显示
+- [x] 处理文件冲突和错误恢复
+- [x] 实现 FileSyncService 和相关接口
+- [x] 集成 SSH.NET 库进行文件传输
+- [x] 添加命令绑定到UI界面
+- [x] 实现进度报告和取消功能
+- [x] 使用 DotNetCampus.Logger 进行日志记录
+- [x] 创建 SSH.NET 和日志库的知识库文档
 - [ ] 支持远程到本地的单向同步
-- [ ] 实现同步状态监控和显示
-- [ ] 处理文件冲突和错误恢复
 - [ ] 实现增量同步优化
 
 **输出文件**：
-- `src/DotNetCampus.Terminal/FileSync/`
-- `src/DotNetCampus.Terminal/Models/FileSync/`
+- `src/DotNetCampus.Terminal/FileSync/IFileSyncService.cs` ✅
+- `src/DotNetCampus.Terminal/FileSync/FileSyncService.cs` ✅
+- `src/DotNetCampus.Terminal/Models/FileSync/` (接口定义) ✅
+- `.github/knowledge/SSH.NET-File-Sync-Guide.md` ✅
+- `.github/knowledge/DotNetCampus-Logger-Guide.md` ✅
+
+**最新进展** (2025-07-08)：
+- ✅ 完成文件同步核心功能实现
+- ✅ 基于 SSH.NET 实现 SFTP 文件传输
+- ✅ 实现文件同步服务接口和具体实现类
+- ✅ 集成进度报告、取消操作、错误处理
+- ✅ 在 UI 中添加"立即同步"按钮的命令绑定
+- ✅ 实现单个同步组和批量同步功能
+- ✅ 使用 DotNetCampus.Logger 替换临时的 Console.WriteLine
+- ✅ 创建 SSH.NET 使用指南和日志库使用指南
+- ✅ 更新 copilot-instructions.md 中的日志规范
+- ✅ 项目可正常编译运行，文件同步功能完全可用
+
+**技术要点**：
+- 使用 SSH.NET 的 SftpClient 进行文件传输
+- 实现递归目录创建和文件上传
+- 支持传输进度回调和取消操作
+- 使用 Task.Run 避免 UI 线程阻塞
+- 集成 DotNetCampus.Logger 进行结构化日志记录
+- 通过依赖注入在 ViewModel 中使用文件同步服务
+- 实现 MVVM 模式的异步命令绑定
 
 **备注**：需要与SSH连接专家密切协作
 

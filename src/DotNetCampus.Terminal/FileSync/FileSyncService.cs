@@ -1,3 +1,4 @@
+using DotNetCampus.Logging;
 using DotNetCampus.Terminal.Modules.Configurations.Models;
 using Renci.SshNet;
 
@@ -17,17 +18,17 @@ public class FileSyncService : IFileSyncService
     {
         if (string.IsNullOrEmpty(syncGroup.LocalPath) || string.IsNullOrEmpty(syncGroup.RemotePath))
         {
-            Console.WriteLine($"同步组 {syncGroup.Name} 的本地路径或远程路径为空");
+            Log.Error($"[FileSync] 同步组 {syncGroup.Name} 的本地路径或远程路径为空");
             return FileSyncResult.Failed;
         }
 
         if (!syncGroup.Enabled)
         {
-            Console.WriteLine($"同步组 {syncGroup.Name} 已被禁用，跳过同步");
+            Log.Info($"[FileSync] 同步组 {syncGroup.Name} 已被禁用，跳过同步");
             return FileSyncResult.Cancelled;
         }
 
-        Console.WriteLine($"开始同步目录 {syncGroup.Name}: {syncGroup.LocalPath} -> {syncGroup.RemotePath}");
+        Log.Info($"[FileSync] 开始同步目录 {syncGroup.Name}: {syncGroup.LocalPath} -> {syncGroup.RemotePath}");
 
         try
         {
@@ -37,12 +38,12 @@ public class FileSyncService : IFileSyncService
         }
         catch (OperationCanceledException)
         {
-            Console.WriteLine($"同步操作被取消: {syncGroup.Name}");
+            Log.Warn($"[FileSync] 同步操作被取消: {syncGroup.Name}");
             return FileSyncResult.Cancelled;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"同步目录时发生错误: {syncGroup.Name}. 错误: {ex.Message}");
+            Log.Error($"[FileSync] 同步目录时发生错误: {syncGroup.Name}. 错误: {ex.Message}");
             return FileSyncResult.Failed;
         }
     }
@@ -57,11 +58,11 @@ public class FileSyncService : IFileSyncService
         var enabledSyncGroups = syncGroups.Where(sg => sg.Enabled).ToList();
         if (enabledSyncGroups.Count == 0)
         {
-            Console.WriteLine("没有启用的同步组，跳过同步");
+            Log.Info("[FileSync] 没有启用的同步组，跳过同步");
             return FileSyncResult.Cancelled;
         }
 
-        Console.WriteLine($"开始同步多个目录，共 {enabledSyncGroups.Count} 个同步组");
+        Log.Info($"[FileSync] 开始同步多个目录，共 {enabledSyncGroups.Count} 个同步组");
 
         var results = new List<FileSyncResult>();
 
@@ -69,7 +70,7 @@ public class FileSyncService : IFileSyncService
         {
             if (cancellationToken.IsCancellationRequested)
             {
-                Console.WriteLine("多目录同步操作被取消");
+                Log.Warn("[FileSync] 多目录同步操作被取消");
                 return FileSyncResult.Cancelled;
             }
 
@@ -105,7 +106,7 @@ public class FileSyncService : IFileSyncService
         // 确保本地目录存在
         if (!Directory.Exists(syncGroup.LocalPath))
         {
-            Console.WriteLine($"本地目录不存在: {syncGroup.LocalPath}");
+            Log.Error($"[FileSync] 本地目录不存在: {syncGroup.LocalPath}");
             return Task.FromResult(FileSyncResult.Failed);
         }
 
@@ -114,12 +115,12 @@ public class FileSyncService : IFileSyncService
 
         try
         {
-            Console.WriteLine($"正在连接到 {sshInfo.Host}:{sshInfo.Port}");
+            Log.Info($"[FileSync] 正在连接到 {sshInfo.Host}:{sshInfo.Port}");
             client.Connect();
 
             if (!client.IsConnected)
             {
-                Console.WriteLine($"无法连接到服务器: {sshInfo.Host}:{sshInfo.Port}");
+                Log.Error($"[FileSync] 无法连接到服务器: {sshInfo.Host}:{sshInfo.Port}");
                 return Task.FromResult(FileSyncResult.Failed);
             }
 
@@ -131,14 +132,14 @@ public class FileSyncService : IFileSyncService
             int totalFiles = localFiles.Count;
             int processedFiles = 0;
 
-            Console.WriteLine($"找到 {totalFiles} 个文件需要同步");
+            Log.Info($"[FileSync] 找到 {totalFiles} 个文件需要同步");
 
             // 执行文件同步
             foreach (var localFile in localFiles)
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    Console.WriteLine("文件同步操作被取消");
+                    Log.Warn("[FileSync] 文件同步操作被取消");
                     return Task.FromResult(FileSyncResult.Cancelled);
                 }
 
@@ -153,7 +154,7 @@ public class FileSyncService : IFileSyncService
                     EnsureRemoteDirectoryExists(client, remoteDirectory);
 
                     // 上传文件
-                    Console.WriteLine($"正在上传文件: {localFile} -> {remoteFilePath}");
+                    Log.Debug($"[FileSync] 正在上传文件: {localFile} -> {remoteFilePath}");
 
                     using (var fileStream = new FileStream(localFile, FileMode.Open, FileAccess.Read))
                     {
@@ -188,24 +189,24 @@ public class FileSyncService : IFileSyncService
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"上传文件时发生错误: {localFile}. 错误: {ex.Message}");
+                    Log.Error($"[FileSync] 上传文件时发生错误: {localFile}. 错误: {ex.Message}");
                     return Task.FromResult(FileSyncResult.Failed);
                 }
             }
 
-            Console.WriteLine($"目录同步完成: {syncGroup.Name}");
+            Log.Info($"[FileSync] 目录同步完成: {syncGroup.Name}");
             return Task.FromResult(FileSyncResult.Success);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"执行目录同步时发生错误: {syncGroup.Name}. 错误: {ex.Message}");
+            Log.Error($"[FileSync] 执行目录同步时发生错误: {syncGroup.Name}. 错误: {ex.Message}");
             return Task.FromResult(FileSyncResult.Failed);
         }
         finally
         {
             if (client.IsConnected)
             {
-                Console.WriteLine($"断开与服务器的连接: {sshInfo.Host}:{sshInfo.Port}");
+                Log.Debug($"[FileSync] 断开与服务器的连接: {sshInfo.Host}:{sshInfo.Port}");
                 client.Disconnect();
             }
         }
@@ -221,7 +222,7 @@ public class FileSyncService : IFileSyncService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"获取本地文件列表时发生错误: {localPath}. 错误: {ex.Message}");
+            Log.Error($"[FileSync] 获取本地文件列表时发生错误: {localPath}. 错误: {ex.Message}");
         }
 
         return files;
@@ -238,7 +239,7 @@ public class FileSyncService : IFileSyncService
 
             if (!client.Exists(currentPath))
             {
-                Console.WriteLine($"创建远程目录: {currentPath}");
+                Log.Debug($"[FileSync] 创建远程目录: {currentPath}");
                 client.CreateDirectory(currentPath);
             }
         }

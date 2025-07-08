@@ -40,8 +40,7 @@ public class MainViewModel
     public async Task TestConnectionAsync()
     {
         var tasks = RemoteDevices.Skip(2)
-            .SelectMany(x => x.Children)
-            .OfType<RemoteDeviceInfoNode>()
+            .OfType<RemoteDeviceGroupNode>()
             .Select(device => Task.Run(async () =>
             {
                 await device.TestConnectionAsync();

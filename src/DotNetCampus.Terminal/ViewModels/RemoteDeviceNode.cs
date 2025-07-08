@@ -4,6 +4,7 @@ using DotNetCampus.Terminal.Modules.Configurations;
 using DotNetCampus.Terminal.Modules.Configurations.Models;
 using DotNetCampus.Terminal.Utils;
 using Avalonia.Threading;
+using System.Threading;
 
 namespace DotNetCampus.Terminal.ViewModels;
 
@@ -41,9 +42,41 @@ public record FavoriteDeviceGroupNode : IRemoteDeviceNode
     public AvaloniaList<IRemoteDeviceNode> Children { get; init; } = [];
 }
 
-public record RemoteDeviceGroupNode(RemoteDeviceGroup Info) : IRemoteDeviceNode
+public record RemoteDeviceGroupNode(RemoteDeviceGroup Info) : BindableRecord, IRemoteDeviceNode
 {
+    private int _onlineCount;
+
+    public int OnlineCount
+    {
+        get => _onlineCount;
+        set => SetField(ref _onlineCount, value);
+    }
+
     public required IReadOnlyList<IRemoteDeviceNode> Children { get; init; }
+
+    public async Task TestConnectionAsync()
+    {
+        OnlineCount = 0;
+
+        var devices = Children.OfType<RemoteDeviceInfoNode>().ToList();
+        var tasks = devices.Select(async device =>
+        {
+            var result = await device.TestConnectionAsync();
+            if (result)
+            {
+                // 每个连接测试成功后立即更新计数
+                Interlocked.Increment(ref _onlineCount);
+                _ = Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    // 确保在UI线程上更新在线设备计数
+                    OnPropertyChanged(nameof(OnlineCount));
+                });
+            }
+            return result;
+        });
+
+        await Task.WhenAll(tasks);
+    }
 }
 
 public abstract record RemoteDeviceInfoNode(IRemoteDeviceInfo Info) : BindableRecord, IRemoteDeviceNode

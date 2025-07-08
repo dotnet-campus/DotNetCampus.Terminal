@@ -160,9 +160,11 @@
                                 </DataTemplate>
                                 <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
                                     <Grid ColumnDefinitions="Auto,*,Auto">
-                                        <TextBlock Grid.Column="0" Padding="1 0"
-                                                   Foreground="DarkGray"
-                                                   Text="{Binding Info.Name, Mode=OneTime}" />
+                                        <TextBlock Grid.Column="0" Padding="1 0" Foreground="DimGray">
+                                            <Run Foreground="DarkGray"
+                                                 Text="{Binding Info.Name, Mode=OneTime}" />
+                                            <Run Text="(" /><Run Text="{Binding OnlineCount, Mode=OneWay}" /><Run Text="/" /><Run Text="{Binding Children.Count, Mode=OneWay}" /><Run Text=")" />
+                                        </TextBlock>
                                         <Border Grid.Column="1" BorderThickness="0 0 0 1">
                                             <Border.BorderBrush>
                                                 <console:LineBrush LineStyle="DoubleLine" Brush="DarkGray" />
@@ -183,12 +185,7 @@
                                         <TextBlock Grid.Row="0" Grid.Column="1"
                                                    Text="{Binding Info.ConnectionName, Mode=OneTime}" />
                                         <TextBlock Grid.Row="1" Grid.Column="1" Classes="SecondaryDescription"
-                                                   DataContext="{Binding Info, Mode=OneTime}">
-                                            <Run x:DataType="m:SshRemoteDeviceInfo"
-                                                 Text="{Binding HostName, Mode=OneTime}" />
-                                            <Run Text=":" Foreground="DimGray" />
-                                            <Run x:DataType="m:SshRemoteDeviceInfo" Text="{Binding Port, Mode=OneTime}" />
-                                        </TextBlock>
+                                                   Text="{Binding Info.Address, Mode=OneTime}" />
                                         <ToggleButton Grid.Row="0" Grid.Column="2" Classes="FavoriteIcon"
                                                       IsCheckedChanged="FavoriteButton_IsCheckedChanged" />
                                     </Grid>

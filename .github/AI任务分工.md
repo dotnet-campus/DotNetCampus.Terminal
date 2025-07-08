@@ -82,16 +82,21 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 ### 5. UI界面设计师 (UI Designer AI)
 **职责**：负责Consolonia控制台界面设计
 **任务**：
-- [ ] 设计主界面布局和导航
-- [ ] 实现全局菜单栏
-- [ ] 实现设备管理界面（个人/团队设备列表）
+- [x] 设计主界面布局和导航
+- [x] 实现全局菜单栏
+- [x] 实现设备管理界面（个人/团队设备列表）
 - [ ] 实现文件夹同步状态显示界面
 - [ ] 实现全局命令输入框
 - [ ] 优化用户交互体验
+- [ ] 完善SshRemoteDeviceInfoView界面设计
 
 **输出文件**：
 - `src/DotNetCampus.Terminal/Views/`
 - `src/DotNetCampus.Terminal/ViewModels/`
+
+**最新进展**：
+- 🔄 正在设计SshRemoteDeviceInfoView界面，包含基本信息编辑和目录同步功能
+- 📋 需要实现两大模块：设备基本信息编辑和目录同步配置
 
 ### 6. 进程管理专家 (Process Manager AI)
 **职责**：负责Shell进程管理和启动

@@ -7,6 +7,7 @@
              xmlns:m="using:DotNetCampus.Terminal.Modules.Configurations.Models"
              xmlns:configurations="clr-namespace:DotNetCampus.Terminal.Modules.Configurations"
              xmlns:views="clr-namespace:DotNetCampus.Terminal.Views"
+             xmlns:converters="clr-namespace:DotNetCampus.Terminal.Views.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="DotNetCampus.Terminal.Views.MainView"
              Background="Black">
@@ -14,6 +15,13 @@
     <Design.DataContext>
         <vm:MainViewModel />
     </Design.DataContext>
+
+    <UserControl.Resources>
+        <converters:ConnectionStateToBrushConverter x:Key="ConnectionStateToBrushConverter"
+                                                    Default="DimGray"
+                                                    Online="Green"
+                                                    Offline="DarkRed" />
+    </UserControl.Resources>
 
     <UserControl.Styles>
         <Style Selector="TextBlock.Fn">
@@ -158,19 +166,28 @@
                                     </Grid>
                                 </DataTemplate>
                                 <DataTemplate x:DataType="vm:SshRemoteDeviceInfoNode">
-                                    <Grid RowDefinitions="*,*" ColumnDefinitions="Auto,*,Auto" DataContext="{Binding Info, Mode=OneTime}">
-                                        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Width="1" Margin="0 0 1 0" Background="Green" />
-                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ConnectionName, Mode=OneTime}" />
-                                        <TextBlock Grid.Row="1" Grid.Column="1" Classes="SecondaryDescription">
-                                            <Run x:DataType="m:SshRemoteDeviceInfo" Text="{Binding HostName, Mode=OneTime}" />:<Run x:DataType="m:SshRemoteDeviceInfo" Text="{Binding Port, Mode=OneTime}" />
+                                    <Grid RowDefinitions="*,*" ColumnDefinitions="Auto,*,Auto">
+                                        <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Width="1"
+                                                Margin="0 0 1 0"
+                                                Background="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToBrushConverter}}" />
+                                        <TextBlock Grid.Row="0" Grid.Column="1"
+                                                   Text="{Binding Info.ConnectionName, Mode=OneTime}" />
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Classes="SecondaryDescription"
+                                                   DataContext="{Binding Info, Mode=OneTime}">
+                                            <Run x:DataType="m:SshRemoteDeviceInfo"
+                                                 Text="{Binding HostName, Mode=OneTime}" />
+                                            <Run Text=":" Foreground="DimGray" />
+                                            <Run x:DataType="m:SshRemoteDeviceInfo" Text="{Binding Port, Mode=OneTime}" />
                                         </TextBlock>
-                                        <ToggleButton Grid.Row="0" Grid.Column="2" Classes="FavoriteIcon" IsCheckedChanged="FavoriteButton_IsCheckedChanged" />
+                                        <ToggleButton Grid.Row="0" Grid.Column="2" Classes="FavoriteIcon"
+                                                      IsCheckedChanged="FavoriteButton_IsCheckedChanged" />
                                     </Grid>
                                 </DataTemplate>
                             </TreeView.DataTemplates>
                         </TreeView>
                     </Grid>
-                    <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" DataContext="{Binding #DeviceTreeView.SelectedItem}">
+                    <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+                          DataContext="{Binding #DeviceTreeView.SelectedItem}">
                         <ContentControl Content="{Binding Mode=OneWay}">
                             <ContentControl.DataTemplates>
                                 <DataTemplate x:DataType="vm:CreateNewRemoteDeviceNode">

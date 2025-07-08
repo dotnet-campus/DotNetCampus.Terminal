@@ -1,5 +1,5 @@
-﻿using System.Collections.ObjectModel;
-using Avalonia.Collections;
+﻿using Avalonia.Collections;
+using DotNetCampus.Terminal.Framework.Mvvm;
 using DotNetCampus.Terminal.Modules.Configurations;
 using DotNetCampus.Terminal.Modules.Configurations.Models;
 
@@ -44,14 +44,37 @@ public record RemoteDeviceGroupNode(RemoteDeviceGroup Info) : IRemoteDeviceNode
     public required IReadOnlyList<IRemoteDeviceNode> Children { get; init; }
 }
 
-public record RemoteDeviceInfoNode(IRemoteDeviceInfo Info) : IRemoteDeviceNode
+public abstract record RemoteDeviceInfoNode(IRemoteDeviceInfo Info) : BindableRecord, IRemoteDeviceNode
 {
+    private ConnectionState _connectionState;
+
+    public ConnectionState ConnectionState
+    {
+        get => _connectionState;
+        protected set => SetField(ref _connectionState, value);
+    }
+
     public IReadOnlyList<IRemoteDeviceNode> Children { get; } = [];
+
+    public async Task<bool> TestConnectionAsync()
+    {
+        ConnectionState = ConnectionState.Testing;
+        var state = await OnTestConnectionAsync();
+        ConnectionState = state ? ConnectionState.Online : ConnectionState.Offline;
+        return state;
+    }
+
+    protected abstract Task<bool> OnTestConnectionAsync();
 }
 
 public record SshRemoteDeviceInfoNode : RemoteDeviceInfoNode
 {
     public SshRemoteDeviceInfoNode(SshRemoteDeviceInfo info) : base(info)
     {
+    }
+
+    protected override Task<bool> OnTestConnectionAsync()
+    {
+        var sshInfo = (SshRemoteDeviceInfo)Info;
     }
 }

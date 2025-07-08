@@ -6,6 +6,7 @@
              xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
              xmlns:m="using:DotNetCampus.Terminal.Modules.Configurations.Models"
              xmlns:configurations="clr-namespace:DotNetCampus.Terminal.Modules.Configurations"
+             xmlns:views="clr-namespace:DotNetCampus.Terminal.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="DotNetCampus.Terminal.Views.MainView"
              Background="Black">
@@ -48,6 +49,9 @@
             </Style>
             <Style Selector="^[Level=0]">
                 <Setter Property="Margin" Value="0 1 0 0" />
+                <Style Selector="^:nth-child(1)">
+                    <Setter Property="Margin" Value="0 -1" />
+                </Style>
             </Style>
             <Style Selector="^[Level=1]">
                 <Setter Property="Margin" Value="1 1 0 0" />
@@ -66,33 +70,41 @@
 
                 <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,2*">
                     <Grid Grid.Row="1" Grid.Column="0" RowDefinitions="Auto,Auto,*">
-                        <StackPanel Grid.Row="0" Orientation="Horizontal">
-                            <DropDownButton>
-                                <DropDownButton.Flyout>
-                                    <MenuFlyout Placement="Bottom">
-                                        <MenuItem Header="+ 连接新设备" />
-                                        <MenuItem Header="+ 增加新源" />
-                                    </MenuFlyout>
-                                </DropDownButton.Flyout>
-                                <Button Content="+ 新设备" BorderThickness="0" />
-                            </DropDownButton>
-                        </StackPanel>
-                        <TextBox Grid.Row="1" Margin="0 1 0 0" Background="DarkGray" Watermark="搜索设备…" />
-                        <TreeView Grid.Row="2" BorderThickness="0"
+                        <TextBox Grid.Row="1" Background="Black" Padding="1 0" Watermark="搜索设备…" />
+                        <TreeView x:Name="DeviceTreeView" Grid.Row="2" BorderThickness="0"
                                   ItemsSource="{Binding RemoteDevices, Mode=OneTime}">
+                            <TreeView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel Margin="0 1" />
+                                </ItemsPanelTemplate>
+                            </TreeView.ItemsPanel>
                             <TreeView.ItemTemplate>
                                 <TreeDataTemplate ItemsSource="{Binding Children}">
                                     <ContentControl Content="{Binding}" />
                                 </TreeDataTemplate>
                             </TreeView.ItemTemplate>
                             <TreeView.DataTemplates>
+                                <DataTemplate x:DataType="vm:CreateNewRemoteDeviceNode">
+                                    <Border BorderThickness="1">
+                                        <Border.BorderBrush>
+                                            <console:LineBrush LineStyle="EdgeWide" Brush="Green" />
+                                        </Border.BorderBrush>
+                                        <TextBlock Text="+ 连接到新设备" Padding="1 0"
+                                                   Background="Green" Foreground="White" />
+                                    </Border>
+                                </DataTemplate>
                                 <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
-                                    <Grid ColumnDefinitions="*,Auto">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
                                         <TextBlock Grid.Column="0" Padding="1 0"
-                                                   Background="Gray" Foreground="Black"
+                                                   Foreground="DarkGray"
                                                    Text="{Binding Info.Name, Mode=OneTime}" />
-                                        <TextBlock Grid.Column="1" Padding="1 0"
-                                                   Background="DarkGray" Foreground="Black"
+                                        <Border Grid.Column="1" BorderThickness="0 0 0 1">
+                                            <Border.BorderBrush>
+                                                <console:LineBrush LineStyle="DoubleLine" Brush="DarkGray" />
+                                            </Border.BorderBrush>
+                                        </Border>
+                                        <TextBlock Grid.Column="2" Padding="1 0"
+                                                   Foreground="DarkGray"
                                                    Text="^" />
                                     </Grid>
                                 </DataTemplate>
@@ -113,6 +125,21 @@
                                 </DataTemplate>
                             </TreeView.DataTemplates>
                         </TreeView>
+                    </Grid>
+                    <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" DataContext="{Binding #DeviceTreeView.SelectedItem}">
+                        <ContentControl Content="{Binding Mode=OneWay}">
+                            <ContentControl.DataTemplates>
+                                <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
+                                    <views:RemoteDeviceGroupView />
+                                </DataTemplate>
+                                <DataTemplate x:DataType="vm:SshRemoteDeviceInfoNode">
+                                    <views:SshRemoteDeviceInfoView />
+                                </DataTemplate>
+                                <DataTemplate x:DataType="m:IRemoteDeviceInfo">
+                                    <views:RemoteDeviceInfoView />
+                                </DataTemplate>
+                            </ContentControl.DataTemplates>
+                        </ContentControl>
                     </Grid>
                 </Grid>
 

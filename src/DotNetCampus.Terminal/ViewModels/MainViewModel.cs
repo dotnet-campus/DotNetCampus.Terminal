@@ -21,6 +21,7 @@ public class MainViewModel
 
     private async Task OnReloadDevices()
     {
+        RemoteDevices.Add(new CreateNewRemoteDeviceNode());
         var remoteDevices = await _configurationManager.FetchRemoteDevicesAsync();
         foreach (var group in remoteDevices)
         {

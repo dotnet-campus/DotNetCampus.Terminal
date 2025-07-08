@@ -25,6 +25,11 @@ public interface IRemoteDeviceNode
     }
 }
 
+public record CreateNewRemoteDeviceNode : IRemoteDeviceNode
+{
+    public IReadOnlyList<IRemoteDeviceNode> Children { get; } = [];
+}
+
 public record RemoteDeviceGroupNode(RemoteDeviceGroup Info) : IRemoteDeviceNode
 {
     public required IReadOnlyList<IRemoteDeviceNode> Children { get; init; }

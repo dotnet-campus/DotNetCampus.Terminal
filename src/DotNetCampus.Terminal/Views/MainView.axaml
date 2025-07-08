@@ -116,7 +116,7 @@
 
             <TabItem Header="设备">
 
-                <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,2*">
+                <Grid RowDefinitions="Auto,*" ColumnDefinitions="*,1,2*">
                     <Grid Grid.Row="1" Grid.Column="0" RowDefinitions="Auto,Auto,*">
                         <TextBox Grid.Row="1" Background="Black" Padding="1 0" Watermark="搜索设备…" />
                         <TreeView x:Name="DeviceTreeView" Grid.Row="2" BorderThickness="0"
@@ -175,7 +175,7 @@
                                                    Text="^" />
                                     </Grid>
                                 </DataTemplate>
-                                <DataTemplate x:DataType="vm:SshRemoteDeviceInfoNode">
+                                <DataTemplate x:DataType="vm:SshRemoteDeviceInfoViewModel">
                                     <Grid RowDefinitions="*,*" ColumnDefinitions="Auto,*,Auto">
                                         <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
                                                    Width="1" Margin="0 0 1 0"
@@ -193,7 +193,8 @@
                             </TreeView.DataTemplates>
                         </TreeView>
                     </Grid>
-                    <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
+                    <console:LineSeparator Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" />
+                    <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
                           DataContext="{Binding #DeviceTreeView.SelectedItem}">
                         <ContentControl Content="{Binding Mode=OneWay}">
                             <ContentControl.DataTemplates>
@@ -203,8 +204,8 @@
                                 <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
                                     <views:RemoteDeviceGroupView DataContext="{Binding Info, Mode=OneWay}" />
                                 </DataTemplate>
-                                <DataTemplate x:DataType="vm:SshRemoteDeviceInfoNode">
-                                    <views:SshRemoteDeviceInfoView DataContext="{Binding Info, Mode=OneWay}" />
+                                <DataTemplate x:DataType="vm:SshRemoteDeviceInfoViewModel">
+                                    <views:SshRemoteDeviceInfoView DataContext="{Binding Mode=OneWay}" />
                                 </DataTemplate>
                             </ContentControl.DataTemplates>
                         </ContentControl>

@@ -12,7 +12,7 @@ public record SshRemoteDeviceInfo : IRemoteDeviceInfo
     /// <summary>
     /// 远程设备主机名或 IP 地址。
     /// </summary>
-    public required string HostName { get; init; }
+    public required string Host { get; init; }
 
     /// <summary>
     /// 远程设备端口号。
@@ -23,8 +23,8 @@ public record SshRemoteDeviceInfo : IRemoteDeviceInfo
     /// 远程设备的地址，格式为 "主机名:端口号"。当端口号为 22 时，仅返回主机名。
     /// </summary>
     public string Address => Port is 22
-        ? HostName
-        : $"{HostName}:{Port}";
+        ? Host
+        : $"{Host}:{Port}";
 
     /// <summary>
     /// 远程连接所使用的用户名。

@@ -2,7 +2,6 @@
 using DotNetCampus.Terminal.Framework.Mvvm;
 using DotNetCampus.Terminal.Modules.Configurations;
 using DotNetCampus.Terminal.Modules.Configurations.Models;
-using DotNetCampus.Terminal.Utils;
 using Avalonia.Threading;
 using System.Threading;
 
@@ -24,7 +23,7 @@ public interface IRemoteDeviceNode
     {
         return info switch
         {
-            SshRemoteDeviceInfo sshInfo => new SshRemoteDeviceInfoNode(sshInfo),
+            SshRemoteDeviceInfo sshInfo => new SshRemoteDeviceInfoViewModel(sshInfo),
             _ => new FallbackRemoteDeviceInfoNode(info),
         };
     }
@@ -122,21 +121,6 @@ public abstract record RemoteDeviceInfoNode(IRemoteDeviceInfo Info) : BindableRe
     }
 
     protected abstract Task<bool> OnTestConnectionAsync();
-}
-
-public record SshRemoteDeviceInfoNode : RemoteDeviceInfoNode
-{
-    public SshRemoteDeviceInfoNode(SshRemoteDeviceInfo info) : base(info)
-    {
-    }
-
-    protected override async Task<bool> OnTestConnectionAsync()
-    {
-        var sshInfo = (SshRemoteDeviceInfo)Info;
-
-        // 使用NetworkUtils工具类进行TCP连接测试
-        return await NetworkUtils.TestTcpConnectionAsync(sshInfo.HostName, sshInfo.Port);
-    }
 }
 
 public sealed record FallbackRemoteDeviceInfoNode : RemoteDeviceInfoNode

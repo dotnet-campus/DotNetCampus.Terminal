@@ -4,22 +4,48 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:console="https://github.com/jinek/consolonia"
              xmlns:models="clr-namespace:DotNetCampus.Terminal.Modules.Configurations.Models"
+             xmlns:vm="clr-namespace:DotNetCampus.Terminal.ViewModels"
+             xmlns:converters="clr-namespace:DotNetCampus.Terminal.Views.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="DotNetCampus.Terminal.Views.SshRemoteDeviceInfoView"
-             x:DataType="models:SshRemoteDeviceInfo">
+             x:DataType="vm:SshRemoteDeviceInfoViewModel">
 
     <Design.DataContext>
-        <models:SshRemoteDeviceInfo />
+        <vm:SshRemoteDeviceInfoViewModel />
     </Design.DataContext>
+
+    <UserControl.Resources>
+        <converters:ConnectionStateToBrushConverter x:Key="ConnectionStateToBackgroundConverter"
+                                                    Default="DimGray"
+                                                    Online="Green"
+                                                    Offline="DarkRed" />
+        <converters:ConnectionStateToBrushConverter x:Key="ConnectionStateToForegroundConverter"
+                                                    Default="Green"
+                                                    Testing="Yellow"
+                                                    Offline="Red" />
+        <converters:ConnectionStateToStringConverter x:Key="ConnectionStateToSymbolConverter"
+                                                     Default="○"
+                                                     Testing="?"
+                                                     Online="●"
+                                                     Offline="✗" />
+        <converters:ConnectionStateToStringConverter x:Key="ConnectionStateToStringConverter"
+                                                     Default="未知"
+                                                     Online="在线"
+                                                     Offline="离线" />
+    </UserControl.Resources>
 
     <UserControl.Styles>
         <Style Selector="Button">
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush">
-                <console:LineBrush LineStyle="EdgeWide" Brush="Green" />
-            </Setter>
-            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Background" Value="Green" />
+            <Setter Property="Padding" Value="1 0" />
             <Setter Property="console:ButtonExtensions.Shadow" Value="False" />
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="LightGreen" />
+            </Style>
+            <Style Selector="^:clickdelayed">
+                <Setter Property="Padding" Value="1 0" />
+                <Setter Property="Background" Value="DarkGreen" />
+            </Style>
             <Style Selector="^ /template/ Border#InternalBorder">
                 <Setter Property="Margin" Value="0" />
             </Style>
@@ -27,25 +53,59 @@
                 <Setter Property="Margin" Value="0" />
             </Style>
         </Style>
+        <Style Selector="UniformGrid TextBox">
+            <Setter Property="Margin" Value="0 0 0 1" />
+            <Style Selector="^:nth-last-child(1)">
+                <Setter Property="Margin" Value="0" />
+            </Style>
+        </Style>
     </UserControl.Styles>
 
     <ScrollViewer>
-        <StackPanel>
-            <TextBlock Text="{Binding ConnectionName, Mode=OneWay}" />
-            <Button HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Padding="2 0" Text="连接"
-                           Background="Green" Foreground="White" />
-            </Button>
-            <TextBlock Text="同步的文件夹" />
-            <ListBox>
-                <ListBoxItem>
-                    D:\WIP\Desktop
-                </ListBoxItem>
-                <ListBoxItem>
-                    D:\Codes\GitHub\dotnet-campus\DotNetCampus.Terminal\src\DotNetCampus.Terminal
-                </ListBoxItem>
-            </ListBox>
-        </StackPanel>
+        <Grid Margin="1" RowDefinitions="Auto,Auto,Auto,Auto,*" ColumnDefinitions="*">
+            <!-- 连接名称标题，单独一行加粗加大 -->
+            <TextBox Grid.Row="0" Grid.Column="0" FontWeight="Bold"
+                     TextAlignment="Center" Background="White"
+                     Text="{Binding ConnectionName, Mode=TwoWay}" />
+
+            <!-- 连接状态 -->
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,1">
+                <TextBlock Width="2"
+                           Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToSymbolConverter}, Mode=OneWay}"
+                           Foreground="{Binding ConnectionState, Converter={StaticResource ConnectionStateToForegroundConverter}, Mode=OneWay}" />
+                <TextBlock Width="8"
+                           Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToStringConverter}, Mode=OneWay}" />
+                <Button Content="连接" Margin="1,0" />
+            </StackPanel>
+
+            <!-- 主机地址/端口、用户名/密码分组 -->
+            <UniformGrid Grid.Row="2" Grid.Column="0" Columns="2">
+                <!-- 主机地址+端口分组 -->
+                <Border BorderThickness="1" BorderBrush="DimGray">
+                    <StackPanel Margin="1">
+                        <TextBlock Text="主机地址" />
+                        <TextBox Text="{Binding Host, Mode=TwoWay}" />
+                        <TextBlock Text="端口" />
+                        <TextBox Text="{Binding Port, Mode=TwoWay}" />
+                    </StackPanel>
+                </Border>
+                <!-- 用户名+密码分组 -->
+                <Border BorderThickness="1" BorderBrush="DimGray">
+                    <StackPanel Margin="1">
+                        <TextBlock Text="用户名" />
+                        <TextBox Text="{Binding UserName, Mode=TwoWay}" />
+                        <TextBlock Text="密码" />
+                        <TextBox Text="{Binding Password, Mode=TwoWay}" />
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- 保存与重置 -->
+            <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="2" Margin="0,1">
+                <Button Content="保存" Margin="1,0" />
+                <Button Content="重置" Margin="1,0" />
+            </StackPanel>
+        </Grid>
     </ScrollViewer>
 
 </UserControl>

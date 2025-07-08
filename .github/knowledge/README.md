@@ -5,8 +5,8 @@
 ## 知识文档结构
 
 ### 技术库使用指南
-- [Terminal.Gui-使用指南](Terminal.Gui-使用指南.md) - 控制台UI框架使用指南
-- [Terminal.Gui-常见错误解决方案](Terminal.Gui-常见错误解决方案.md) - Terminal.Gui开发中的问题解决
+- [Consolonia-使用指南](Consolonia-使用指南.md) - 控制台UI框架使用指南（待补充）
+- [Consolonia-常见错误解决方案](Consolonia-常见错误解决方案.md) - Consolonia开发中的问题解决（待补充）
 - [SSH.NET-使用指南](SSH.NET-使用指南.md) - SSH连接库使用指南
 - [Tomlet-使用指南](Tomlet-使用指南.md) - TOML配置文件解析库
 - [DotNet9-新特性](DotNet9-新特性.md) - .NET 9.0在项目中的应用

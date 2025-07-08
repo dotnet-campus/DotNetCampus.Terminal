@@ -4,12 +4,12 @@
 
 ## 项目概述
 
-DotNetCampus Terminal 是一个基于 .NET 9.0 的远程设备连接管理工具，使用 Terminal.Gui 构建控制台UI界面。项目采用多AI协同开发模式。
+DotNetCampus Terminal 是一个基于 .NET 9.0 的远程设备连接管理工具，使用 Consolonia 构建控制台UI界面。项目采用多AI协同开发模式。
 
 ## 技术栈和依赖
 
 - **.NET 9.0** - 目标框架
-- **Terminal.Gui** - 控制台UI框架
+- **Consolonia** - 控制台UI框架
 - **SSH.NET** - SSH连接库
 - **Tomlet** - TOML配置文件解析
 - **C# 12** - 编程语言，启用nullable引用类型
@@ -157,48 +157,18 @@ public record Result<T>
 }
 ```
 
-## Terminal.Gui 使用规范
+## Consolonia 使用规范
 
 ### 1. 视图结构
 ```csharp
-public class DeviceListView : View
-{
-    private readonly IDeviceManager _deviceManager;
-    private ListView _deviceListView = null!;
-    private Button _connectButton = null!;
-
-    public DeviceListView(IDeviceManager deviceManager)
-    {
-        _deviceManager = deviceManager;
-        InitializeComponent();
-    }
-
-    private void InitializeComponent()
-    {
-        // 初始化UI组件
-        _deviceListView = new ListView
-        {
-            X = 0,
-            Y = 0,
-            Width = Dim.Fill(),
-            Height = Dim.Fill() - 2
-        };
-
-        _connectButton = new Button("连接")
-        {
-            X = Pos.Center(),
-            Y = Pos.AnchorEnd(1)
-        };
-
-        Add(_deviceListView, _connectButton);
-    }
-}
+// 待补充：Consolonia 视图结构示例
+// 此部分需要知识学习者重新学习 Consolonia 后填写
 ```
 
 ### 2. 数据绑定
 - 使用Observable模式更新UI
 - 避免直接在UI线程进行耗时操作
-- 合理使用Application.MainLoop.Invoke
+- 合理使用数据绑定机制
 
 ## 测试规范
 
@@ -327,10 +297,9 @@ Closes #123
 
 ## 常见问题解决
 
-### 1. Terminal.Gui 相关
-- 使用 `Application.MainLoop.Invoke` 在UI线程更新界面
-- 正确处理 `KeyEvent` 和鼠标事件
-- 注意内存泄漏，及时释放资源
+### 1. Consolonia 相关
+- 待补充：Consolonia 使用要点和常见问题
+- 此部分需要知识学习者重新学习 Consolonia 后填写
 
 ### 2. SSH.NET 相关
 - 正确处理连接超时和异常
@@ -363,26 +332,22 @@ Closes #123
 
 ## AI 协作开发经验总结
 
-### 1. Terminal.Gui 开发要点
+### 1. Consolonia 开发要点
 
-**重要提示**: 详细的 Terminal.Gui 使用指南请参考 [knowledge/Terminal.Gui-使用指南.md](knowledge/Terminal.Gui-使用指南.md)
+**重要提示**: 详细的 Consolonia 使用指南待知识学习者重新学习后完善
 
 基本要点：
-- **避免** 使用 `using Terminal.Gui;` 全局引用，会导致类型冲突
-- **使用** 具体命名空间：`Terminal.Gui.Views`、`Terminal.Gui.Input` 等
-- v2 中使用 `KeyDown` 事件替代已废弃的 `Accept` 事件
-- 使用 `MenuBarv2` 而不是旧版 `MenuBar`
+- 待补充：Consolonia 基本使用要点
+- 此部分需要知识学习者重新学习 Consolonia 后填写
 
 ### 2. 错误处理策略
 
 #### 求助时机
 以下情况建议立即寻求人类帮助，避免 AI 陷入错误循环：
 - 多个命名空间冲突同时出现
-- API 版本兼容性问题（v1 -> v2）
+- API 版本兼容性问题
 - 复杂的泛型推断失败
 - 平台特定的显示问题
-
-详细的错误解决方案请参考 [knowledge/Terminal.Gui-常见错误解决方案.md](knowledge/Terminal.Gui-常见错误解决方案.md)
 
 ### 3. 协作效率提升
 

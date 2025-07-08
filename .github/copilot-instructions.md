@@ -558,3 +558,25 @@ Closes #123
 - **知识共享**: 技术问题解决后及时更新到相应的知识文档
 
 这些经验总结来自实际开发过程中的问题和解决方案，具体的技术细节请参考 `.github/knowledge/` 目录下的专门文档。
+
+## Consolonia 架构核心要点
+
+### 1. 像素 = 字符原则
+- **核心概念**: 每个像素对应一个控制台字符
+- **布局单位**: 所有尺寸都以字符为单位
+- **设计约束**: 最小可视单位是 1 字符
+
+### 2. 主题系统
+- **推荐主题**: `TurboVisionDarkTheme`
+- **配置位置**: `App.axaml` 中的 `Application.Styles`
+- **可选主题**: MaterialTheme, FluentTheme
+
+### 3. 绘制系统
+- **边框**: 使用 `LineBrush` 配置边框样式
+- **线条**: 仅支持水平或垂直线条
+- **字体**: 支持 FontWeight, FontStyle, TextDecorations，不支持 FontFamily, FontSize
+
+### 4. Unicode 支持
+- **图标**: 使用 Unicode 字符作为图标
+- **装饰**: 利用 Unicode 框线字符绘制复杂边框
+- **兼容性**: 考虑不同终端的字符显示差异

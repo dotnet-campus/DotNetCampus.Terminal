@@ -7,6 +7,8 @@
 - `Padding="1 0"` = 左右各1个字符
 - `Margin="0 1"` = 上下各1个字符
 
+**核心原则**: 像素 = 字符，每个像素对应一个控制台字符
+
 ## 基本设置
 
 ### 1. 项目配置
@@ -16,15 +18,8 @@
 ```
 
 ### 2. 程序入口
-```csharp### 3. 数据节点接口
 ```csharp
-public interface IRemoteDeviceNode
-{
-    IReadOnlyList<IRemoteDeviceNode> Children { get; }
-}
-```
-
-**注意**: 这些 Node 类本质上是专门用于 TreeView 的 ViewModel，不是传统意义上的数据模型。gram.cs
+// Program.cs
 AppBuilder.Configure<App>()
     .UseConsolonia()
     .UseAutoDetectedConsole()
@@ -33,7 +28,17 @@ AppBuilder.Configure<App>()
     .StartWithConsoleLifetime(args);
 ```
 
-### 3. 应用程序配置
+### 3. 数据节点接口
+```csharp
+public interface IRemoteDeviceNode
+{
+    IReadOnlyList<IRemoteDeviceNode> Children { get; }
+}
+```
+
+**注意**: 这些 Node 类本质上是专门用于 TreeView 的 ViewModel，不是传统意义上的数据模型。
+
+### 4. 应用程序配置
 ```xml
 <!-- App.axaml -->
 <Application xmlns="https://github.com/avaloniaui"
@@ -314,6 +319,63 @@ public enum ConnectionState
     Online,
     Offline
 }
+```
+
+### 4. 主题配置
+```xml
+<!-- App.axaml 支持多种主题 -->
+<Application.Styles>
+    <console:TurboVisionDarkTheme />     <!-- 深色主题（推荐） -->
+    <!-- <console:TurboVisionLightTheme /> --> <!-- 浅色主题 -->
+    <!-- <console:MaterialTheme /> -->         <!-- Material 风格 -->
+    <!-- <console:FluentTheme /> -->           <!-- Fluent 风格 -->
+</Application.Styles>
+```
+
+## 绘制系统
+
+### 1. LineBrush 边框样式
+```xml
+<!-- 单线边框 -->
+<Border BorderThickness="1">
+    <Border.BorderBrush>
+        <console:LineBrush LineStyle="SingleLine" Brush="Gray" />
+    </Border.BorderBrush>
+</Border>
+
+<!-- 双线边框 -->
+<Border BorderThickness="1">
+    <Border.BorderBrush>
+        <console:LineBrush LineStyle="DoubleLine" Brush="Yellow" />
+    </Border.BorderBrush>
+</Border>
+
+<!-- 混合边框样式 -->
+<Border BorderThickness="1">
+    <Border.BorderBrush>
+        <console:LineBrush LineStyle="SingleLine DoubleLine SingleLine DoubleLine" Brush="DarkGreen" />
+    </Border.BorderBrush>
+</Border>
+```
+
+### 2. 线条和矩形
+```xml
+<!-- 水平线 -->
+<Line StartPoint="1,0" EndPoint="10,0" Stroke="Yellow" StrokeThickness="1" />
+
+<!-- 矩形 -->
+<Rectangle Width="10" Height="10" Fill="Yellow" Stroke="Red" StrokeThickness="1"/>
+```
+
+### 3. 字体样式
+```xml
+<!-- 支持的字体属性 -->
+<TextBlock Text="Hello World" 
+           Background="Black"
+           Foreground="Yellow" 
+           FontWeight="Bold"
+           TextDecorations="Underline" 
+           FontStyle="Italic"/>
 ```
 
 这个快速参考指南涵盖了 Consolonia 开发的核心要点，便于快速查阅和使用。

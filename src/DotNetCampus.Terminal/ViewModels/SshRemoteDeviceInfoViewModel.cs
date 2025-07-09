@@ -151,6 +151,11 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     public ActionCommand ShowDiagnosticsCommand { get; private set; } = null!;
 
     /// <summary>
+    /// 打开新Shell连接命令
+    /// </summary>
+    public AsyncCommand OpenShellCommand { get; private set; } = null!;
+
+    /// <summary>
     /// 同步组列表
     /// </summary>
     public AvaloniaList<SyncGroupViewModel> SyncGroups { get; } = new();
@@ -265,6 +270,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         EnableAllCommand = new AsyncCommand(OnEnableAllAsync);
         DisableAllCommand = new AsyncCommand(OnDisableAllAsync);
         ShowDiagnosticsCommand = new ActionCommand(OnShowDiagnostics);
+        OpenShellCommand = new AsyncCommand(OnOpenShellAsync);
     }
 
     protected override async Task<bool> OnTestConnectionAsync()
@@ -353,6 +359,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
             // 执行同步
             var result = await _fileSyncService.SyncMultipleDirectoriesAsync(
                 sshInfo, syncConfigs, progress, _syncCancellationTokenSource.Token);
+            await Task.Delay(100);
 
             // 根据同步结果更新状态
             switch (result.OverallResult)
@@ -411,7 +418,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
             // 清理取消令牌
             _syncCancellationTokenSource.Dispose();
             _syncCancellationTokenSource = null;
-            
+
             // 重置全局同步状态
             IsGlobalSyncing = false;
             GlobalSyncProgress = 0;
@@ -480,6 +487,39 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         else
         {
             Log.Info("[UI] 没有可用的诊断信息");
+        }
+    }
+
+    /// <summary>
+    /// 打开新Shell连接
+    /// </summary>
+    private async Task OnOpenShellAsync()
+    {
+        var sshInfo = (SshRemoteDeviceInfo)Info;
+
+        try
+        {
+            Log.Info($"[UI] 尝试在新标签页打开SSH连接: {sshInfo.UserName}@{sshInfo.Host}:{sshInfo.Port}");
+
+            // 使用ShellUtils在新的终端标签页中打开SSH连接
+            var success = await ShellUtils.OpenSshInNewTabAsync(
+                sshInfo.Host,
+                sshInfo.Port,
+                sshInfo.UserName,
+                sshInfo.Password);
+
+            if (success)
+            {
+                Log.Info("[UI] 新SSH连接已在新标签页中打开");
+            }
+            else
+            {
+                Log.Warn("[UI] 无法在新标签页中打开SSH连接，可能需要手动连接");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"[UI] 打开新Shell连接时发生错误: {ex.Message}", ex);
         }
     }
 }

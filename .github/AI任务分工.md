@@ -32,6 +32,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - ✅ 数据绑定和MVVM模式
 - ✅ 同步状态显示和全局进度条
 - ✅ 最近同步时间显示和错误消息绑定
+- ✅ 新Shell标签页打开功能（解决TUI应用中的Shell冲突问题）
 - [ ] 路径省略功能
 - [ ] 交互优化
 

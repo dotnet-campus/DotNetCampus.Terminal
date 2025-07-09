@@ -62,7 +62,7 @@
                                Foreground="{Binding ConnectionState, Converter={StaticResource ConnectionStateToForegroundConverter}, Mode=OneWay}" />
                     <TextBlock Grid.Column="1" Width="8" Margin="4 0 0 0" HorizontalAlignment="Left"
                                Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToStringConverter}, Mode=OneWay}" />
-                    <Button Grid.Column="2" Content="▶️  命令" Width="10" />
+                    <Button Grid.Column="2" Content="连接主机" Width="10" Command="{Binding OpenShellCommand}" />
                 </Grid>
 
                 <!-- 全局同步进度条 -->
@@ -83,8 +83,9 @@
                         <Run Text="{Binding LastSyncTime, Converter={StaticResource DateTimeToStringConverter}, Mode=OneWay}" />
                     </TextBlock>
                     <TextBlock Grid.Row="2" Grid.Column="1" Margin="1 0"
-                               Foreground="Red"
-                               Text="{Binding LastSyncErrorMessage, Mode=OneWay}" />
+                               Foreground="Red" TextWrapping="WrapWithOverflow"
+                               Text="{Binding LastSyncErrorMessage, Mode=OneWay}"
+                               ToolTip.Tip="{Binding DetailedDiagnostics, Mode=OneWay}" />
                 </Grid>
 
                 <!-- 操作按钮 -->

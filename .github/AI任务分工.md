@@ -22,7 +22,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - ✅ 基于SFTP的文件同步
 - ✅ 同步状态监控和UI集成
 - ✅ 远程到本地同步
-- [ ] 增量同步优化
+- ✅ 增量同步优化
 
 ### UI界面设计师 (UI Designer AI)
 - ✅ 主界面布局和SSH设备编辑界面

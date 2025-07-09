@@ -201,6 +201,64 @@ public class SyncGroupConfiguration
 - [ ] 支持配置文件加密存储
 - [ ] 实现团队配置同步
 
+## 安全认证配置升级方案
+
+### SSH密钥认证配置
+为了提高安全性，建议从密码认证迁移到密钥认证。配置文件需要支持以下认证方式：
+
+#### 1. 密钥认证配置（推荐）
+```toml
+[[SshDevices]]
+LocalId = "device_a1b2c3d4e5f67890"
+ConnectionName = "生产服务器"
+Host = "prod.example.com"
+Port = 22
+UserName = "developer"
+
+# 认证配置
+[SshDevices.Auth]
+Type = "Key"  # "Password" | "Key" | "Hybrid"
+PrivateKeyPath = "~/.ssh/dotnetcampus_terminal_device_a1b2c3d4e5f67890"
+PassphraseRequired = false  # 私钥是否有密码短语保护
+
+# 备用认证（可选）
+[SshDevices.Auth.Fallback]
+Type = "Password"
+# Password字段在运行时从安全存储读取，不存储在配置文件中
+```
+
+#### 2. 混合认证配置
+```toml
+[[SshDevices]]
+LocalId = "device_b2c3d4e5f6789a01"
+ConnectionName = "开发服务器"
+Host = "dev.example.com"
+Port = 22
+UserName = "developer"
+
+[SshDevices.Auth]
+Type = "Hybrid"  # 优先尝试密钥，失败时使用密码
+PrivateKeyPath = "~/.ssh/dotnetcampus_terminal_device_b2c3d4e5f6789a01"
+PassphraseRequired = true
+# 密码和密码短语都从安全存储读取
+```
+
+#### 3. 安全存储集成
+```toml
+# 敏感信息存储配置
+[Security]
+PasswordStorage = "WindowsCredentialManager"  # "WindowsCredentialManager" | "UserSecrets" | "None"
+CredentialPrefix = "DotNetCampus.Terminal"
+
+# 不再在配置文件中存储明文密码
+# Password = "123"  # 删除此类配置
+```
+
+### 配置文件权限要求
+- Windows: 文件权限限制为当前用户访问
+- Linux/macOS: `chmod 600 terminal.toml`
+- 可选：支持整个配置文件加密存储
+
 ---
 
 **更新时间**：2025年7月9日  

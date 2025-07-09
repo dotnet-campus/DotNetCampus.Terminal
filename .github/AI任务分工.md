@@ -43,7 +43,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - [ ] 交互优化
 
 ### 其他模块
-- SSH连接专家：✅ SSH密钥认证配置指南，SSH.NET封装和连接管理
+- SSH连接专家：✅ SSH密钥认证配置指南，✅ 多设备连接安全性分析，SSH.NET封装和连接管理
 - 进程管理专家：Shell启动和进程管理  
 - Windows连接专家：Windows远程连接
 - 测试工程师：测试框架和自动化

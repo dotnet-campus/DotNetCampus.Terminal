@@ -48,7 +48,7 @@ public class MultiSyncResult
             return string.Empty;
 
         if (errors.Count == 1)
-            return errors[0].GetUserFriendlyMessage();
+            return errors[0].GetBriefMessage();
 
         var errorsByType = errors.GroupBy(e => e.ErrorType);
         var summaryLines = new List<string>();
@@ -68,10 +68,10 @@ public class MultiSyncResult
                 _ => "其他错误"
             };
 
-            summaryLines.Add($"{typeName}: {count}个");
+            summaryLines.Add($"{typeName} {count}个");
         }
 
-        return string.Join(", ", summaryLines);
+        return string.Join("，", summaryLines);
     }
 
     /// <summary>

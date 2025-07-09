@@ -117,6 +117,25 @@ public record SyncError(
     }
 
     /// <summary>
+    /// 获取简洁的错误描述（用于消息拼接，不包含冒号）
+    /// </summary>
+    public string GetBriefMessage()
+    {
+        return ErrorType switch
+        {
+            SyncErrorType.NetworkError => $"网络连接失败({Message})",
+            SyncErrorType.AuthenticationError => $"身份验证失败({Message})",
+            SyncErrorType.FileSystemError => $"文件系统错误({Message})",
+            SyncErrorType.RemotePathNotFound => $"远程路径不存在({Context ?? "未知路径"})",
+            SyncErrorType.LocalPathError => $"本地路径错误({Context ?? "未知路径"})",
+            SyncErrorType.ConfigurationError => $"配置错误({Message})",
+            SyncErrorType.Cancelled => "操作被取消",
+            SyncErrorType.TransferError => $"文件传输失败({Message})",
+            _ => $"同步失败({Message})"
+        };
+    }
+
+    /// <summary>
     /// 获取详细的诊断信息
     /// </summary>
     public string GetDiagnosticInfo()

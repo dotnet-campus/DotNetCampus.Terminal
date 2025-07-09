@@ -68,6 +68,12 @@
                 <Style Selector="^:nth-child(1)">
                     <Setter Property="Margin" Value="0 -1" />
                 </Style>
+                <Style Selector="^ TextBlock.TreeViewExpander">
+                    <Setter Property="Text" Value="🔼" />
+                </Style>
+                <Style Selector="^[IsExpanded=True] TextBlock.TreeViewExpander">
+                    <Setter Property="Text" Value="🔽" />
+                </Style>
             </Style>
             <Style Selector="^[Level=1]">
                 <Setter Property="Margin" Value="1 1 0 0" />
@@ -82,7 +88,8 @@
                     <Setter Property="Foreground" Value="Orange" />
                     <Setter Property="Content" Value="☆" />
                     <Style Selector="^:checked">
-                        <Setter Property="Content" Value="★" />
+                        <Setter Property="Padding" Value="0 0 1 0" />
+                        <Setter Property="Content" Value="⭐" />
                     </Style>
                     <Style Selector="^:checked /template/ ContentPresenter">
                         <Setter Property="Background" Value="Transparent" />
@@ -108,13 +115,6 @@
                 <Setter Property="Foreground" Value="White" />
             </Style>
         </Style>
-        <Style Selector="Border.GroupBox">
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="DimGray" />
-            <Style Selector="^ TextBlock.GroupBoxHeader">
-                <Setter Property="Margin" Value="1 -1 1 1" />
-            </Style>
-        </Style>
     </UserControl.Styles>
 
     <Grid RowDefinitions="Auto,*,Auto">
@@ -124,10 +124,15 @@
         </Border>
 
         <Grid Grid.Row="1" RowDefinitions="Auto,*" ColumnDefinitions="*,1,2*">
-            <Border Grid.Row="1" Grid.Column="0" Classes="GroupBox" BorderThickness="1" BorderBrush="DimGray">
+            <Border Grid.Row="1" Grid.Column="0" Classes="GroupBox">
                 <Grid RowDefinitions="Auto,Auto,Auto,*">
                     <TextBlock Grid.Row="0" Classes="GroupBoxHeader" Text="远程设备列表" />
-                    <TextBox Grid.Row="1" Background="Black" Padding="1 0" Watermark="搜索设备…" />
+                    <Border Grid.Row="1" BorderThickness="1">
+                        <Border.BorderBrush>
+                            <console:LineBrush LineStyle="Edge" Brush="DimGray" />
+                        </Border.BorderBrush>
+                        <TextBox Background="Black" Padding="1 0" Watermark="搜索设备…" />
+                    </Border>
                     <TreeView x:Name="DeviceTreeView" Grid.Row="2" BorderThickness="0"
                               ItemsSource="{Binding RemoteDevices, Mode=OneTime}"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -144,47 +149,40 @@
                         </TreeView.ItemTemplate>
                         <TreeView.DataTemplates>
                             <DataTemplate x:DataType="vm:CreateNewRemoteDeviceNode">
-                                <Border Background="DimGray">
-                                    <TextBlock Text="+ 连接到新设备" Padding="1 0"
-                                               Background="DimGray" Foreground="White" />
+                                <Border Background="Transparent">
+                                    <TextBlock Text="🔗 连接到新设备" Padding="1 0" Foreground="DarkGray" />
                                 </Border>
                             </DataTemplate>
                             <DataTemplate x:DataType="vm:FavoriteDeviceGroupNode">
-                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Grid ColumnDefinitions="Auto,*,Auto" Background="Transparent">
                                     <TextBlock Grid.Column="0" Padding="1 0"
                                                Foreground="DarkGray"
-                                               Text="收藏" />
+                                               Text="⭐ 收藏" />
                                     <Border Grid.Column="1" BorderThickness="0 0 0 1">
                                         <Border.BorderBrush>
                                             <console:LineBrush LineStyle="DoubleLine" Brush="DarkGray" />
                                         </Border.BorderBrush>
                                     </Border>
-                                    <TextBlock Grid.Column="2" Padding="1 0"
-                                               Foreground="DarkGray"
-                                               Text="^" />
+                                    <TextBlock Grid.Column="2" Padding="1 0" Classes="TreeViewExpander"
+                                               Foreground="DarkGray" />
                                 </Grid>
                             </DataTemplate>
                             <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
-                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Grid ColumnDefinitions="Auto,*,Auto" Background="Transparent">
                                     <TextBlock Grid.Column="0" Padding="1 0" Foreground="DimGray">
+                                        <Run Text="📁" />
                                         <Run Foreground="DarkGray"
                                              Text="{Binding Info.Name, Mode=OneTime}" />
                                         <Run Text="(" /><Run Text="{Binding OnlineCount, Mode=OneWay}" />
                                         <Run Text="/" />
                                         <Run Text="{Binding Children.Count, Mode=OneWay}" /><Run Text=")" />
                                     </TextBlock>
-                                    <Border Grid.Column="1" BorderThickness="0 0 0 1">
-                                        <Border.BorderBrush>
-                                            <console:LineBrush LineStyle="DoubleLine" Brush="DarkGray" />
-                                        </Border.BorderBrush>
-                                    </Border>
-                                    <TextBlock Grid.Column="2" Padding="1 0"
-                                               Foreground="DarkGray"
-                                               Text="^" />
+                                    <TextBlock Grid.Column="2" Padding="1 0" Classes="TreeViewExpander"
+                                               Foreground="DarkGray" />
                                 </Grid>
                             </DataTemplate>
                             <DataTemplate x:DataType="vm:SshRemoteDeviceInfoViewModel">
-                                <Grid RowDefinitions="*,*" ColumnDefinitions="Auto,*,Auto">
+                                <Grid RowDefinitions="*,*" ColumnDefinitions="Auto,*,Auto" Background="Transparent">
                                     <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
                                                Width="1" Margin="0 0 1 0"
                                                Background="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToBackgroundConverter}}"
@@ -202,8 +200,7 @@
                     </TreeView>
                 </Grid>
             </Border>
-            <console:LineSeparator Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Brush="DimGray" />
-            <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
+            <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Margin="0 -1 0 0"
                   DataContext="{Binding #DeviceTreeView.SelectedItem}">
                 <ContentControl Content="{Binding Mode=OneWay}">
                     <ContentControl.DataTemplates>

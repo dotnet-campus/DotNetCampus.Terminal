@@ -3,7 +3,37 @@
              xmlns:console="https://github.com/jinek/consolonia"
              x:Class="DotNetCampus.Terminal.App"
              RequestedThemeVariant="Dark">
+
     <Application.Styles>
         <console:TurboVisionDarkTheme />
+        <Style Selector="Border.GroupBox">
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="DimGray" />
+            <Style Selector="^ TextBlock.GroupBoxHeader">
+                <Setter Property="Margin" Value="1 -1 1 0" />
+            </Style>
+            <Style Selector="^ TextBox.GroupBoxHeader">
+                <Setter Property="Margin" Value="1 -1 1 0" />
+            </Style>
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="Background" Value="Green" />
+            <Setter Property="Padding" Value="1 0" />
+            <Setter Property="console:ButtonExtensions.Shadow" Value="False" />
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="LightGreen" />
+            </Style>
+            <Style Selector="^:clickdelayed">
+                <Setter Property="Padding" Value="1 0" />
+                <Setter Property="Background" Value="DarkGreen" />
+            </Style>
+            <Style Selector="^ /template/ Border#InternalBorder">
+                <Setter Property="Margin" Value="0" />
+            </Style>
+            <Style Selector="^:clickdelayed /template/ Border#InternalBorder">
+                <Setter Property="Margin" Value="0" />
+            </Style>
+        </Style>
     </Application.Styles>
+
 </Application>

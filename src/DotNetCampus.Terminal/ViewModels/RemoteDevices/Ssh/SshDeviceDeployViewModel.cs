@@ -1,5 +1,8 @@
 using DotNetCampus.Terminal.Framework.Input.Commands;
 using DotNetCampus.Terminal.Framework.Mvvm;
+using DotNetCampus.Terminal.Modules.Configurations.Models;
+using DotNetCampus.Terminal.Modules.SshManagement;
+using DotNetCampus.Logging;
 
 namespace DotNetCampus.Terminal.ViewModels.RemoteDevices.Ssh;
 
@@ -8,6 +11,9 @@ namespace DotNetCampus.Terminal.ViewModels.RemoteDevices.Ssh;
 /// </summary>
 public partial record SshDeviceDeployViewModel : TrackableBindableRecord
 {
+    private readonly Func<SshRemoteDeviceInfo> _getDeviceInfo;
+    private readonly SshKeyDeploymentService _deploymentService;
+    
     private bool _isDeploying;
     private string _currentStep = string.Empty;
     private int _progressPercent;
@@ -19,8 +25,11 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
     private bool _disablePasswordAuth;
     private string _passphrase = string.Empty;
 
-    public SshDeviceDeployViewModel()
+    public SshDeviceDeployViewModel(Func<SshRemoteDeviceInfo> getDeviceInfo)
     {
+        _getDeviceInfo = getDeviceInfo ?? throw new ArgumentNullException(nameof(getDeviceInfo));
+        _deploymentService = new SshKeyDeploymentService();
+        
         // 初始化命令
         DeployKeyCommand = new AsyncCommand(DeployKeyAsync);
         RetryDeployCommand = new AsyncCommand(DeployKeyAsync);
@@ -197,22 +206,86 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
             return;
         }
 
+        var deviceInfo = _getDeviceInfo();
+        if (string.IsNullOrEmpty(deviceInfo.Password))
+        {
+            ErrorMessage = "设备密码为空，无法进行密钥部署";
+            HasError = true;
+            return;
+        }
+
         IsDeploying = true;
         HasError = false;
         ErrorMessage = string.Empty;
         CanRetry = false;
         CanRollback = false;
+        ProgressPercent = 0;
 
         try
         {
-            // TODO: 实现实际的部署逻辑
-            await SimulateDeploymentProcess();
+            Log.Info($"[SSH] 开始为设备 {deviceInfo.ConnectionName} 部署SSH密钥");
+
+            // 创建进度回调
+            var progress = new Progress<(string step, int percent)>(OnProgressUpdated);
+
+            // 执行密钥部署
+            var result = await _deploymentService.DeployKeyToDeviceAsync(
+                deviceInfo,
+                deviceInfo.Password,
+                string.IsNullOrEmpty(Passphrase) ? null : Passphrase,
+                DisablePasswordAuth,
+                progress);
+
+            // 处理结果
+            if (result.Success)
+            {
+                CurrentStep = "部署完成";
+                ProgressPercent = 100;
+                CanRollback = true;
+                
+                Log.Info($"[SSH] 设备 {deviceInfo.ConnectionName} 的SSH密钥部署成功");
+                
+                // 显示成功的详细步骤
+                foreach (var step in result.Steps.TakeLast(3)) // 显示最后3个重要步骤
+                {
+                    Log.Info($"[SSH] {step}");
+                }
+            }
+            else
+            {
+                // 处理失败情况
+                if (result.RequiresPassphrase && string.IsNullOrEmpty(Passphrase))
+                {
+                    CurrentStep = "需要密码短语";
+                    ErrorMessage = "私钥需要密码短语，请在上方输入密码短语后重试";
+                    HasError = true;
+                    CanRetry = true;
+                }
+                else
+                {
+                    CurrentStep = "部署失败";
+                    ErrorMessage = result.ErrorMessage ?? "未知错误";
+                    HasError = true;
+                    CanRetry = true;
+                }
+
+                Log.Error($"[SSH] 设备 {deviceInfo.ConnectionName} 的SSH密钥部署失败: {result.ErrorMessage}");
+                
+                // 记录详细的错误步骤
+                foreach (var step in result.Steps)
+                {
+                    Log.Info($"[SSH] {step}");
+                }
+            }
         }
         catch (Exception ex)
         {
             HasError = true;
             ErrorMessage = ex.Message;
             CanRetry = true;
+            CurrentStep = "部署异常";
+            
+            Log.Error($"[SSH] 密钥部署过程中发生异常: {ex.Message}", ex);
         }
         finally
         {
@@ -221,31 +294,13 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
     }
 
     /// <summary>
-    /// 模拟部署过程（临时实现）
+    /// 进度更新回调
     /// </summary>
-    private async Task SimulateDeploymentProcess()
+    /// <param name="update">进度更新信息</param>
+    private void OnProgressUpdated((string step, int percent) update)
     {
-        var steps = new[]
-        {
-            "检查现有SSH密钥...",
-            "生成新的SSH密钥对...",
-            "连接到远程设备...",
-            "部署公钥到远程设备...",
-            "验证密钥认证...",
-            "更新配置文件..."
-        };
-
-        for (int i = 0; i < steps.Length; i++)
-        {
-            CurrentStep = steps[i];
-            ProgressPercent = (i + 1) * 100 / steps.Length;
-
-            // 模拟异步操作
-            await Task.Delay(1000);
-        }
-
-        CurrentStep = "部署完成";
-        CanRollback = true;
+        CurrentStep = update.step;
+        ProgressPercent = update.percent;
     }
 
     /// <summary>
@@ -253,13 +308,48 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
     /// </summary>
     private async Task RollbackAsync()
     {
+        var deviceInfo = _getDeviceInfo();
+        if (string.IsNullOrEmpty(deviceInfo.Password))
+        {
+            ErrorMessage = "设备密码为空，无法进行回滚操作";
+            HasError = true;
+            return;
+        }
+
         CurrentStep = "正在回滚操作...";
+        ProgressPercent = 0;
 
-        // TODO: 实现回滚逻辑
-        await Task.Delay(1000);
+        try
+        {
+            Log.Info($"[SSH] 开始回滚设备 {deviceInfo.ConnectionName} 的SSH密钥部署");
 
-        CurrentStep = "已回滚";
-        CanRollback = false;
+            var result = await _deploymentService.RollbackKeyDeploymentAsync(deviceInfo, deviceInfo.Password);
+
+            if (result.Success)
+            {
+                CurrentStep = "回滚完成";
+                ProgressPercent = 100;
+                CanRollback = false;
+                
+                Log.Info($"[SSH] 设备 {deviceInfo.ConnectionName} 的SSH密钥回滚成功");
+            }
+            else
+            {
+                CurrentStep = "回滚失败";
+                ErrorMessage = result.ErrorMessage ?? "回滚操作失败";
+                HasError = true;
+                
+                Log.Error($"[SSH] 设备 {deviceInfo.ConnectionName} 的SSH密钥回滚失败: {result.ErrorMessage}");
+            }
+        }
+        catch (Exception ex)
+        {
+            CurrentStep = "回滚异常";
+            ErrorMessage = ex.Message;
+            HasError = true;
+            
+            Log.Error($"[SSH] 回滚过程中发生异常: {ex.Message}", ex);
+        }
     }
 
     /// <summary>

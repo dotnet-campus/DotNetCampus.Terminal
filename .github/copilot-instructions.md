@@ -27,6 +27,13 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 - 使用依赖注入
 - 添加 XML 文档注释
 
+### 常见错误提醒 ⚠️
+**以下是AI同事经常犯的错误，必须避免**：
+1. **日志命名空间**：使用 `DotNetCampus.Logging` 而不是 `DotNetCampus.Logger`（前者是命名空间，后者是库名称）
+2. **日志方法名**：使用 `Log.Warn` 而不是 `Log.Warning`
+3. **编译文件占用**：`dotnet build` 提示文件被占用时，这是正常现象（VS Code的bug），不要报错
+4. **SSH.NET引用**：确保添加 `using Renci.SshNet;`
+
 ### 兼容性原则
 **重要：本项目不需要考虑兼容性问题**
 - 不使用 `[Obsolete]` 标记
@@ -66,6 +73,7 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 - 使用静态 `Log` 类，无需依赖注入
 - 日志格式：`Log.Info("[标签] 消息内容")`
 - 标签约定：`[FileSync]` `[SSH]` `[UI]` `[Config]` `[Network]` `[System]`
+- **常用方法**：`Log.Info()`, `Log.Warn()`, `Log.Error()`
 
 ## 协作要点
 
@@ -83,8 +91,9 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 - API版本兼容性问题
 - 复杂的泛型推断失败
 - 平台特定显示问题
-- **编译文件占用问题**：当 dotnet build 提示文件被占用时
 - **反复犯错**：如果发现自己在重复犯同样的错误
+
+**注意**：`dotnet build` 文件占用问题是VS Code的已知bug，属于正常现象，无需求助。
 
 ## 技术文档索引
 

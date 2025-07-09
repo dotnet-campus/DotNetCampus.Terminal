@@ -80,7 +80,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         var fileSyncService = Container.Current.EnsureGet<IFileSyncService>();
         Sync = new SshDeviceSyncViewModel(fileSyncService);
         Commands = new SshDeviceCommandsViewModel(this, GetCurrentDeviceInfo);
-        Deploy = new SshDeviceDeployViewModel();
+        Deploy = new SshDeviceDeployViewModel(GetCurrentDeviceInfo);
 
         // 从配置中加载同步组数据
         Sync.InitializeSyncGroups(info.SyncGroups);

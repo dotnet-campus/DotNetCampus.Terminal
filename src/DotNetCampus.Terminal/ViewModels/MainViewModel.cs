@@ -14,6 +14,7 @@ public class MainViewModel
     {
         _serviceProvider = serviceProvider;
         _configurationManager = serviceProvider.EnsureGet<ConfigurationManager>();
+        StatusBarViewModel = serviceProvider.EnsureGet<StatusBarViewModel>();
 
         RemoteDevices.Add(new CreateNewRemoteDeviceNode());
         RemoteDevices.Add(new FavoriteDeviceGroupNode());
@@ -22,6 +23,8 @@ public class MainViewModel
     }
 
     public AsyncCommand ReloadDevicesCommand { get; }
+
+    public StatusBarViewModel StatusBarViewModel { get; }
 
     public AvaloniaList<IRemoteDeviceNode> RemoteDevices { get; } = [];
 

@@ -5,6 +5,64 @@
 
 ## ❗ 致命错误避坑
 
+### 文件位置错误导致编译失败
+**这是UI设计师容易犯的文件组织错误！**
+
+#### ❌ 错误：文件创建在错误位置
+```
+项目根目录/
+├── Views/                              ← 错误位置！
+│   ├── StatusTipView.axaml
+│   ├── StatusTipView.axaml.cs
+│   └── StatusBarView.axaml.cs
+└── src/
+    └── DotNetCampus.Terminal/
+        └── Views/                      ← 正确位置
+            ├── MainView.axaml
+            └── MainView.axaml.cs
+```
+
+**典型编译错误**：
+```
+CSC : error AXN0001: Avalonia x:Name generator was unable to generate names for type 'DotNetCampus.Terminal.Views.StatusTipView'. 
+The type 'DotNetCampus.Terminal.Views.StatusTipView' does not exist in the assembly.
+```
+
+#### ✅ 正确：文件必须在项目目录内
+```
+src/
+└── DotNetCampus.Terminal/
+    ├── Views/                          ← 正确位置
+    │   ├── StatusTipView.axaml
+    │   ├── StatusTipView.axaml.cs
+    │   ├── StatusBarView.axaml
+    │   └── StatusBarView.axaml.cs
+    └── ViewModels/
+        ├── StatusTipViewModel.cs
+        └── StatusBarViewModel.cs
+```
+
+#### 错误原因分析
+1. **AXAML文件声明了`x:Class`**：`x:Class="DotNetCampus.Terminal.Views.StatusTipView"`
+2. **但C#文件不在项目中**：创建在了项目外部的错误位置
+3. **Avalonia无法生成代码**：x:Name生成器找不到对应的类型
+
+#### 修复方法
+```powershell
+# 删除错误位置的文件
+Remove-Item "Views\StatusTipView.axaml.cs" -Force
+Remove-Item "Views\StatusBarView.axaml" -Force
+Remove-Item "Views\StatusBarView.axaml.cs" -Force
+Remove-Item "Views" -Recurse -Force
+
+# 确保文件在正确位置：src/DotNetCampus.Terminal/Views/
+```
+
+**记忆要点**：
+- **AXAML和其C#代码隐藏文件必须在同一个项目中**
+- **使用绝对路径创建文件时要特别小心路径是否正确**
+- **遇到AXN0001错误时，首先检查文件位置是否正确**
+
 ### 字符级测量单位错误
 **这是UI设计师最容易犯的致命错误！**
 

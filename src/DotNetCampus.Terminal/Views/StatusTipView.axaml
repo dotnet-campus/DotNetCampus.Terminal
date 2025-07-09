@@ -1,0 +1,86 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:console="https://github.com/jinek/consolonia"
+             xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="30"
+             x:Class="DotNetCampus.Terminal.Views.StatusTipView">
+
+    <Design.DataContext>
+        <vm:StatusTipViewModel />
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <!-- 正常状态样式 -->
+        <Style Selector="Border.StatusTip">
+            <Setter Property="Background" Value="Black" />
+            <Setter Property="BorderBrush" Value="Gray" />
+            <Setter Property="BorderThickness" Value="0 1 0 0" />
+            <Setter Property="Padding" Value="1 0" />
+        </Style>
+        
+        <!-- 错误状态样式 -->
+        <Style Selector="Border.StatusTip.Error">
+            <Setter Property="Background" Value="Red" />
+            <Setter Property="BorderBrush" Value="Red" />
+        </Style>
+        
+        <!-- 警告状态样式 -->
+        <Style Selector="Border.StatusTip.Warning">
+            <Setter Property="Background" Value="Yellow" />
+            <Setter Property="BorderBrush" Value="Yellow" />
+        </Style>
+        
+        <!-- 提示文本样式 -->
+        <Style Selector="TextBlock.StatusText">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        
+        <!-- 错误状态文本样式 -->
+        <Style Selector="Border.Error TextBlock.StatusText">
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        
+        <!-- 警告状态文本样式 -->
+        <Style Selector="Border.Warning TextBlock.StatusText">
+            <Setter Property="Foreground" Value="Black" />
+        </Style>
+    </UserControl.Styles>
+
+    <Border Classes="StatusTip"
+            Classes.Error="{Binding IsError}"
+            Classes.Warning="{Binding IsWarning}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            
+            <!-- 主要提示信息 -->
+            <TextBlock Grid.Column="0" 
+                       Text="{Binding CurrentTip}" 
+                       Classes="StatusText" />
+            
+            <!-- 右侧状态指示器 -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="1">
+                <!-- 错误指示器 -->
+                <TextBlock Text="●" 
+                           Foreground="Red" 
+                           IsVisible="{Binding IsError}" />
+                
+                <!-- 警告指示器 -->
+                <TextBlock Text="▲" 
+                           Foreground="Yellow" 
+                           IsVisible="{Binding IsWarning}" />
+                
+                <!-- 正常状态指示器 -->
+                <TextBlock Text="●" 
+                           Foreground="Green" 
+                           IsVisible="{Binding !IsError}" />
+            </StackPanel>
+        </Grid>
+    </Border>
+
+</UserControl>

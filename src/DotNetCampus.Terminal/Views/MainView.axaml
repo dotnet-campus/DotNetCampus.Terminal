@@ -107,7 +107,7 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid RowDefinitions="Auto,*,Auto">
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
 
         <Border Grid.Row="0" Margin="0 0 0 1">
             <TextBlock Text="🎲 DotNetCampus Terminal" Foreground="DarkGray" />
@@ -213,7 +213,11 @@
             </Grid>
         </Grid>
 
-        <views:StatusBarView Grid.Row="2" />
+        <!-- 状态提示栏 -->
+        <views:StatusTipView Grid.Row="2" DataContext="{Binding StatusBarViewModel.StatusTip}" />
+        
+        <!-- 功能键状态栏 -->
+        <views:StatusBarView Grid.Row="3" />
 
     </Grid>
 </UserControl>

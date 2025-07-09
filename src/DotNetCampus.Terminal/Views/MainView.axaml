@@ -214,10 +214,10 @@
         </Grid>
 
         <!-- 状态提示栏 -->
-        <views:StatusTipView Grid.Row="2" DataContext="{Binding StatusBar.StatusTip}" />
+        <views:StatusTipView Grid.Row="2" DataContext="{Binding StatusTip}" />
 
         <!-- 功能键状态栏 -->
-        <views:StatusBarView Grid.Row="3" />
+        <views:StatusBarView Grid.Row="3" DataContext="{Binding StatusBar}" />
 
     </Grid>
 </UserControl>

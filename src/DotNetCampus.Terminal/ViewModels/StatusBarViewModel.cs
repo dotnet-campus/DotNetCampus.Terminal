@@ -99,8 +99,25 @@ public record StatusBarViewModel : BindableRecord
     private void OnShowHelp()
     {
         Log.Info("[StatusBar] F1 - 显示帮助");
-        StatusTip.ShowTip("F1 - 显示帮助文档和操作指南 (功能开发中)");
-        // TODO: 实现帮助界面或帮助文档显示
+        StatusTip.ShowTip("F1 - 正在打开GitHub仓库...");
+        
+        try
+        {
+            // 在默认浏览器中打开GitHub仓库
+            var url = "https://github.com/dotnet-campus/dotnetCampus.Terminal";
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
+            
+            StatusTip.ShowTip("F1 - 已在浏览器中打开GitHub仓库");
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"[StatusBar] 打开GitHub仓库失败: {ex.Message}");
+            StatusTip.ShowError("打开GitHub仓库失败，请手动访问: https://github.com/dotnet-campus/dotnetCampus.Terminal");
+        }
     }
 
     private void OnConnect()
@@ -171,6 +188,26 @@ public record StatusBarViewModel : BindableRecord
         StatusTip.ShowTip("F10 - 正在安全退出应用程序...");
         // TODO: 安全退出应用程序
         Environment.Exit(0);
+    }
+
+    #endregion
+
+    #region 鼠标悬停处理
+
+    /// <summary>
+    /// 处理功能键按钮的鼠标悬停事件
+    /// </summary>
+    public void OnFunctionKeyHover(string functionKey, string description, bool isEnabled = true)
+    {
+        StatusTip.ShowFunctionKeyTip(functionKey, description, isEnabled);
+    }
+
+    /// <summary>
+    /// 处理鼠标离开功能键按钮事件
+    /// </summary>
+    public void OnFunctionKeyLeave()
+    {
+        StatusTip.Reset();
     }
 
     #endregion

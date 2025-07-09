@@ -19,6 +19,8 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     private string _userName;
     private string? _password;
 
+    public IServiceProvider ServiceProvider { get; }
+
     // 组合的子ViewModels - 使用简洁的属性名
     public SshDeviceSyncViewModel Sync { get; }
     public SshDeviceCommandsViewModel Commands { get; }
@@ -32,7 +34,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     }
 
     [Obsolete("仅供设计器使用", true)]
-    public SshRemoteDeviceInfoViewModel() : this(new SshRemoteDeviceInfo
+    public SshRemoteDeviceInfoViewModel() : this(null!, new SshRemoteDeviceInfo
     {
         LocalId = GenerateLocalId(),
         RemoteId = null,
@@ -62,8 +64,9 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     {
     }
 
-    public SshRemoteDeviceInfoViewModel(SshRemoteDeviceInfo info) : base(info)
+    public SshRemoteDeviceInfoViewModel(IServiceProvider serviceProvider, SshRemoteDeviceInfo info) : base(info)
     {
+        ServiceProvider = serviceProvider;
         _localId = info.LocalId;
         _remoteId = info.RemoteId;
         _connectionName = info.ConnectionName;
@@ -156,7 +159,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     {
         var currentInfo = GetCurrentDeviceInfo();
         Info = currentInfo;
-        
+
         // 重置变更跟踪状态
         ResetChangeTracking();
     }

@@ -26,14 +26,14 @@ public partial class App : Application
         {
             singleLifetime.MainView = new MainView
             {
-                DataContext = new MainViewModel(_serviceScope),
+                DataContext = _serviceScope.EnsureGet<MainViewModel>(),
             };
         }
         else if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
         {
             desktopLifetime.MainWindow = new MainWindow
             {
-                DataContext = new MainViewModel(_serviceScope),
+                DataContext = _serviceScope.EnsureGet<MainViewModel>(),
             };
             desktopLifetime.Exit += (sender, args) => _serviceScope.Dispose();
         }

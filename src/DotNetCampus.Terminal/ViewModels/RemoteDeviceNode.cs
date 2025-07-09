@@ -11,19 +11,19 @@ public interface IRemoteDeviceNode
 {
     IReadOnlyList<IRemoteDeviceNode> Children { get; }
 
-    public static RemoteDeviceGroupNode From(RemoteDeviceGroup group)
+    public static RemoteDeviceGroupNode From(IServiceProvider serviceProvider, RemoteDeviceGroup group)
     {
         return new RemoteDeviceGroupNode(group)
         {
-            Children = group.Devices.Select(From).ToList(),
+            Children = group.Devices.Select(x => From(serviceProvider, x)).ToList(),
         };
     }
 
-    public static RemoteDeviceInfoNode From(IRemoteDeviceInfo info)
+    public static RemoteDeviceInfoNode From(IServiceProvider serviceProvider, IRemoteDeviceInfo info)
     {
         return info switch
         {
-            SshRemoteDeviceInfo sshInfo => new SshRemoteDeviceInfoViewModel(sshInfo),
+            SshRemoteDeviceInfo sshInfo => new SshRemoteDeviceInfoViewModel(serviceProvider, sshInfo),
             _ => new FallbackRemoteDeviceInfoNode(info),
         };
     }

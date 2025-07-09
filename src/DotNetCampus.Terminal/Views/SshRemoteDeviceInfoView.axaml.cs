@@ -17,7 +17,11 @@ public partial class SshRemoteDeviceInfoView : UserControl
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
-        var vm = (SshRemoteDeviceInfoViewModel)DataContext!;
+        if (DataContext is not SshRemoteDeviceInfoViewModel vm)
+        {
+            return;
+        }
+
         vm.Commands.DeleteDeviceCommand.ProvideInteraction(new DeleteDeviceInteraction
         {
             ConfirmDeleteAsync = ConfirmDeleteAsync,

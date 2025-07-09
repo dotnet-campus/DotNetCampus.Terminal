@@ -231,7 +231,11 @@ public record SshDeviceCommandsViewModel : TrackableBindableRecord
             // 删除设备配置
             await configurationManager.RemoveRemoteDeviceAsync(deviceInfo.ConnectionName);
 
-            Log.Info($"[UI] 设备删除成功: {deviceInfo.ConnectionName}");
+            // 通知主界面重新加载设备列表
+            var mainViewModel = _owner.ServiceProvider.EnsureGet<MainViewModel>();
+            await mainViewModel.ReloadDevicesCommand.ExecuteAsync();
+
+            Log.Info($"[UI] 设备删除成功，已更新设备列表: {deviceInfo.ConnectionName}");
         }
         catch (Exception ex)
         {

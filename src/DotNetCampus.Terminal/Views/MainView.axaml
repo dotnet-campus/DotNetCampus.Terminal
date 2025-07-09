@@ -32,12 +32,6 @@
     </UserControl.Resources>
 
     <UserControl.Styles>
-        <Style Selector="TextBlock.Fn">
-            <Setter Property="Background" Value="White" />
-            <Setter Property="Foreground" Value="Black" />
-            <Setter Property="Padding" Value="1 0" />
-            <Setter Property="Margin" Value="0 0 1 0" />
-        </Style>
         <Style Selector="Button">
             <Setter Property="console:ButtonExtensions.Shadow" Value="False" />
             <Style Selector="^ /template/ Border#InternalBorder">
@@ -46,10 +40,6 @@
             <Style Selector="^:clickdelayed /template/ Border#InternalBorder">
                 <Setter Property="Margin" Value="0" />
             </Style>
-        </Style>
-        <Style Selector="#StatusBarPanel>Button">
-            <Setter Property="Padding" Value="0 0 1 0" />
-            <Setter Property="Margin" Value="0 0 1 0" />
         </Style>
         <Style Selector="TabItem">
             <Setter Property="MinWidth" Value="16" />
@@ -223,32 +213,7 @@
             </Grid>
         </Grid>
 
-        <StackPanel x:Name="StatusBarPanel" Grid.Row="2" Orientation="Horizontal">
-            <Button>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="F1" Classes="Fn" />
-                    <TextBlock Text="帮助" />
-                </StackPanel>
-            </Button>
-            <Button>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="F2" Classes="Fn" />
-                    <TextBlock Text="连接" />
-                </StackPanel>
-            </Button>
-            <Button>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="F3" Classes="Fn" />
-                    <TextBlock Text="同步" />
-                </StackPanel>
-            </Button>
-            <Button>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="F10" Classes="Fn" />
-                    <TextBlock Text="退出" />
-                </StackPanel>
-            </Button>
-        </StackPanel>
+        <views:StatusBarView Grid.Row="2" />
 
     </Grid>
 </UserControl>

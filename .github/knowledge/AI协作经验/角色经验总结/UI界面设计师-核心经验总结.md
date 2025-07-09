@@ -224,6 +224,62 @@ SSH密钥部署等安全敏感操作的UI设计要点：
 </Border>
 ```
 
+## 📋 最新重构经验 (2025-07-09)
+
+### 全局功能键状态栏重构成功案例
+
+#### 重构前问题
+- 功能键代码直接嵌入在MainView.axaml中，难以维护
+- 没有统一的命令绑定，功能键点击无实际响应
+- 功能键设计不够完整，缺少常用的TUI功能
+
+#### 重构后解决方案
+1. **创建专用状态栏控件**：`StatusBarView.axaml` + `StatusBarViewModel.cs`
+2. **完整的功能键设计**：F1-F10 覆盖所有常用TUI操作
+3. **统一的命令绑定**：每个功能键都有对应的命令实现
+4. **模块化设计**：状态栏可以独立维护和测试
+
+#### TUI程序标准功能键设计
+```xml
+F1  - 帮助    (ShowHelpCommand)
+F2  - 连接    (ConnectCommand) 
+F3  - 同步    (StartSyncCommand)
+F4  - 新建    (NewDeviceCommand)
+F5  - 刷新    (RefreshCommand)
+F6  - 保存    (SaveConfigCommand)
+F7  - 终端    (OpenShellCommand)
+F8  - 搜索    (ToggleSearchCommand)
+F9  - 设置    (SettingsCommand)
+F10 - 退出    (ExitCommand)
+```
+
+#### 关键技术要点
+- **依赖注入集成**：StatusBarViewModel 需要注册到 Startup.cs
+- **命令类型选择**：同步用 ActionCommand，异步用 AsyncCommand
+- **日志标签规范**：使用 `[StatusBar]` 标签便于调试
+- **循环引用避免**：StatusBarViewModel 不能直接引用 ViewModels 命名空间
+
+#### 编译错误解决
+```csharp
+// ❌ 错误：循环引用
+using DotNetCampus.Terminal.ViewModels;
+
+// ✅ 正确：避免循环引用，使用 EnsureGet 扩展方法
+using DotNetCampus.Terminal.Framework.DependencyInjection;
+_mainViewModel = serviceProvider.EnsureGet<MainViewModel>();
+```
+
+#### 功能键响应状态管理
+**重要发现**：功能键的可用状态应该根据当前选中的设备/界面动态变化
+- F2(连接)、F3(同步)、F6(保存)、F7(终端) 需要选中设备时才可用
+- F1(帮助)、F4(新建)、F5(刷新)、F8(搜索)、F9(设置)、F10(退出) 始终可用
+
+**未来改进方向**：
+1. 实现功能键的动态可用状态管理
+2. 添加快捷键支持 (KeyBinding)
+3. 功能键标签的多语言支持
+4. 根据选中项类型显示不同的功能键组合
+
 ---
 *最后更新：2025年7月9日*
 *下次更新时，请基于实际踩坑经验补充内容*

@@ -24,6 +24,7 @@ public static class Startup
                     .IntoGlobalStaticLog()))
             .AddLazyServices(sc => sc
                 .AddScoped(s => new MainViewModel(s))
+                .AddScoped(s => new StatusBarViewModel(s))
             )
         );
     }

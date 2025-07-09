@@ -1,0 +1,118 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:console="https://github.com/jinek/consolonia"
+             xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="30"
+             x:Class="DotNetCampus.Terminal.Views.StatusBarView">
+
+    <Design.DataContext>
+        <vm:StatusBarViewModel />
+    </Design.DataContext>
+
+    <!-- 
+    全局功能键定义 (Global Function Keys):
+    F1  - 帮助     显示帮助文档或操作指南 (始终可用)
+    F2  - 连接     测试设备连接状态，更新连接指示器 (需要选中设备)
+    F3  - 同步     启动文件同步操作 (需要选中设备)
+    F4  - 新建     创建新设备配置 (始终可用)
+    F5  - 刷新     刷新设备列表和连接状态 (始终可用)
+    F6  - 保存     保存当前设备的配置修改 (需要选中设备且有修改)
+    F7  - 终端     在新标签页中打开SSH命令行会话 (需要选中设备)
+    F8  - 搜索     切换搜索模式或焦点 (始终可用)
+    F9  - 设置     打开应用程序全局设置 (始终可用)
+    F10 - 退出     安全退出应用程序 (始终可用)
+    
+    注意事项:
+    - F2 和 F7 的区别：F2只测试连接状态，F7打开实际的终端交互
+    - F6 只有在设备配置有未保存修改时才应该可用
+    - 所有需要选中设备的功能键在未选中时应该禁用
+    -->
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.Fn">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Padding" Value="1 0" />
+            <Setter Property="Margin" Value="0 0 1 0" />
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="console:ButtonExtensions.Shadow" Value="False" />
+            <Style Selector="^ /template/ Border#InternalBorder">
+                <Setter Property="Margin" Value="0" />
+            </Style>
+            <Style Selector="^:clickdelayed /template/ Border#InternalBorder">
+                <Setter Property="Margin" Value="0" />
+            </Style>
+        </Style>
+        <Style Selector="#StatusBarPanel>Button">
+            <Setter Property="Padding" Value="0 0 1 0" />
+            <Setter Property="Margin" Value="0 0 1 0" />
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel x:Name="StatusBarPanel" Orientation="Horizontal">
+        <Button Command="{Binding ShowHelpCommand}" ToolTip.Tip="显示帮助文档和操作指南">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="F1" Classes="Fn" />
+                <TextBlock Text="帮助" />
+            </StackPanel>
+        </Button>
+        <Button Command="{Binding ConnectCommand}" ToolTip.Tip="测试当前选中设备的连接状态">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="F2" Classes="Fn" />
+                <TextBlock Text="连接" />
+            </StackPanel>
+        </Button>
+        <Button Command="{Binding StartSyncCommand}" ToolTip.Tip="启动当前选中设备的文件同步">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="F3" Classes="Fn" />
+                <TextBlock Text="同步" />
+            </StackPanel>
+        </Button>
+        <Button Command="{Binding NewDeviceCommand}" ToolTip.Tip="创建新的远程设备配置">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="F4" Classes="Fn" />
+                <TextBlock Text="新建" />
+            </StackPanel>
+        </Button>
+        <Button Command="{Binding RefreshCommand}" ToolTip.Tip="刷新设备列表和连接状态">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="F5" Classes="Fn" />
+                <TextBlock Text="刷新" />
+            </StackPanel>
+        </Button>
+        <Button Command="{Binding SaveConfigCommand}" ToolTip.Tip="保存当前设备的配置修改">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="F6" Classes="Fn" />
+                <TextBlock Text="保存" />
+            </StackPanel>
+        </Button>
+        <Button Command="{Binding OpenShellCommand}" ToolTip.Tip="在新终端标签页中打开SSH会话">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="F7" Classes="Fn" />
+                <TextBlock Text="终端" />
+            </StackPanel>
+        </Button>
+        <Button Command="{Binding ToggleSearchCommand}" ToolTip.Tip="切换搜索模式或搜索框焦点">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="F8" Classes="Fn" />
+                <TextBlock Text="搜索" />
+            </StackPanel>
+        </Button>
+        <Button Command="{Binding SettingsCommand}" ToolTip.Tip="打开应用程序全局设置">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="F9" Classes="Fn" />
+                <TextBlock Text="设置" />
+            </StackPanel>
+        </Button>
+        <Button Command="{Binding ExitCommand}" ToolTip.Tip="安全退出应用程序">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="F10" Classes="Fn" />
+                <TextBlock Text="退出" />
+            </StackPanel>
+        </Button>
+    </StackPanel>
+
+</UserControl>

@@ -1,5 +1,6 @@
 using DotNetCampus.Logging;
 using DotNetCampus.Terminal.FileSync.Core;
+using DotNetCampus.Terminal.FileSync.Models;
 using DotNetCampus.Terminal.Modules.Configurations.Models;
 using Renci.SshNet;
 
@@ -24,7 +25,7 @@ public class RemoteToLocalSyncOperation
     /// <summary>
     /// 执行远程到本地同步
     /// </summary>
-    public Task<FileSyncResult> ExecuteAsync(
+    public Task<SyncResult<int>> ExecuteAsync(
         SshRemoteDeviceInfo sshInfo,
         SyncGroupConfiguration syncGroup,
         IProgress<FileSyncProgress>? progressCallback,
@@ -41,7 +42,7 @@ public class RemoteToLocalSyncOperation
             catch (Exception ex)
             {
                 Log.Error($"[FileSync] 无法创建本地目录: {syncGroup.LocalPath}. 错误: {ex.Message}");
-                return Task.FromResult(FileSyncResult.Failed);
+                return Task.FromResult(SyncResult<int>.Failure(ex, "创建本地目录", syncGroup.LocalPath));
             }
         }
 
@@ -55,15 +56,23 @@ public class RemoteToLocalSyncOperation
 
             if (!client.IsConnected)
             {
-                Log.Error($"[FileSync] 无法连接到服务器: {sshInfo.Host}:{sshInfo.Port}");
-                return Task.FromResult(FileSyncResult.Failed);
+                var error = new SyncError(
+                    $"无法连接到服务器: {sshInfo.Host}:{sshInfo.Port}",
+                    SyncErrorType.NetworkError,
+                    $"{sshInfo.Host}:{sshInfo.Port}");
+                Log.Error($"[FileSync] {error.GetUserFriendlyMessage()}");
+                return Task.FromResult(SyncResult<int>.Failure(error));
             }
 
             // 检查远程目录是否存在
             if (!client.Exists(syncGroup.RemotePath))
             {
-                Log.Error($"[FileSync] 远程目录不存在: {syncGroup.RemotePath}");
-                return Task.FromResult(FileSyncResult.Failed);
+                var error = new SyncError(
+                    "远程目录不存在",
+                    SyncErrorType.RemotePathNotFound,
+                    syncGroup.RemotePath);
+                Log.Error($"[FileSync] {error.GetUserFriendlyMessage()}");
+                return Task.FromResult(SyncResult<int>.Failure(error));
             }
 
             // 获取本地和远程文件信息用于增量比较
@@ -78,7 +87,7 @@ public class RemoteToLocalSyncOperation
             if (totalFiles == 0)
             {
                 Log.Info($"[FileSync] 没有文件需要同步: {syncGroup.Name}");
-                return Task.FromResult(FileSyncResult.Success);
+                return Task.FromResult(SyncResult<int>.Success(0));
             }
 
             Log.Info($"[FileSync] 找到 {totalFiles} 个文件需要下载（增量同步）");
@@ -89,7 +98,7 @@ public class RemoteToLocalSyncOperation
                 if (cancellationToken.IsCancellationRequested)
                 {
                     Log.Warn("[FileSync] 文件同步操作被取消");
-                    return Task.FromResult(FileSyncResult.Cancelled);
+                    return Task.FromResult(SyncResult<int>.Cancelled("文件同步操作被取消"));
                 }
 
                 try
@@ -147,17 +156,17 @@ public class RemoteToLocalSyncOperation
                 catch (Exception ex)
                 {
                     Log.Error($"[FileSync] 下载文件时发生错误: {remoteFile}. 错误: {ex.Message}");
-                    return Task.FromResult(FileSyncResult.Failed);
+                    return Task.FromResult(SyncResult<int>.Failure(ex, "下载文件", remoteFile));
                 }
             }
 
             Log.Info($"[FileSync] 远程到本地同步完成: {syncGroup.Name}");
-            return Task.FromResult(FileSyncResult.Success);
+            return Task.FromResult(SyncResult<int>.Success(processedFiles));
         }
         catch (Exception ex)
         {
             Log.Error($"[FileSync] 执行远程到本地同步时发生错误: {syncGroup.Name}. 错误: {ex.Message}");
-            return Task.FromResult(FileSyncResult.Failed);
+            return Task.FromResult(SyncResult<int>.Failure(ex, "执行远程到本地同步", syncGroup.Name));
         }
         finally
         {

@@ -22,6 +22,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     private bool _isGlobalSyncing;
     private DateTimeOffset? _lastSyncTime;
     private string _lastSyncErrorMessage = string.Empty;
+    private string _detailedDiagnostics = string.Empty;
 
     public SshRemoteDeviceInfoViewModel() : base(new SshRemoteDeviceInfo
     {
@@ -145,6 +146,11 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     public AsyncCommand DisableAllCommand { get; private set; } = null!;
 
     /// <summary>
+    /// 显示详细诊断信息的命令
+    /// </summary>
+    public ActionCommand ShowDiagnosticsCommand { get; private set; } = null!;
+
+    /// <summary>
     /// 同步组列表
     /// </summary>
     public AvaloniaList<SyncGroupViewModel> SyncGroups { get; } = new();
@@ -241,6 +247,15 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     }
 
     /// <summary>
+    /// 详细诊断信息
+    /// </summary>
+    public string DetailedDiagnostics
+    {
+        get => _detailedDiagnostics;
+        private set => SetField(ref _detailedDiagnostics, value);
+    }
+
+    /// <summary>
     /// 初始化命令
     /// </summary>
     private void InitializeCommands()
@@ -249,6 +264,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         CancelSyncCommand = new AsyncCommand(OnCancelSyncAsync);
         EnableAllCommand = new AsyncCommand(OnEnableAllAsync);
         DisableAllCommand = new AsyncCommand(OnDisableAllAsync);
+        ShowDiagnosticsCommand = new ActionCommand(OnShowDiagnostics);
     }
 
     protected override async Task<bool> OnTestConnectionAsync()
@@ -294,6 +310,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         IsGlobalSyncing = true;
         GlobalSyncProgress = 0;
         LastSyncErrorMessage = string.Empty; // 开始同步时清空错误消息
+        DetailedDiagnostics = string.Empty; // 清空详细诊断信息
 
         // 将所有启用的同步组状态设置为同步中
         foreach (var group in enabledGroups)
@@ -336,7 +353,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
                 sshInfo, syncConfigs, progress, _syncCancellationTokenSource.Token);
 
             // 根据同步结果更新状态
-            switch (result)
+            switch (result.OverallResult)
             {
                 case FileSyncResult.Success:
                     foreach (var group in enabledGroups)
@@ -345,6 +362,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
                     }
                     LastSyncTime = DateTimeOffset.Now;
                     LastSyncErrorMessage = string.Empty; // 清空错误消息
+                    DetailedDiagnostics = string.Empty; // 清空详细诊断信息
                     Log.Info("[UI] 所有目录同步成功");
                     break;
                 case FileSyncResult.Failed:
@@ -352,13 +370,17 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
                     {
                         group.Status = SyncGroupStatus.Error;
                     }
-                    LastSyncErrorMessage = "同步失败";
-                    Log.Error("[UI] 目录同步失败");
+                    // 使用详细的错误信息
+                    LastSyncErrorMessage = result.GetErrorSummary();
+                    DetailedDiagnostics = result.GetDetailedDiagnostics();
+                    Log.Error($"[UI] 目录同步失败: {LastSyncErrorMessage}");
                     break;
                 case FileSyncResult.PartialSuccess:
                     LastSyncTime = DateTimeOffset.Now;
-                    LastSyncErrorMessage = "部分目录同步失败";
-                    Log.Warn("[UI] 部分目录同步成功，部分失败");
+                    // 使用详细的错误信息
+                    LastSyncErrorMessage = $"部分同步失败: {result.GetErrorSummary()}";
+                    DetailedDiagnostics = result.GetDetailedDiagnostics();
+                    Log.Warn($"[UI] 部分目录同步成功，部分失败: {LastSyncErrorMessage}");
                     break;
                 case FileSyncResult.Cancelled:
                     foreach (var group in enabledGroups)
@@ -366,6 +388,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
                         group.Status = SyncGroupStatus.Normal;
                     }
                     LastSyncErrorMessage = "同步操作被取消";
+                    DetailedDiagnostics = string.Empty;
                     Log.Info("[UI] 同步操作被取消");
                     break;
             }
@@ -378,6 +401,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
                 group.Status = SyncGroupStatus.Error;
             }
             LastSyncErrorMessage = $"同步异常: {ex.Message}";
+            DetailedDiagnostics = $"异常类型: {ex.GetType().Name}\n错误消息: {ex.Message}\n堆栈跟踪: {ex.StackTrace}";
             Log.Error($"[UI] 同步过程中发生错误: {ex.Message}");
         }
         finally
@@ -438,5 +462,22 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
             group.IsEnabled = false;
         }
         await Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// 显示详细诊断信息
+    /// </summary>
+    private void OnShowDiagnostics()
+    {
+        if (!string.IsNullOrEmpty(DetailedDiagnostics))
+        {
+            Log.Info($"[UI] 显示详细诊断信息:\n{DetailedDiagnostics}");
+            // TODO: 这里可以实现一个对话框或者窗口来显示详细信息
+            // 或者将信息复制到剪贴板
+        }
+        else
+        {
+            Log.Info("[UI] 没有可用的诊断信息");
+        }
     }
 }

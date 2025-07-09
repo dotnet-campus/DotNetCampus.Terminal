@@ -40,7 +40,7 @@ public class LocalFileInfoProvider
     }
 
     /// <summary>
-    /// 获取本地文件列表（兼容旧版本）
+    /// 获取本地文件列表
     /// </summary>
     public List<string> GetFiles(string localPath)
     {

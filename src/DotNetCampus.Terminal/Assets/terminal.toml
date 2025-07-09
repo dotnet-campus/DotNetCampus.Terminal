@@ -36,14 +36,14 @@ Password = "123"
 
 [[SshDevices.SyncGroups]]
 Name = "调试工具"
-RemotePath = "/home/seewo/lvyi/Tools"
+RemotePath = "/home/uos/lvyi/Tools"
 LocalPath = "D:\\WIP\\Desktop\\Linux调试工具"
 Enabled = true
 Direction = "LocalToRemote"  # 标准名称
 
 [[SshDevices.SyncGroups]]
 Name = "性能数据"
-RemotePath = "/home/seewo/lvyi/data"
+RemotePath = "/home/uos/lvyi/data"
 LocalPath = "D:\\WIP\\Desktop\\data"
 Enabled = true
 Direction = "Download"  # 从远程下载

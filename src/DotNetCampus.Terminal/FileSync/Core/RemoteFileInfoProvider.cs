@@ -70,7 +70,7 @@ public class RemoteFileInfoProvider
     }
 
     /// <summary>
-    /// 递归获取远程目录中的所有文件（兼容旧版本）
+    /// 递归获取远程目录中的所有文件
     /// </summary>
     public List<string> GetFiles(SftpClient client, string remotePath)
     {

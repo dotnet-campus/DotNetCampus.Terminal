@@ -1,3 +1,4 @@
+using DotNetCampus.Terminal.FileSync.Models;
 using DotNetCampus.Terminal.Modules.Configurations.Models;
 
 namespace DotNetCampus.Terminal.FileSync;
@@ -71,8 +72,8 @@ public interface IFileSyncService
     /// <param name="syncGroup">同步组配置</param>
     /// <param name="progressCallback">进度回调</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>同步结果</returns>
-    Task<FileSyncResult> SyncDirectoryAsync(
+    /// <returns>包含详细错误信息的同步结果</returns>
+    Task<SyncResult<int>> SyncDirectoryAsync(
         SshRemoteDeviceInfo sshInfo,
         SyncGroupConfiguration syncGroup,
         IProgress<FileSyncProgress>? progressCallback = null,
@@ -85,8 +86,8 @@ public interface IFileSyncService
     /// <param name="syncGroups">同步组配置列表</param>
     /// <param name="progressCallback">进度回调</param>
     /// <param name="cancellationToken">取消令牌</param>
-    /// <returns>同步结果</returns>
-    Task<FileSyncResult> SyncMultipleDirectoriesAsync(
+    /// <returns>包含详细错误信息的多组同步结果</returns>
+    Task<MultiSyncResult> SyncMultipleDirectoriesAsync(
         SshRemoteDeviceInfo sshInfo,
         IEnumerable<SyncGroupConfiguration> syncGroups,
         IProgress<FileSyncProgress>? progressCallback = null,

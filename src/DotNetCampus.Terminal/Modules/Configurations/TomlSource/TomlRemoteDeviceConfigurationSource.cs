@@ -45,6 +45,8 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
             {
                 var deviceInfo = new SshRemoteDeviceInfo
                 {
+                    LocalId = sshDevice.LocalId, // 要求配置文件中必须有LocalId
+                    RemoteId = sshDevice.RemoteId,
                     ConnectionName = sshDevice.ConnectionName,
                     Host = sshDevice.Host,
                     Port = sshDevice.Port,
@@ -77,14 +79,13 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
                 return;
             }
 
-            Log.Info($"[Config] 开始保存设备配置: {sshDeviceInfo.ConnectionName}");
+            Log.Info($"[Config] 开始保存设备配置: {sshDeviceInfo.ConnectionName} (LocalId: {sshDeviceInfo.LocalId})");
 
             // 读取现有配置
             var deviceConfiguration = await LoadTomlConfigurationAsync();
 
-            // 查找是否已存在同名设备
-            var existingDeviceIndex = deviceConfiguration.SshDevices.FindIndex(d => 
-                d.ConnectionName.Equals(sshDeviceInfo.ConnectionName, StringComparison.OrdinalIgnoreCase));
+            // 使用新的查找逻辑查找现有设备
+            var existingDeviceIndex = FindExistingDeviceIndex(deviceConfiguration.SshDevices, sshDeviceInfo);
 
             // 转换为 TOML 设备配置
             var tomlDevice = ConvertToTomlDevice(sshDeviceInfo);
@@ -92,14 +93,15 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
             if (existingDeviceIndex >= 0)
             {
                 // 更新现有设备
+                var oldDevice = deviceConfiguration.SshDevices[existingDeviceIndex];
                 deviceConfiguration.SshDevices[existingDeviceIndex] = tomlDevice;
-                Log.Info($"[Config] 更新现有设备配置: {sshDeviceInfo.ConnectionName}");
+                Log.Info($"[Config] 更新现有设备配置: {sshDeviceInfo.ConnectionName} (LocalId: {sshDeviceInfo.LocalId}, 原名称: {oldDevice.ConnectionName})");
             }
             else
             {
                 // 添加新设备
                 deviceConfiguration.SshDevices.Add(tomlDevice);
-                Log.Info($"[Config] 添加新设备配置: {sshDeviceInfo.ConnectionName}");
+                Log.Info($"[Config] 添加新设备配置: {sshDeviceInfo.ConnectionName} (LocalId: {sshDeviceInfo.LocalId})");
             }
 
             // 保存到文件
@@ -123,18 +125,19 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
             // 读取现有配置
             var deviceConfiguration = await LoadTomlConfigurationAsync();
 
-            // 查找要删除的设备
+            // 查找要删除的设备（兼容性：仍使用连接名称查找）
             var deviceIndex = deviceConfiguration.SshDevices.FindIndex(d => 
                 d.ConnectionName.Equals(connectionName, StringComparison.OrdinalIgnoreCase));
 
             if (deviceIndex >= 0)
             {
+                var removedDevice = deviceConfiguration.SshDevices[deviceIndex];
                 deviceConfiguration.SshDevices.RemoveAt(deviceIndex);
                 
                 // 保存到文件
                 await SaveTomlConfigurationAsync(deviceConfiguration);
                 
-                Log.Info($"[Config] 设备配置删除成功: {connectionName}");
+                Log.Info($"[Config] 设备配置删除成功: {connectionName} (LocalId: {removedDevice.LocalId})");
             }
             else
             {
@@ -187,6 +190,8 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
     {
         return new SshDeviceConfiguration
         {
+            LocalId = sshDeviceInfo.LocalId,
+            RemoteId = sshDeviceInfo.RemoteId,
             ConnectionName = sshDeviceInfo.ConnectionName,
             Host = sshDeviceInfo.Host,
             Port = sshDeviceInfo.Port,
@@ -194,5 +199,36 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
             Password = sshDeviceInfo.Password,
             SyncGroups = sshDeviceInfo.SyncGroups.ToList()
         };
+    }
+
+    /// <summary>
+    /// 生成本地唯一标识符
+    /// </summary>
+    private static string GenerateLocalId()
+    {
+        return "device_" + Guid.NewGuid().ToString("N")[..16];
+    }
+
+    /// <summary>
+    /// 查找现有设备的索引，使用多重匹配策略
+    /// </summary>
+    private static int FindExistingDeviceIndex(List<SshDeviceConfiguration> devices, SshRemoteDeviceInfo deviceInfo)
+    {
+        // 1. 优先使用LocalId精确匹配
+        var index = devices.FindIndex(d => d.LocalId == deviceInfo.LocalId);
+        if (index >= 0) return index;
+
+        // 2. 使用RemoteId匹配（如果两者都非空）
+        if (!string.IsNullOrEmpty(deviceInfo.RemoteId))
+        {
+            index = devices.FindIndex(d => 
+                !string.IsNullOrEmpty(d.RemoteId) && 
+                d.RemoteId == deviceInfo.RemoteId);
+            if (index >= 0) return index;
+        }
+
+        // 3. 降级到ConnectionName匹配（兼容性）
+        return devices.FindIndex(d => 
+            d.ConnectionName.Equals(deviceInfo.ConnectionName, StringComparison.OrdinalIgnoreCase));
     }
 }

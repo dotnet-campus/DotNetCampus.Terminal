@@ -11,6 +11,8 @@ namespace DotNetCampus.Terminal.ViewModels;
 /// </summary>
 public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
 {
+    private string _localId;
+    private string? _remoteId;
     private string _connectionName;
     private string _host;
     private int _port;
@@ -21,9 +23,19 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     public SshDeviceSyncViewModel Sync { get; }
     public SshDeviceCommandsViewModel Commands { get; }
 
+    /// <summary>
+    /// 生成本地唯一标识符
+    /// </summary>
+    private static string GenerateLocalId()
+    {
+        return "device_" + Guid.NewGuid().ToString("N")[..16];
+    }
+
     [Obsolete("仅供设计器使用", true)]
     public SshRemoteDeviceInfoViewModel() : this(new SshRemoteDeviceInfo
     {
+        LocalId = GenerateLocalId(),
+        RemoteId = null,
         ConnectionName = "设计时设备",
         Host = "localhost",
         Port = 22,
@@ -52,6 +64,8 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
 
     public SshRemoteDeviceInfoViewModel(SshRemoteDeviceInfo info) : base(info)
     {
+        _localId = info.LocalId;
+        _remoteId = info.RemoteId;
         _connectionName = info.ConnectionName;
         _host = info.Host;
         _port = info.Port;
@@ -68,6 +82,24 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     }
 
     #region 基础属性
+
+    /// <summary>
+    /// 本地唯一标识符
+    /// </summary>
+    public string LocalId
+    {
+        get => _localId;
+        set => SetField(ref _localId, value);
+    }
+
+    /// <summary>
+    /// 远程设备唯一标识符
+    /// </summary>
+    public string? RemoteId
+    {
+        get => _remoteId;
+        set => SetField(ref _remoteId, value);
+    }
 
     public string ConnectionName
     {
@@ -124,6 +156,8 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     {
         return new SshRemoteDeviceInfo
         {
+            LocalId = LocalId,
+            RemoteId = RemoteId,
             ConnectionName = ConnectionName,
             Host = Host,
             Port = Port,

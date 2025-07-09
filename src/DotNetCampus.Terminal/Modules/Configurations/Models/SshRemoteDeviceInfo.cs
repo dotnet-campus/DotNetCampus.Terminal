@@ -5,6 +5,16 @@
 /// </summary>
 public record SshRemoteDeviceInfo : IRemoteDeviceInfo
 {
+    /// <summary>
+    /// 本地唯一标识符，用于在本地环境中唯一标识设备
+    /// </summary>
+    public required string LocalId { get; init; }
+
+    /// <summary>
+    /// 远程设备唯一标识符，目标设备如果部署了服务自发现，则也会有一个唯一标识符
+    /// </summary>
+    public string? RemoteId { get; init; }
+
     public required string ConnectionName { get; init; }
 
     public RemoteDeviceType DeviceType { get; } = RemoteDeviceType.LinuxSsh;

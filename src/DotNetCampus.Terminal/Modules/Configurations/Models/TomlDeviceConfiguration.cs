@@ -17,6 +17,16 @@ public class TomlDeviceConfiguration
 public class SshDeviceConfiguration
 {
     /// <summary>
+    /// 本地唯一标识符，用于在本地环境中唯一标识设备
+    /// </summary>
+    public string LocalId { get; set; } = string.Empty;
+
+    /// <summary>
+    /// 远程设备唯一标识符，可能是设备序列号、MAC地址等
+    /// </summary>
+    public string? RemoteId { get; set; }
+
+    /// <summary>
     /// 连接名称
     /// </summary>
     public string ConnectionName { get; set; } = string.Empty;

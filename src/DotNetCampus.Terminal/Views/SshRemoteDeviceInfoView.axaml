@@ -74,7 +74,11 @@
                                  Background="DimGray"
                                  Foreground="Green" />
                     <Button Grid.Row="0" Grid.Column="2" Content="立即同步" Command="{Binding SyncAllCommand}" />
-                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="1 0">
+                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="1 0" Foreground="Green"
+                               Text="正在同步…"
+                               IsVisible="{Binding IsGlobalSyncing, Mode=OneWay}" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="1 0"
+                               IsVisible="{Binding !IsGlobalSyncing, Mode=OneWay}">
                         <Run Foreground="DimGray" Text="最近同步于" />
                         <Run Text="{Binding LastSyncTime, Converter={StaticResource DateTimeToStringConverter}, Mode=OneWay}" />
                     </TextBlock>

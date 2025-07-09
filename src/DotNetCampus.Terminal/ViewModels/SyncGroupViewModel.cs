@@ -215,7 +215,7 @@ public record SyncGroupViewModel : BindableRecord
     /// <summary>
     /// 同步方向符号
     /// </summary>
-    public string DirectionSymbol { get; private set; } = "↑";
+    public string DirectionSymbol { get; private set; } = "↑ 上传";
 
     private void UpdateDirectionDisplay()
     {
@@ -223,8 +223,8 @@ public record SyncGroupViewModel : BindableRecord
 
         DirectionSymbol = Direction switch
         {
-            SyncDirection.LocalToRemote => "↑",
-            SyncDirection.RemoteToLocal => "↓",
+            SyncDirection.LocalToRemote => "↑ 上传",
+            SyncDirection.RemoteToLocal => "↓ 下载",
             _ => "?"
         };
     }

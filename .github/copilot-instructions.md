@@ -6,6 +6,12 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 
 基于 .NET 9.0 和 Consolonia 的远程设备连接管理工具，采用多AI协同开发模式。
 
+**🤖 AI角色自动认领机制**：如果用户在提示词中指定了AI的角色（如"你是文档维护员"、"你是UI界面设计师"等），AI应该：
+1. 立即查看 `.github/AI任务分工.md` 文件认领对应职位
+2. 阅读该角色的必读文档（角色经验总结文档）
+3. 按照职位要求和经验总结执行后续行动
+4. 遵循该角色的技术规范和工作流程
+
 **技术栈**：.NET 9.0, Consolonia, SSH.NET, Tomlet, DotNetCampus.Logger
 
 ## 核心编码规范
@@ -65,17 +71,11 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 
 ### 开发流程
 1. 🔥 **首要步骤**：查看 `.github/AI任务分工.md` 确定自己的角色
-2. 📖 **必读文档**：阅读对应角色的经验总结文档（如 `UI-Designer-Experience-Summary.md`）
+2. 📖 **必读文档**：阅读对应角色的经验总结文档（详见下方技术文档索引）
 3. 📚 **技术查阅**：查看 `.github/knowledge/` 相关技术文档
 4. 接口设计优先，确保模块依赖清晰
 5. 及时测试，避免积累错误
 6. 知识更新到知识库和经验总结，便于复用
-
-### 角色经验总结文档
-- **UI界面设计师**: `UI-Designer-Experience-Summary.md`
-- **文件同步工程师**: `File-Sync-Engineer-Experience-Summary.md`
-- **配置管理专家**: `Configuration-Expert-Experience-Summary.md`
-- **其他角色**: 后续补充对应的经验总结文档
 
 ### 求助时机
 以下情况建议寻求人类帮助：
@@ -91,16 +91,50 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 详细的技术资料已整理到 `.github/knowledge/` 目录：
 
 ### 角色经验总结（首要阅读）
-- `UI-Designer-Experience-Summary.md` - UI设计师核心经验
-- `File-Sync-Engineer-Experience-Summary.md` - 文件同步工程师核心经验  
-- `Configuration-Expert-Experience-Summary.md` - 配置管理专家核心经验
+- `UI界面设计师-核心经验总结.md` - UI设计师核心经验
+- `文件同步工程师-核心经验总结.md` - 文件同步工程师核心经验  
+- `配置管理专家-核心经验总结.md` - 配置管理专家核心经验
+- `SSH连接专家-核心经验总结.md` - SSH连接专家核心经验
+- `文档维护员-核心经验总结.md` - 文档维护员核心经验
 
 ### 技术参考文档
-- `Consolonia-Quick-Reference.md` - Consolonia快速参考
-- `DotNetCampus-Logger-Guide.md` - 日志使用指南
-- `SSH.NET-File-Sync-Guide.md` - 文件同步指南
-- `Terminal-TOML-Configuration-Design.md` - 配置设计
-- `常见问题解答.md` - 问题解决方案
+详细的技术资料已按照以下结构组织，AI可根据具体技术需求选择相应文档：
+
+#### 依赖库使用指南
+- `依赖库文档/Consolonia/01-快速参考指南.md` - Consolonia快速参考
+- `依赖库文档/Consolonia/02-架构核心要点.md` - 架构设计要点  
+- `依赖库文档/Consolonia/03-UI框架使用.md` - UI框架详细使用
+- `依赖库文档/Consolonia/04-UI设计模式最佳实践.md` - UI设计模式
+- `依赖库文档/DotNetCampus.Logger/01-日志框架使用指南.md` - 日志使用指南
+- `依赖库文档/SSH.NET/01-基础使用指南.md` - SSH.NET基础使用
+- `依赖库文档/SSH.NET/02-文件同步实现.md` - 文件同步指南
+- `依赖库文档/Tomlet/01-TOML解析使用指南.md` - TOML配置解析
+- `依赖库文档/DotNet9/01-新特性在项目中的应用.md` - .NET 9新特性
+
+#### 技术设计文档
+- `技术设计文档/界面设计/01-Terminal界面开发指南.md` - Terminal界面开发
+- `技术设计文档/界面设计/02-SSH设备信息视图设计.md` - SSH设备视图设计
+- `技术设计文档/界面设计/03-进度显示和数据绑定.md` - 进度显示设计
+- `技术设计文档/界面设计/04-ViewModel重构最佳实践.md` - ViewModel重构
+- `技术设计文档/界面设计/05-TUI与Shell集成解决方案.md` - Shell集成方案
+- `技术设计文档/界面设计/06-交互式命令模式设计.md` - 交互式命令设计
+- `技术设计文档/配置管理/01-TOML配置文件架构设计.md` - 配置架构设计
+- `技术设计文档/配置管理/02-配置保存功能实现.md` - 配置保存实现
+- `技术设计文档/配置管理/03-配置数据源迁移方案.md` - 配置迁移方案
+- `技术设计文档/配置管理/04-设备唯一标识符设计.md` - 设备ID设计
+- `技术设计文档/文件同步/01-远程到本地同步架构.md` - 同步架构设计
+- `技术设计文档/文件同步/02-增量同步性能优化.md` - 同步性能优化
+- `技术设计文档/文件同步/03-同步错误处理机制.md` - 错误处理机制
+- `技术设计文档/SSH连接管理/01-SSH密钥认证配置方案.md` - SSH密钥配置
+- `技术设计文档/SSH连接管理/02-多设备连接安全分析.md` - 连接安全分析
+
+#### 问题排查指南
+- `问题排查/开发问题快速解答手册.md` - 问题解决方案
+
+#### AI协作经验
+- `AI协作经验/实现经验总结/设备唯一ID实现技术总结.md` - 设备ID实现经验
+- `AI协作经验/实现经验总结/TOML配置功能实现踩坑记录.md` - 配置功能踩坑记录
+- `AI协作经验/AI多角色协作开发经验.md` - 多角色协作经验
 
 **重要提醒**：
 1. 🔥 开始任务前，必须先阅读对应角色的经验总结文档

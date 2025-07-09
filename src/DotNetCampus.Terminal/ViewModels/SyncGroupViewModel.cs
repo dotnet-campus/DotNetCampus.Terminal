@@ -1,4 +1,3 @@
-using DotNetCampus.Terminal.FileSync;
 using DotNetCampus.Terminal.Framework.Input.Commands;
 using DotNetCampus.Terminal.Framework.Mvvm;
 using DotNetCampus.Terminal.Modules.Configurations.Models;
@@ -8,7 +7,7 @@ namespace DotNetCampus.Terminal.ViewModels;
 /// <summary>
 /// 同步组视图模型
 /// </summary>
-public record SyncGroupViewModel : BindableRecord
+public record SyncGroupViewModel : TrackableBindableRecord
 {
     private string _name = string.Empty;
     private string _remotePath = string.Empty;
@@ -38,7 +37,7 @@ public record SyncGroupViewModel : BindableRecord
     public string Name
     {
         get => _name;
-        set => SetField(ref _name, value);
+        set => SetFieldTrackingChanges(ref _name, value);
     }
 
     /// <summary>
@@ -47,7 +46,7 @@ public record SyncGroupViewModel : BindableRecord
     public string RemotePath
     {
         get => _remotePath;
-        set => SetField(ref _remotePath, value);
+        set => SetFieldTrackingChanges(ref _remotePath, value);
     }
 
     /// <summary>
@@ -56,7 +55,7 @@ public record SyncGroupViewModel : BindableRecord
     public string LocalPath
     {
         get => _localPath;
-        set => SetField(ref _localPath, value);
+        set => SetFieldTrackingChanges(ref _localPath, value);
     }
 
     /// <summary>
@@ -93,7 +92,7 @@ public record SyncGroupViewModel : BindableRecord
         get => _isEnabled;
         set
         {
-            if (SetField(ref _isEnabled, value))
+            if (SetFieldTrackingChanges(ref _isEnabled, value))
             {
                 Status = value ? SyncGroupStatus.Normal : SyncGroupStatus.Disabled;
             }
@@ -119,6 +118,23 @@ public record SyncGroupViewModel : BindableRecord
     }
 
     /// <summary>
+    /// 同步方向
+    /// </summary>
+    public SyncDirection Direction
+    {
+        get => _direction;
+        set
+        {
+            if (SetField(ref _direction, value))
+            {
+                UpdateDirectionDisplay();
+                OnPropertyChanged(nameof(DirectionText));
+                OnPropertyChanged(nameof(DirectionSymbol));
+            }
+        }
+    }
+
+    /// <summary>
     /// 状态符号
     /// </summary>
     public string StatusSymbol => Status switch
@@ -127,7 +143,7 @@ public record SyncGroupViewModel : BindableRecord
         SyncGroupStatus.Error => "⚠",
         SyncGroupStatus.Disabled => "✗",
         SyncGroupStatus.Syncing => "◐",
-        _ => "○"
+        _ => "○",
     };
 
     /// <summary>
@@ -139,7 +155,7 @@ public record SyncGroupViewModel : BindableRecord
         SyncGroupStatus.Error => "Yellow",
         SyncGroupStatus.Disabled => "Red",
         SyncGroupStatus.Syncing => "Cyan",
-        _ => "DimGray"
+        _ => "DimGray",
     };
 
     private void UpdateStatusDisplay()
@@ -150,7 +166,7 @@ public record SyncGroupViewModel : BindableRecord
             SyncGroupStatus.Error => "(同步出错)",
             SyncGroupStatus.Disabled => "(已禁用)",
             SyncGroupStatus.Syncing => "(同步中)",
-            _ => string.Empty
+            _ => string.Empty,
         };
 
         IsSyncing = Status == SyncGroupStatus.Syncing;
@@ -191,23 +207,6 @@ public record SyncGroupViewModel : BindableRecord
     }
 
     /// <summary>
-    /// 同步方向
-    /// </summary>
-    public SyncDirection Direction
-    {
-        get => _direction;
-        set
-        {
-            if (SetField(ref _direction, value))
-            {
-                UpdateDirectionDisplay();
-                OnPropertyChanged(nameof(DirectionText));
-                OnPropertyChanged(nameof(DirectionSymbol));
-            }
-        }
-    }
-
-    /// <summary>
     /// 同步方向显示文本
     /// </summary>
     public string DirectionText { get; private set; } = string.Empty;
@@ -225,7 +224,7 @@ public record SyncGroupViewModel : BindableRecord
         {
             SyncDirection.LocalToRemote => "↑ 上传",
             SyncDirection.RemoteToLocal => "↓ 下载",
-            _ => "?"
+            _ => "?",
         };
     }
 }
@@ -253,5 +252,5 @@ public enum SyncGroupStatus
     /// <summary>
     /// 同步中
     /// </summary>
-    Syncing
+    Syncing,
 }

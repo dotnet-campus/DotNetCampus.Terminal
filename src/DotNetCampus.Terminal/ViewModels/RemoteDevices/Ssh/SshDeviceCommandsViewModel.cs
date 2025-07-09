@@ -11,7 +11,7 @@ namespace DotNetCampus.Terminal.ViewModels.RemoteDevices.Ssh;
 /// <summary>
 /// SSH设备命令处理的ViewModel
 /// </summary>
-public partial record SshDeviceCommandsViewModel : BindableRecord
+public partial record SshDeviceCommandsViewModel : TrackableBindableRecord
 {
     private readonly SshDeviceSyncViewModel _syncViewModel;
     private readonly Func<SshRemoteDeviceInfo> _getDeviceInfo;

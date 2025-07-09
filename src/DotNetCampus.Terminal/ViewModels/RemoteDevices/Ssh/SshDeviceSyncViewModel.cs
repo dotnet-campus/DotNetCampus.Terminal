@@ -9,7 +9,7 @@ namespace DotNetCampus.Terminal.ViewModels.RemoteDevices.Ssh;
 /// <summary>
 /// SSH设备同步相关的ViewModel
 /// </summary>
-public partial record SshDeviceSyncViewModel : BindableRecord
+public partial record SshDeviceSyncViewModel : TrackableBindableRecord
 {
     private readonly IFileSyncService? _fileSyncService;
     private CancellationTokenSource? _syncCancellationTokenSource;

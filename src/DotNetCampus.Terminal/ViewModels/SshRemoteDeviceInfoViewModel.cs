@@ -89,7 +89,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     public string LocalId
     {
         get => _localId;
-        set => SetField(ref _localId, value);
+        set => SetFieldTrackingChanges(ref _localId, value);
     }
 
     /// <summary>
@@ -98,13 +98,13 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     public string? RemoteId
     {
         get => _remoteId;
-        set => SetField(ref _remoteId, value);
+        set => SetFieldTrackingChanges(ref _remoteId, value);
     }
 
     public string ConnectionName
     {
         get => _connectionName;
-        set => SetField(ref _connectionName, value);
+        set => SetFieldTrackingChanges(ref _connectionName, value);
     }
 
     public string Host
@@ -112,7 +112,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         get => _host;
         set
         {
-            if (SetField(ref _host, value))
+            if (SetFieldTrackingChanges(ref _host, value))
             {
                 OnPropertyChanged(nameof(Address));
             }
@@ -124,7 +124,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         get => _port;
         set
         {
-            if (SetField(ref _port, value))
+            if (SetFieldTrackingChanges(ref _port, value))
             {
                 OnPropertyChanged(nameof(Address));
             }
@@ -138,13 +138,13 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     public string UserName
     {
         get => _userName;
-        set => SetField(ref _userName, value);
+        set => SetFieldTrackingChanges(ref _userName, value);
     }
 
     public string? Password
     {
         get => _password;
-        set => SetField(ref _password, value);
+        set => SetFieldTrackingChanges(ref _password, value);
     }
 
     #endregion
@@ -156,6 +156,9 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     {
         var currentInfo = GetCurrentDeviceInfo();
         Info = currentInfo;
+        
+        // 重置变更跟踪状态
+        ResetChangeTracking();
     }
 
     /// <summary>

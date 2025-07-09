@@ -83,12 +83,12 @@
                 <Style Selector="^ ToggleButton.FavoriteIcon">
                     <Setter Property="Background" Value="Transparent" />
                     <Setter Property="IsVisible" Value="False" />
-                    <Setter Property="Margin" Value="0" />
-                    <Setter Property="Padding" Value="0 0 1 0" />
+                    <Setter Property="Margin" Value="0 0 1 0" />
+                    <Setter Property="Padding" Value="0" />
                     <Setter Property="Foreground" Value="Orange" />
                     <Setter Property="Content" Value="☆" />
                     <Style Selector="^:checked">
-                        <Setter Property="Padding" Value="0 0 1 0" />
+                        <Setter Property="Margin" Value="0 0 1 0" />
                         <Setter Property="Content" Value="⭐" />
                     </Style>
                     <Style Selector="^:checked /template/ ContentPresenter">
@@ -194,6 +194,11 @@
                                                Text="{Binding Info.Address, Mode=OneWay}" />
                                     <ToggleButton Grid.Row="0" Grid.Column="2" Classes="FavoriteIcon"
                                                   IsCheckedChanged="FavoriteButton_IsCheckedChanged" />
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                               Margin="0 0 1 0" HorizontalAlignment="Right"
+                                               IsVisible="{Binding HasUnsavedChanges, Mode=OneWay}">
+                                        <Run Text="💾" />
+                                    </TextBlock>
                                 </Grid>
                             </DataTemplate>
                         </TreeView.DataTemplates>

@@ -168,17 +168,21 @@ public class SshKeyDeploymentService
 
         foreach (var command in commands)
         {
-            var commandResult = client.RunCommand(command);
+            // 使用Task.Run包装同步操作，避免阻塞UI线程
+            var commandResult = await Task.Run(() => client.RunCommand(command));
             if (commandResult.ExitStatus != 0)
             {
                 throw new InvalidOperationException($"命令执行失败: {command}, 错误: {commandResult.Error}");
             }
+            
+            // 添加小延迟以避免命令执行过快
+            await Task.Delay(100);
         }
 
         result.AddSuccess("公钥已成功部署到远程设备");
 
         // 验证authorized_keys文件
-        var verifyCommand = client.RunCommand("test -f ~/.ssh/authorized_keys && echo 'EXISTS'");
+        var verifyCommand = await Task.Run(() => client.RunCommand("test -f ~/.ssh/authorized_keys && echo 'EXISTS'"));
         if (verifyCommand.Result.Trim() == "EXISTS")
         {
             result.AddStep("已验证authorized_keys文件存在");
@@ -201,7 +205,7 @@ public class SshKeyDeploymentService
             result.AddStep("正在禁用SSH密码认证...");
 
             // 检查是否有sudo权限
-            var sudoTest = client.RunCommand("sudo -n echo 'test' 2>/dev/null");
+            var sudoTest = await Task.Run(() => client.RunCommand("sudo -n echo 'test' 2>/dev/null"));
             bool hasSudo = sudoTest.ExitStatus == 0;
 
             if (!hasSudo)
@@ -211,7 +215,7 @@ public class SshKeyDeploymentService
             }
 
             // 备份sshd_config
-            var backupCmd = client.RunCommand("sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup");
+            var backupCmd = await Task.Run(() => client.RunCommand("sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup"));
             if (backupCmd.ExitStatus == 0)
             {
                 result.AddStep("已备份SSH配置文件");
@@ -227,21 +231,24 @@ public class SshKeyDeploymentService
 
             foreach (var command in commands)
             {
-                var cmdResult = client.RunCommand(command);
+                var cmdResult = await Task.Run(() => client.RunCommand(command));
                 if (cmdResult.ExitStatus != 0)
                 {
                     result.AddWarning($"配置命令执行失败: {command}");
                 }
+                
+                // 添加小延迟
+                await Task.Delay(100);
             }
 
             // 验证配置更改
-            var verifyCmd = client.RunCommand("sudo sshd -t");
+            var verifyCmd = await Task.Run(() => client.RunCommand("sudo sshd -t"));
             if (verifyCmd.ExitStatus == 0)
             {
                 result.AddStep("SSH配置语法验证通过");
 
                 // 重启SSH服务
-                var restartCmd = client.RunCommand("sudo systemctl restart sshd || sudo service ssh restart");
+                var restartCmd = await Task.Run(() => client.RunCommand("sudo systemctl restart sshd || sudo service ssh restart"));
                 if (restartCmd.ExitStatus == 0)
                 {
                     result.AddSuccess("SSH服务已重启，密码认证已禁用");
@@ -295,7 +302,7 @@ public class SshKeyDeploymentService
 
             // 从authorized_keys中移除公钥
             var removeKeyCmd = $"grep -v '{publicKeyContent.Trim()}' ~/.ssh/authorized_keys > ~/.ssh/authorized_keys.tmp && mv ~/.ssh/authorized_keys.tmp ~/.ssh/authorized_keys";
-            var removeResult = client.RunCommand(removeKeyCmd);
+            var removeResult = await Task.Run(() => client.RunCommand(removeKeyCmd));
 
             if (removeResult.ExitStatus == 0)
             {

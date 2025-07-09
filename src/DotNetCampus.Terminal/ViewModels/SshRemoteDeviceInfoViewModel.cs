@@ -17,9 +17,9 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     private string _userName;
     private string? _password;
 
-    // 组合的子ViewModels
-    public SshDeviceSyncViewModel SyncViewModel { get; }
-    public SshDeviceCommandsViewModel CommandsViewModel { get; }
+    // 组合的子ViewModels - 使用简洁的属性名
+    public SshDeviceSyncViewModel Sync { get; }
+    public SshDeviceCommandsViewModel Commands { get; }
 
     [Obsolete("仅供设计器使用", true)]
     public SshRemoteDeviceInfoViewModel() : this(new SshRemoteDeviceInfo
@@ -60,11 +60,11 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
 
         // 初始化子ViewModels
         var fileSyncService = Container.Current.EnsureGet<IFileSyncService>();
-        SyncViewModel = new SshDeviceSyncViewModel(fileSyncService);
-        CommandsViewModel = new SshDeviceCommandsViewModel(SyncViewModel, GetCurrentDeviceInfo);
+        Sync = new SshDeviceSyncViewModel(fileSyncService);
+        Commands = new SshDeviceCommandsViewModel(Sync, GetCurrentDeviceInfo);
 
         // 从配置中加载同步组数据
-        SyncViewModel.InitializeSyncGroups(info.SyncGroups);
+        Sync.InitializeSyncGroups(info.SyncGroups);
     }
 
     #region 基础属性
@@ -129,7 +129,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
             Port = Port,
             UserName = UserName,
             Password = Password,
-            SyncGroups = SyncViewModel.GetSyncGroupConfigurations(),
+            SyncGroups = Sync.GetSyncGroupConfigurations(),
         };
     }
 

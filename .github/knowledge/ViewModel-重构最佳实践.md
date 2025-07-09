@@ -98,6 +98,42 @@ public SshRemoteDeviceInfoViewModel(SshRemoteDeviceInfo info) : base(info)
 <Button Command="{Binding CommandsViewModel.SyncAllCommand}" />
 ```
 
+## UI绑定优化
+
+### 子ViewModel属性命名优化
+
+**问题**：重构后的绑定路径过于冗长
+```xml
+<!-- 不优雅的绑定 -->
+<TextBlock Text="{Binding SyncViewModel.GlobalSyncProgress}" />
+<Button Command="{Binding CommandsViewModel.SyncAllCommand}" />
+```
+
+**解决方案**：使用简洁的属性名
+```csharp
+// 主ViewModel中的简洁命名
+public SshDeviceSyncViewModel Sync { get; }
+public SshDeviceCommandsViewModel Commands { get; }
+```
+
+```xml
+<!-- 优雅的绑定 -->
+<TextBlock Text="{Binding Sync.GlobalSyncProgress}" />
+<Button Command="{Binding Commands.SyncAllCommand}" />
+```
+
+**命名规范**：
+- 同步相关：`Sync`
+- 命令相关：`Commands`  
+- 配置相关：`Config`
+- 状态相关：`Status`
+
+**优势**：
+1. **绑定路径更简洁**：`Sync.Progress` vs `SyncViewModel.Progress`
+2. **代码可读性更好**：语义更清晰
+3. **重构更容易**：属性名变更影响范围小
+4. **团队一致性**：建立统一的命名规范
+
 ## 编译错误解决
 
 ### 1. BindableRecord vs ViewModelBase

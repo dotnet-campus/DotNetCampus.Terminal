@@ -67,5 +67,26 @@ SshRemoteDeviceInfoViewModel (主ViewModel)
 
 重构后：
 ```xml
-<TextBlock Text="{Binding SyncViewModel.GlobalSyncProgress}" />
+<TextBlock Text="{Binding Sync.GlobalSyncProgress}" />
+```
+
+## 优化后的绑定路径
+
+使用简洁的子ViewModel属性名：
+- 同步相关：`{Binding Sync.PropertyName}`
+- 命令相关：`{Binding Commands.CommandName}`
+
+示例：
+```xml
+<!-- 同步进度 -->
+<ProgressBar Value="{Binding Sync.GlobalSyncProgress}" />
+
+<!-- 同步状态 -->
+<TextBlock Text="{Binding Sync.LastSyncErrorMessage}" />
+
+<!-- 同步命令 -->
+<Button Command="{Binding Commands.SyncAllCommand}" />
+
+<!-- 配置保存 -->
+<Button Command="{Binding Commands.SaveConfigurationCommand}" />
 ```

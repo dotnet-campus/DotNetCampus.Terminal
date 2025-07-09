@@ -20,7 +20,7 @@
 - 启用/禁用控制
 - 错误信息显示
 
-**绑定到**: `SshDeviceSyncViewModel`
+**绑定到**: `Sync` (简化后的属性名)
 
 #### SshDeviceCommandsView.axaml  
 负责操作命令相关的UI组件：
@@ -30,7 +30,7 @@
 - 保存配置按钮
 - 测试连接按钮
 
-**绑定到**: `SshDeviceCommandsViewModel`
+**绑定到**: `Commands` (简化后的属性名)
 
 ## Consolonia特殊考虑
 

@@ -4,14 +4,16 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 
 ## 协作规则
 
-1. 完成任务时更新进度状态 ✅
-2. 重要技术经验记录到 `.github/knowledge/` 知识库
-3. 大任务拆分成小任务，便于其他 AI 协助
-4. 详细技术文档查看 `.github/knowledge/` 目录
+1. 🔥 **开始任务前必读**: 先阅读对应角色的经验总结文档 (见下方各角色链接)
+2. 完成任务时更新进度状态 ✅
+3. 重要技术经验记录到 `.github/knowledge/` 知识库
+4. 大任务拆分成小任务，便于其他 AI 协助
+5. 详细技术文档查看 `.github/knowledge/` 目录
 
 ## AI 角色分工
 
 ### 配置管理专家 (Configuration AI)
+**📖 必读文档**: `.github/knowledge/Configuration-Expert-Experience-Summary.md`
 - ✅ TOML配置文件格式设计和实现
 - ✅ 配置解析和数据模型
 - ✅ 个人设备配置存储（TOML源保存功能）
@@ -21,6 +23,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - [ ] 配置加密存储
 
 ### 文件同步工程师 (File Sync AI) 
+**📖 必读文档**: `.github/knowledge/File-Sync-Engineer-Experience-Summary.md`
 - ✅ 基于SFTP的文件同步
 - ✅ 同步状态监控和UI集成
 - ✅ 远程到本地同步
@@ -30,6 +33,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - ✅ "没有启用的同步组"UI错误提示优化
 
 ### UI界面设计师 (UI Designer AI)
+**📖 必读文档**: `.github/knowledge/UI-Designer-Experience-Summary.md`
 - ✅ 主界面布局和SSH设备编辑界面
 - ✅ 数据绑定和MVVM模式
 - ✅ 同步状态显示和全局进度条
@@ -39,6 +43,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - ✅ 建立ViewModels和Views的文件夹重构规范
 - ✅ 删除设备功能（使用交互式命令模式实现）
 - ✅ SshRemoteDeviceInfoView.axaml重构（从208行拆分为31行主View + 3个子TabViews）
+- ✅ 一键部署SSH密钥对功能的界面和ViewModel实现
 - [ ] 路径省略功能
 - [ ] 交互优化
 
@@ -52,11 +57,12 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 
 ## 协作流程
 
-1. **开发前必读** `.github/knowledge/` 相关技术文档
-2. **接口设计** 优先，确保模块间依赖清晰
-3. **及时测试** 每个模块完成后立即编译验证
-4. **知识共享** 将技术问题和解决方案更新到知识库
-5. **进度同步** 接口变更时通知相关AI
+1. **开始任务前必读** 📖 对应角色的经验总结文档（见各角色的必读文档链接）
+2. **技术文档查阅** `.github/knowledge/` 相关技术文档
+3. **接口设计** 优先，确保模块间依赖清晰
+4. **及时测试** 每个模块完成后立即编译验证
+5. **知识共享** 将技术问题和解决方案更新到知识库和经验总结
+6. **进度同步** 接口变更时通知相关AI
 
 ## 重要提醒
 

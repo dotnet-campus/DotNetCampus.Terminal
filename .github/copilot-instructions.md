@@ -64,10 +64,18 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 ## 协作要点
 
 ### 开发流程
-1. 先查看 `.github/knowledge/` 技术文档
-2. 接口设计优先，确保模块依赖清晰
-3. 及时测试，避免积累错误
-4. 知识更新到知识库，便于复用
+1. 🔥 **首要步骤**：查看 `.github/AI任务分工.md` 确定自己的角色
+2. 📖 **必读文档**：阅读对应角色的经验总结文档（如 `UI-Designer-Experience-Summary.md`）
+3. 📚 **技术查阅**：查看 `.github/knowledge/` 相关技术文档
+4. 接口设计优先，确保模块依赖清晰
+5. 及时测试，避免积累错误
+6. 知识更新到知识库和经验总结，便于复用
+
+### 角色经验总结文档
+- **UI界面设计师**: `UI-Designer-Experience-Summary.md`
+- **文件同步工程师**: `File-Sync-Engineer-Experience-Summary.md`
+- **配置管理专家**: `Configuration-Expert-Experience-Summary.md`
+- **其他角色**: 后续补充对应的经验总结文档
 
 ### 求助时机
 以下情况建议寻求人类帮助：
@@ -76,14 +84,25 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 - 复杂的泛型推断失败
 - 平台特定显示问题
 - **编译文件占用问题**：当 dotnet build 提示文件被占用时
+- **反复犯错**：如果发现自己在重复犯同样的错误
 
 ## 技术文档索引
 
 详细的技术资料已整理到 `.github/knowledge/` 目录：
-- `Consolonia-Quick-Reference.md` - 快速参考
+
+### 角色经验总结（首要阅读）
+- `UI-Designer-Experience-Summary.md` - UI设计师核心经验
+- `File-Sync-Engineer-Experience-Summary.md` - 文件同步工程师核心经验  
+- `Configuration-Expert-Experience-Summary.md` - 配置管理专家核心经验
+
+### 技术参考文档
+- `Consolonia-Quick-Reference.md` - Consolonia快速参考
 - `DotNetCampus-Logger-Guide.md` - 日志使用指南
 - `SSH.NET-File-Sync-Guide.md` - 文件同步指南
 - `Terminal-TOML-Configuration-Design.md` - 配置设计
 - `常见问题解答.md` - 问题解决方案
 
-**记住**：遇到技术问题先查阅知识库，避免重复踩坑。
+**重要提醒**：
+1. 🔥 开始任务前，必须先阅读对应角色的经验总结文档
+2. 📚 遇到技术问题先查阅知识库，避免重复踩坑
+3. 💡 将新的踩坑经验及时更新到经验总结文档中

@@ -62,43 +62,43 @@
                                Foreground="{Binding ConnectionState, Converter={StaticResource ConnectionStateToForegroundConverter}, Mode=OneWay}" />
                     <TextBlock Grid.Column="1" Width="8" Margin="4 0 0 0" HorizontalAlignment="Left"
                                Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToStringConverter}, Mode=OneWay}" />
-                    <Button Grid.Column="2" Content="连接主机" Width="10" Command="{Binding OpenShellCommand}" />
+                    <Button Grid.Column="2" Content="连接主机" Width="10" Command="{Binding CommandsViewModel.OpenShellCommand}" />
                 </Grid>
 
                 <!-- 全局同步进度条 -->
                 <Grid Grid.Row="1" Margin="0 1 0 0" RowDefinitions="*,*,*" ColumnDefinitions="Auto,*,Auto">
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="同步进度" Width="8" />
                     <ProgressBar Grid.Row="0" Grid.Column="1"
-                                 Value="{Binding GlobalSyncProgress}"
+                                 Value="{Binding SyncViewModel.GlobalSyncProgress}"
                                  Minimum="0" Maximum="100" Margin="1 0" Height="1"
                                  Background="DimGray"
                                  Foreground="Green" />
-                    <Button Grid.Row="0" Grid.Column="2" Content="立即同步" Command="{Binding SyncAllCommand}" />
+                    <Button Grid.Row="0" Grid.Column="2" Content="立即同步" Command="{Binding CommandsViewModel.SyncAllCommand}" />
                     <TextBlock Grid.Row="1" Grid.Column="1" Margin="1 0" Foreground="Green"
                                Text="正在同步…"
-                               IsVisible="{Binding IsGlobalSyncing, Mode=OneWay}" />
+                               IsVisible="{Binding SyncViewModel.IsGlobalSyncing, Mode=OneWay}" />
                     <TextBlock Grid.Row="1" Grid.Column="1" Margin="1 0"
-                               IsVisible="{Binding !IsGlobalSyncing, Mode=OneWay}">
+                               IsVisible="{Binding !SyncViewModel.IsGlobalSyncing, Mode=OneWay}">
                         <Run Foreground="DimGray" Text="最近同步于" />
-                        <Run Text="{Binding LastSyncTime, Converter={StaticResource DateTimeToStringConverter}, Mode=OneWay}" />
+                        <Run Text="{Binding SyncViewModel.LastSyncTime, Converter={StaticResource DateTimeToStringConverter}, Mode=OneWay}" />
                     </TextBlock>
                     <TextBlock Grid.Row="2" Grid.Column="1" Margin="1 0"
                                Foreground="Red" TextWrapping="WrapWithOverflow"
-                               Text="{Binding LastSyncErrorMessage, Mode=OneWay}"
-                               ToolTip.Tip="{Binding DetailedDiagnostics, Mode=OneWay}" />
+                               Text="{Binding SyncViewModel.LastSyncErrorMessage, Mode=OneWay}"
+                               ToolTip.Tip="{Binding SyncViewModel.DetailedDiagnostics, Mode=OneWay}" />
                 </Grid>
 
                 <!-- 操作按钮 -->
                 <Grid Grid.Row="2" Margin="0 1 0 0" ColumnDefinitions="Auto,*,Auto,1,Auto"
-                      IsEnabled="{Binding !IsGlobalSyncing}">
+                      IsEnabled="{Binding !SyncViewModel.IsGlobalSyncing}">
                     <Button Grid.Column="0" Content="+ 同步新目录" />
-                    <Button Grid.Column="2" Content="全部启用" Command="{Binding EnableAllCommand}" />
-                    <Button Grid.Column="4" Content="全部禁用" Command="{Binding DisableAllCommand}" />
+                    <Button Grid.Column="2" Content="全部启用" Command="{Binding CommandsViewModel.EnableAllCommand}" />
+                    <Button Grid.Column="4" Content="全部禁用" Command="{Binding CommandsViewModel.DisableAllCommand}" />
                 </Grid>
 
                 <!-- 同步组列表 -->
                 <ItemsControl Grid.Row="3" BorderThickness="0"
-                              ItemsSource="{Binding SyncGroups}">
+                              ItemsSource="{Binding SyncViewModel.SyncGroups}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <VirtualizingStackPanel Margin="0 1 0 0" />
@@ -163,7 +163,7 @@
                     <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="1" HorizontalAlignment="Right">
                         <Button Content="保存"
                                 Margin="1,0"
-                                Command="{Binding SaveConfigurationCommand}" />
+                                Command="{Binding CommandsViewModel.SaveConfigurationCommand}" />
                     </StackPanel>
                 </Grid>
 

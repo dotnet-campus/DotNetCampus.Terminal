@@ -38,8 +38,8 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - ✅ SshRemoteDeviceInfoViewModel重构（拆分为同步和命令子ViewModels）
 - ✅ 建立ViewModels和Views的文件夹重构规范
 - ✅ 删除设备功能（使用交互式命令模式实现）
+- ✅ SshRemoteDeviceInfoView.axaml重构（从208行拆分为31行主View + 3个子TabViews）
 - [ ] 路径省略功能
-- [ ] SshRemoteDeviceInfoView.axaml重构（当超过400行时拆分）
 - [ ] 交互优化
 
 ### 其他模块

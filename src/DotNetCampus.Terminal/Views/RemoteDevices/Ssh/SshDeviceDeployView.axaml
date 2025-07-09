@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:DotNetCampus.Terminal.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="DotNetCampus.Terminal.Views.RemoteDevices.Ssh.SshDeviceDeployView"
+             x:DataType="vm:SshRemoteDeviceInfoViewModel">
+
+    <Design.DataContext>
+        <vm:SshRemoteDeviceInfoViewModel />
+    </Design.DataContext>
+
+    <!-- 部署功能预留区域 -->
+    <Grid RowDefinitions="Auto,*">
+        <TextBlock Grid.Row="0" Text="部署功能正在开发中..." 
+                   HorizontalAlignment="Center" 
+                   Foreground="DimGray" 
+                   FontStyle="Italic" 
+                   Margin="0 10" />
+        
+        <!-- 未来可能包含的功能 -->
+        <StackPanel Grid.Row="1" Spacing="10" IsVisible="False">
+            <TextBlock Text="计划功能：" FontWeight="Bold" />
+            <TextBlock Text="• 应用部署配置" Margin="10 0" />
+            <TextBlock Text="• 部署历史记录" Margin="10 0" />
+            <TextBlock Text="• 部署状态监控" Margin="10 0" />
+            <TextBlock Text="• 自动化脚本执行" Margin="10 0" />
+        </StackPanel>
+    </Grid>
+</UserControl>

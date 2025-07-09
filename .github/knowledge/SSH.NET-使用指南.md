@@ -27,13 +27,69 @@ SSH.NET提供了完整的SSH客户端功能，包括：
 ## 认证方式
 
 ### 1. 密码认证
-[待补充示例]
+```csharp
+var connectionInfo = new ConnectionInfo("hostname", "username", 
+    new PasswordAuthenticationMethod("username", "password"));
+
+using var client = new SshClient(connectionInfo);
+client.Connect();
+```
 
 ### 2. 私钥认证
-[待补充示例]
+```csharp
+// 无密码短语的私钥
+var keyFile = new PrivateKeyFile(@"C:\Users\YourUser\.ssh\id_rsa");
+var connectionInfo = new ConnectionInfo("hostname", "username", 
+    new PrivateKeyAuthenticationMethod("username", keyFile));
 
-### 3. 公钥认证
-[待补充示例]
+// 有密码短语的私钥
+var keyFileWithPassphrase = new PrivateKeyFile(@"C:\Users\YourUser\.ssh\id_rsa", "passphrase");
+var connectionInfoSecure = new ConnectionInfo("hostname", "username", 
+    new PrivateKeyAuthenticationMethod("username", keyFileWithPassphrase));
+```
+
+### 3. 组合认证（推荐）
+```csharp
+// 优先尝试密钥认证，失败时回退到密码认证
+var connectionInfo = new ConnectionInfo("hostname", "username", 
+    new PrivateKeyAuthenticationMethod("username", keyFile),
+    new PasswordAuthenticationMethod("username", "password"));
+```
+
+### 4. 全局SSH密钥认证（推荐）
+```csharp
+// 自动检测和使用全局SSH密钥
+public static ConnectionInfo CreateGlobalKeyConnection(string hostname, int port, string username)
+{
+    var globalKeyPath = FindGlobalPrivateKey();
+    if (globalKeyPath != null)
+    {
+        var keyFile = new PrivateKeyFile(globalKeyPath);
+        return new ConnectionInfo(hostname, port, username, 
+            new PrivateKeyAuthenticationMethod(username, keyFile));
+    }
+    
+    // 如果没有全局密钥，回退到密码认证
+    throw new InvalidOperationException("未找到全局SSH私钥，请先配置SSH密钥或使用密码认证");
+}
+
+private static string? FindGlobalPrivateKey()
+{
+    var sshDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".ssh");
+    var keyNames = new[] { "id_ed25519", "id_rsa", "id_ecdsa" };
+    
+    foreach (var keyName in keyNames)
+    {
+        var keyPath = Path.Combine(sshDir, keyName);
+        if (File.Exists(keyPath))
+        {
+            return keyPath;
+        }
+    }
+    
+    return null;
+}
+```
 
 ## 错误处理
 

@@ -300,6 +300,8 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         if (enabledGroups.Count == 0)
         {
             Log.Info("[UI] 没有启用的同步组，跳过同步");
+            LastSyncErrorMessage = "没有启用的同步组";
+            DetailedDiagnostics = "请至少启用一个同步组后再执行同步操作。您可以通过勾选同步组列表中的复选框来启用同步组，或使用「全部启用」按钮一次性启用所有同步组。";
             return;
         }
 

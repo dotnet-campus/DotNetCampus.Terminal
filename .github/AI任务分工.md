@@ -25,6 +25,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - ✅ 增量同步优化
 - ✅ 错误处理优化和诊断信息改进
 - ✅ 错误消息格式优化（解决双冒号问题）
+- ✅ "没有启用的同步组"UI错误提示优化
 
 ### UI界面设计师 (UI Designer AI)
 - ✅ 主界面布局和SSH设备编辑界面

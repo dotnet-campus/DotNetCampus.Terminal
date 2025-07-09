@@ -73,7 +73,9 @@
                                  Minimum="0" Maximum="100" Margin="1 0" Height="1"
                                  Background="DimGray"
                                  Foreground="Green" />
-                    <Button Grid.Row="0" Grid.Column="2" Content="立即同步" Command="{Binding Commands.SyncAllCommand}" />
+                    <Button Grid.Row="0" Grid.Column="2" Content="立即同步"
+                            IsEnabled="{Binding !Sync.IsGlobalSyncing}"
+                            Command="{Binding Commands.SyncAllCommand}" />
                     <TextBlock Grid.Row="1" Grid.Column="1" Margin="1 0" Foreground="Green"
                                Text="正在同步…"
                                IsVisible="{Binding Sync.IsGlobalSyncing, Mode=OneWay}" />
@@ -92,12 +94,15 @@
                 <Grid Grid.Row="2" Margin="0 1 0 0" ColumnDefinitions="Auto,*,Auto,1,Auto"
                       IsEnabled="{Binding !Sync.IsGlobalSyncing}">
                     <Button Grid.Column="0" Content="+ 同步新目录" />
-                    <Button Grid.Column="2" Content="全部启用" Command="{Binding Commands.EnableAllCommand}" />
-                    <Button Grid.Column="4" Content="全部禁用" Command="{Binding Commands.DisableAllCommand}" />
+                    <Button Grid.Column="2" Content="全部禁用" Background="DarkOrange"
+                            Command="{Binding Commands.DisableAllCommand}" />
+                    <Button Grid.Column="4" Content="全部启用"
+                            Command="{Binding Commands.EnableAllCommand}" />
                 </Grid>
 
                 <!-- 同步组列表 -->
                 <ItemsControl Grid.Row="3" BorderThickness="0"
+                              IsEnabled="{Binding !Sync.IsGlobalSyncing}"
                               ItemsSource="{Binding Sync.SyncGroups}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -161,11 +166,9 @@
 
                     <!-- 保存与删除 -->
                     <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="1" HorizontalAlignment="Right">
-                        <Button Content="保存"
-                                Margin="0 0 1 0" Padding="2 0"
+                        <Button Content="保存" Padding="2 0"
                                 Command="{Binding Commands.SaveConfigurationCommand}" />
-                        <Button Content="删除" Background="DarkRed"
-                                Margin="0" Padding="2 0"
+                        <Button Content="删除" Background="DarkRed" Padding="2 0"
                                 Command="{Binding Commands.DeleteDeviceCommand}" />
                     </StackPanel>
                 </Grid>

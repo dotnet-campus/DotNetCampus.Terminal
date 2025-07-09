@@ -37,7 +37,7 @@ public partial class SshRemoteDeviceInfoView : UserControl
 
         // 显示确认对话框
         var result = await MessageBox.ShowDialog(
-            (Window)TopLevel.GetTopLevel(this)!,
+            this,
             "删除设备",
             message,
             MessageBoxStyle.YesNo);
@@ -51,7 +51,7 @@ public partial class SshRemoteDeviceInfoView : UserControl
 
         // 显示错误消息
         _ = MessageBox.ShowDialog(
-            (Window)TopLevel.GetTopLevel(this)!,
+            this,
             "删除失败",
             $"删除设备时发生错误：\n{ex.Message}",
             MessageBoxStyle.Ok);

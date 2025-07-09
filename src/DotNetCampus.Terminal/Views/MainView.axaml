@@ -69,10 +69,10 @@
                     <Setter Property="Margin" Value="0 -1" />
                 </Style>
                 <Style Selector="^ TextBlock.TreeViewExpander">
-                    <Setter Property="Text" Value="🔼" />
+                    <Setter Property="Text" Value="🔽" />
                 </Style>
                 <Style Selector="^[IsExpanded=True] TextBlock.TreeViewExpander">
-                    <Setter Property="Text" Value="🔽" />
+                    <Setter Property="Text" Value="🔼" />
                 </Style>
             </Style>
             <Style Selector="^[Level=1]">

@@ -102,35 +102,36 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="vm:SyncGroupViewModel">
                             <Border Margin="0 -1 0 0" BorderThickness="0 1 0 1" BorderBrush="DimGray">
-                                <StackPanel Margin="1">
+                                <StackPanel>
                                     <!-- 同步组名称和状态 -->
                                     <Grid ColumnDefinitions="3,Auto,*,Auto,Auto,Auto">
                                         <TextBlock Grid.Column="0" Width="3"
                                                    TextAlignment="Center"
                                                    Text="{Binding StatusSymbol}"
                                                    Foreground="{Binding StatusColor}" />
-                                        <TextBlock Grid.Column="1" Text="{Binding Name}" />
-                                        <TextBlock Grid.Column="2" Text="{Binding StatusText}"
+                                        <TextBlock Grid.Column="1" FontWeight="Bold" Text="{Binding Name}" />
+                                        <TextBlock Grid.Column="2" FontStyle="Italic" Foreground="DimGray" Text="{Binding StatusText}"
                                                    Margin="1,0,0,0" />
-                                        <ToggleSwitch Grid.Column="3" Margin="1,0"
+                                        <ToggleSwitch Grid.Column="3" Margin="0 0 1 0"
                                                       OnContent="已启用" OffContent="已禁用"
                                                       IsChecked="{Binding IsEnabled}" />
-                                        <Button Grid.Column="4" Content="编辑" Margin="1,0" />
-                                        <Button Grid.Column="5" Content="同步" Margin="1,0"
+                                        <Button Grid.Column="4" Content="编辑" Margin="0 0 1 0" />
+                                        <Button Grid.Column="5" Content="同步" Margin="0"
                                                 Command="{Binding SyncCommand}" />
                                     </Grid>
-                                    <!-- 远程路径 -->
-                                    <StackPanel Orientation="Horizontal" Margin="0,1,0,0">
-                                        <TextBlock Width="3" Text="📁" />
-                                        <TextBlock Text="{Binding RemotePath}" />
-                                    </StackPanel>
-                                    <!-- 同步方向 -->
-                                    <TextBlock Width="3" Text=" ↑" HorizontalAlignment="Left" />
-                                    <!-- 本地路径 -->
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Width="3" Text="📁" />
-                                        <TextBlock Text="{Binding LocalPath}" />
-                                    </StackPanel>
+                                    <TextBlock Margin="0 1 0 0" Foreground="Gray">
+                                        <!-- 远程路径 -->
+                                        <Run Text="🌐" />
+                                        <Run Foreground="DarkCyan" Text="{Binding RemotePath}" />
+                                        <!-- 同步方向 -->
+                                        <LineBreak />
+                                        <Run Text="  " />
+                                        <Run Foreground="DimGray" Text="{Binding DirectionSymbol}" />
+                                        <LineBreak />
+                                        <!-- 本地路径 -->
+                                        <Run Text="📁" />
+                                        <Run Foreground="DarkOrange" Text="{Binding LocalPath}" />
+                                    </TextBlock>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>

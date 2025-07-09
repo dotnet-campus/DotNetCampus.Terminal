@@ -1,9 +1,12 @@
 # DotNetCampus Terminal 设备配置文件
 # 这是一个示例配置文件，展示了如何配置SSH设备和同步组
+# 同步方向支持多种别名：
+# LocalToRemote/Push/Upload/上传 - 本地到远程
+# RemoteToLocal/Pull/Download/下载 - 远程到本地
 
 # 测试设备 1
 [[SshDevices]]
-ConnectionName = "测试设备 1"
+ConnectionName = "麒麟 Kylin (x86_64)"
 Host = "172.20.114.71"
 Port = 22
 UserName = "seewo"
@@ -14,26 +17,36 @@ Name = "调试工具"
 RemotePath = "/home/seewo/lvyi/Tools"
 LocalPath = "D:\\WIP\\Desktop\\Linux调试工具"
 Enabled = true
+Direction = "Push"  # 上传到远程
 
 [[SshDevices.SyncGroups]]
 Name = "测试项目"
 RemotePath = "/home/seewo/lvyi/TestProject"
 LocalPath = "D:\\WIP\\Desktop\\xxxxx"
 Enabled = true
+Direction = "上传"  # 中文别名示例
 
 # 测试设备 2
 [[SshDevices]]
-ConnectionName = "测试设备 2"
-Host = "172.20.114.72"
+ConnectionName = "兆芯 UOS (x86_64)"
+Host = "172.20.113.36"
 Port = 22
-UserName = "seewo"
+UserName = "uos"
 Password = "123"
 
 [[SshDevices.SyncGroups]]
-Name = "开发环境"
-RemotePath = "/home/seewo/development"
-LocalPath = "D:\\Development"
+Name = "调试工具"
+RemotePath = "/home/seewo/lvyi/Tools"
+LocalPath = "D:\\WIP\\Desktop\\Linux调试工具"
 Enabled = true
+Direction = "LocalToRemote"  # 标准名称
+
+[[SshDevices.SyncGroups]]
+Name = "性能数据"
+RemotePath = "/home/seewo/lvyi/data"
+LocalPath = "D:\\WIP\\Desktop\\data"
+Enabled = true
+Direction = "Download"  # 从远程下载
 
 # 测试设备 3
 [[SshDevices]]
@@ -48,3 +61,4 @@ Name = "生产备份"
 RemotePath = "/home/seewo/backup"
 LocalPath = "D:\\Backup"
 Enabled = false
+Direction = "下载"  # 中文别名：从远程拉取备份

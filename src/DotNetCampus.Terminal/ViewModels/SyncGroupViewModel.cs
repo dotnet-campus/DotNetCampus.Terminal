@@ -1,6 +1,7 @@
 using DotNetCampus.Terminal.FileSync;
 using DotNetCampus.Terminal.Framework.Input.Commands;
 using DotNetCampus.Terminal.Framework.Mvvm;
+using DotNetCampus.Terminal.Modules.Configurations.Models;
 
 namespace DotNetCampus.Terminal.ViewModels;
 
@@ -17,10 +18,13 @@ public record SyncGroupViewModel : BindableRecord
     private double _syncProgress;
     private bool _isEnabled = true;
     private bool _isSyncing;
+    private SyncDirection _direction = SyncDirection.LocalToRemote;
 
     public SyncGroupViewModel()
     {
         SyncCommand = new AsyncCommand(OnSyncAsync);
+        UpdateStatusDisplay();
+        UpdateDirectionDisplay();
     }
 
     /// <summary>
@@ -184,6 +188,45 @@ public record SyncGroupViewModel : BindableRecord
             Console.WriteLine($"同步过程中发生错误: {ex.Message}");
             Status = SyncGroupStatus.Error;
         }
+    }
+
+    /// <summary>
+    /// 同步方向
+    /// </summary>
+    public SyncDirection Direction
+    {
+        get => _direction;
+        set
+        {
+            if (SetField(ref _direction, value))
+            {
+                UpdateDirectionDisplay();
+                OnPropertyChanged(nameof(DirectionText));
+                OnPropertyChanged(nameof(DirectionSymbol));
+            }
+        }
+    }
+
+    /// <summary>
+    /// 同步方向显示文本
+    /// </summary>
+    public string DirectionText { get; private set; } = string.Empty;
+
+    /// <summary>
+    /// 同步方向符号
+    /// </summary>
+    public string DirectionSymbol { get; private set; } = "↑";
+
+    private void UpdateDirectionDisplay()
+    {
+        DirectionText = SyncDirectionParser.ToDisplayText(Direction);
+
+        DirectionSymbol = Direction switch
+        {
+            SyncDirection.LocalToRemote => "↑",
+            SyncDirection.RemoteToLocal => "↓",
+            _ => "?"
+        };
     }
 }
 

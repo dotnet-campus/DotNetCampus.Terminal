@@ -63,7 +63,8 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
             Name = "设计时项目",
             RemotePath = "/home/user/projects/design",
             LocalPath = @"D:\Projects\Design",
-            Status = SyncGroupStatus.Normal
+            Status = SyncGroupStatus.Normal,
+            Direction = SyncDirection.LocalToRemote
         });
 
         SyncGroups.Add(new SyncGroupViewModel
@@ -71,7 +72,17 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
             Name = "设计时文档",
             RemotePath = "/home/user/documents",
             LocalPath = @"D:\Documents",
-            Status = SyncGroupStatus.Disabled
+            Status = SyncGroupStatus.Disabled,
+            Direction = SyncDirection.RemoteToLocal
+        });
+
+        SyncGroups.Add(new SyncGroupViewModel
+        {
+            Name = "配置备份",
+            RemotePath = "/home/user/backup",
+            LocalPath = @"D:\Backup",
+            Status = SyncGroupStatus.Normal,
+            Direction = SyncDirection.RemoteToLocal
         });
     }
 
@@ -95,7 +106,8 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
                 Name = syncGroup.Name,
                 RemotePath = syncGroup.RemotePath,
                 LocalPath = syncGroup.LocalPath,
-                IsEnabled = syncGroup.Enabled
+                IsEnabled = syncGroup.Enabled,
+                Direction = syncGroup.DirectionEnum
             });
         }
 
@@ -297,7 +309,8 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
                 Name = group.Name,
                 RemotePath = group.RemotePath,
                 LocalPath = group.LocalPath,
-                Enabled = true
+                Enabled = true,
+                Direction = group.Direction.ToString() // 设置字符串值，会通过解析器转换为枚举
             }).ToList();
 
             // 创建进度报告

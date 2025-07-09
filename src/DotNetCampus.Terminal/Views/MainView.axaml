@@ -134,7 +134,7 @@
                         <TextBox Background="Black" Padding="1 0" Watermark="搜索设备…" />
                     </Border>
                     <TreeView x:Name="DeviceTreeView" Grid.Row="2" BorderThickness="0"
-                              ItemsSource="{Binding RemoteDevices, Mode=OneTime}"
+                              ItemsSource="{Binding RemoteDevices}"
                               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                               ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <TreeView.ItemsPanel>
@@ -172,7 +172,7 @@
                                     <TextBlock Grid.Column="0" Padding="1 0" Foreground="DimGray">
                                         <Run Text="📁" />
                                         <Run Foreground="DarkGray"
-                                             Text="{Binding Info.Name, Mode=OneTime}" />
+                                             Text="{Binding Info.Name, Mode=OneWay}" />
                                         <Run Text="(" /><Run Text="{Binding OnlineCount, Mode=OneWay}" />
                                         <Run Text="/" />
                                         <Run Text="{Binding Children.Count, Mode=OneWay}" /><Run Text=")" />
@@ -189,9 +189,9 @@
                                                Foreground="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToForegroundConverter}}"
                                                Text="{Binding ConnectionState, Mode=OneWay, Converter={StaticResource ConnectionStateToStringConverter}}" />
                                     <TextBlock Grid.Row="0" Grid.Column="1"
-                                               Text="{Binding Info.ConnectionName, Mode=OneTime}" />
+                                               Text="{Binding Info.ConnectionName, Mode=OneWay}" />
                                     <TextBlock Grid.Row="1" Grid.Column="1" Classes="SecondaryDescription"
-                                               Text="{Binding Info.Address, Mode=OneTime}" />
+                                               Text="{Binding Info.Address, Mode=OneWay}" />
                                     <ToggleButton Grid.Row="0" Grid.Column="2" Classes="FavoriteIcon"
                                                   IsCheckedChanged="FavoriteButton_IsCheckedChanged" />
                                 </Grid>

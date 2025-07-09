@@ -75,7 +75,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         // 初始化子ViewModels
         var fileSyncService = Container.Current.EnsureGet<IFileSyncService>();
         Sync = new SshDeviceSyncViewModel(fileSyncService);
-        Commands = new SshDeviceCommandsViewModel(Sync, GetCurrentDeviceInfo);
+        Commands = new SshDeviceCommandsViewModel(this, GetCurrentDeviceInfo);
 
         // 从配置中加载同步组数据
         Sync.InitializeSyncGroups(info.SyncGroups);
@@ -148,6 +148,15 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     }
 
     #endregion
+
+    /// <summary>
+    /// 更新基类的Info属性，确保与当前属性值同步
+    /// </summary>
+    public void UpdateInfo()
+    {
+        var currentInfo = GetCurrentDeviceInfo();
+        Info = currentInfo;
+    }
 
     /// <summary>
     /// 获取当前设备信息

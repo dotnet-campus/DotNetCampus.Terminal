@@ -15,11 +15,13 @@ public partial record SshDeviceCommandsViewModel : BindableRecord
 {
     private readonly SshDeviceSyncViewModel _syncViewModel;
     private readonly Func<SshRemoteDeviceInfo> _getDeviceInfo;
+    private readonly SshRemoteDeviceInfoViewModel _owner;
 
-    public SshDeviceCommandsViewModel(SshDeviceSyncViewModel syncViewModel, Func<SshRemoteDeviceInfo> getDeviceInfo)
+    public SshDeviceCommandsViewModel(SshRemoteDeviceInfoViewModel owner, Func<SshRemoteDeviceInfo> getDeviceInfo)
     {
-        _syncViewModel = syncViewModel;
+        _syncViewModel = owner.Sync;
         _getDeviceInfo = getDeviceInfo;
+        _owner = owner;
         InitializeCommands();
     }
 
@@ -168,7 +170,10 @@ public partial record SshDeviceCommandsViewModel : BindableRecord
             // 保存配置
             await configurationManager.SaveRemoteDeviceAsync(updatedDeviceInfo);
 
-            Log.Info($"[UI] 设备配置保存成功: {currentDeviceInfo.ConnectionName}");
+            // 更新父ViewModel的Info属性，确保数据同步
+            _owner.UpdateInfo();
+
+            Log.Info($"[UI] 设备配置保存成功并已同步列表数据: {currentDeviceInfo.ConnectionName}");
         }
         catch (Exception ex)
         {

@@ -78,9 +78,24 @@ public record RemoteDeviceGroupNode(RemoteDeviceGroup Info) : BindableRecord, IR
     }
 }
 
-public abstract record RemoteDeviceInfoNode(IRemoteDeviceInfo Info) : BindableRecord, IRemoteDeviceNode
+public abstract record RemoteDeviceInfoNode : BindableRecord, IRemoteDeviceNode
 {
+    private IRemoteDeviceInfo _info;
     private ConnectionState _connectionState;
+
+    protected RemoteDeviceInfoNode(IRemoteDeviceInfo info)
+    {
+        _info = info;
+    }
+
+    /// <summary>
+    /// 设备信息
+    /// </summary>
+    public IRemoteDeviceInfo Info
+    {
+        get => _info;
+        protected set => SetField(ref _info, value);
+    }
 
     public ConnectionState ConnectionState
     {

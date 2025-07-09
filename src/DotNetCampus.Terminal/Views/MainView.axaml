@@ -214,8 +214,8 @@
         </Grid>
 
         <!-- 状态提示栏 -->
-        <views:StatusTipView Grid.Row="2" DataContext="{Binding StatusBarViewModel.StatusTip}" />
-        
+        <views:StatusTipView Grid.Row="2" DataContext="{Binding StatusBar.StatusTip}" />
+
         <!-- 功能键状态栏 -->
         <views:StatusBarView Grid.Row="3" />
 

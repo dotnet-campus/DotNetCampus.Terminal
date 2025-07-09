@@ -39,6 +39,11 @@ public record StatusTipViewModel : BindableRecord
     }
 
     /// <summary>
+    /// 是否为正常状态（既不是错误也不是警告）
+    /// </summary>
+    public bool IsNormal => !IsError && !IsWarning;
+
+    /// <summary>
     /// 显示普通提示
     /// </summary>
     public void ShowTip(string message)

@@ -1,6 +1,5 @@
 using DotNetCampus.Terminal.Framework.Input.Commands;
 using DotNetCampus.Terminal.Framework.Mvvm;
-using DotNetCampus.Terminal.Framework.DependencyInjection;
 using DotNetCampus.Logging;
 
 namespace DotNetCampus.Terminal.ViewModels;
@@ -13,12 +12,12 @@ public record StatusBarViewModel : BindableRecord
     private readonly IServiceProvider _serviceProvider;
     private readonly MainViewModel _mainViewModel;
 
-    public StatusBarViewModel(IServiceProvider serviceProvider)
+    public StatusBarViewModel(MainViewModel owner, IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-        _mainViewModel = serviceProvider.EnsureGet<MainViewModel>();
-        StatusTip = serviceProvider.EnsureGet<StatusTipViewModel>();
-        
+        _mainViewModel = owner;
+        StatusTip = owner.StatusTip;
+
         InitializeCommands();
     }
 

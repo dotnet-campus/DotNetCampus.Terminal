@@ -13,7 +13,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 ## AI 角色分工
 
 ### 配置管理专家 (Configuration AI)
-**📖 必读文档**: `.github/knowledge/Configuration-Expert-Experience-Summary.md`
+**📖 必读文档**: `.github/knowledge/AI协作经验/角色经验总结/配置管理专家-核心经验总结.md`
 - ✅ TOML配置文件格式设计和实现
 - ✅ 配置解析和数据模型
 - ✅ 个人设备配置存储（TOML源保存功能）
@@ -23,7 +23,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - [ ] 配置加密存储
 
 ### 文件同步工程师 (File Sync AI) 
-**📖 必读文档**: `.github/knowledge/File-Sync-Engineer-Experience-Summary.md`
+**📖 必读文档**: `.github/knowledge/AI协作经验/角色经验总结/文件同步工程师-核心经验总结.md`
 - ✅ 基于SFTP的文件同步
 - ✅ 同步状态监控和UI集成
 - ✅ 远程到本地同步
@@ -33,7 +33,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - ✅ "没有启用的同步组"UI错误提示优化
 
 ### UI界面设计师 (UI Designer AI)
-**📖 必读文档**: `.github/knowledge/UI-Designer-Experience-Summary.md`
+**📖 必读文档**: `.github/knowledge/AI协作经验/角色经验总结/UI界面设计师-核心经验总结.md`
 - ✅ 主界面布局和SSH设备编辑界面
 - ✅ 数据绑定和MVVM模式
 - ✅ 同步状态显示和全局进度条
@@ -53,7 +53,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - Windows连接专家：Windows远程连接
 - 测试工程师：测试框架和自动化
 - 知识学习者：技术文档和最佳实践
-- 文档维护员：✅ 简化协作文档，项目文档维护
+- 文档维护员：✅ 简化协作文档，✅ 知识库分类重组，项目文档维护
 
 ## 协作流程
 

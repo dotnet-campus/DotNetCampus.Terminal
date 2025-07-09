@@ -1,0 +1,146 @@
+# 文件同步工程师经验总结
+
+## 必读提醒
+🔥 **在开始任何文件同步相关任务前，必须先阅读本文档！**
+
+## 核心技术栈速查
+
+### SSH.NET关键类型
+- `SftpClient` - SFTP文件传输客户端
+- `ConnectionInfo` - SSH连接信息配置
+- `PasswordAuthenticationMethod` - 密码认证
+- `PrivateKeyAuthenticationMethod` - 密钥认证
+- `PrivateKeyFile` - 私钥文件
+
+### 文件同步服务接口
+```csharp
+public interface IFileSyncService
+{
+    Task<SyncResult> SyncDirectoryAsync(SyncRequest request, 
+        IProgress<SyncProgress>? progress = null, 
+        CancellationToken cancellationToken = default);
+}
+```
+
+### 同步方向类型
+- `RemoteToLocal` - 远程到本地（主要使用）
+- `LocalToRemote` - 本地到远程
+- `Bidirectional` - 双向同步
+
+### 进度报告模式
+```csharp
+public record SyncProgress(
+    int FileIndex,          // 当前文件索引
+    int TotalFiles,         // 总文件数
+    string CurrentFile,     // 当前文件名
+    double OverallProgress  // 总体进度 (0-100)
+);
+```
+
+## 错误处理最佳实践
+
+### 错误消息格式规范
+- ✅ `"[SSH] 连接失败: 主机不可达"`
+- ✅ `"[FileSync] 同步失败: 权限不足"`
+- ❌ `"[SSH]: 连接失败: 主机不可达"` (双冒号)
+
+### 常见错误类型处理
+```csharp
+// 网络连接错误
+catch (SocketException ex) 
+{
+    return SyncResult.Failure($"[SSH] 网络连接失败: {ex.Message}");
+}
+
+// SSH认证错误
+catch (SshAuthenticationException ex)
+{
+    return SyncResult.Failure($"[SSH] 认证失败: {ex.Message}");
+}
+
+// SFTP操作错误
+catch (SftpPathNotFoundException ex)
+{
+    return SyncResult.Failure($"[FileSync] 路径不存在: {ex.Message}");
+}
+```
+
+### 诊断信息格式
+```csharp
+var diagnostics = new StringBuilder();
+diagnostics.AppendLine($"连接信息: {info.UserName}@{info.Host}:{info.Port}");
+diagnostics.AppendLine($"同步方向: {request.Direction}");
+diagnostics.AppendLine($"远程路径: {request.RemotePath}");
+diagnostics.AppendLine($"本地路径: {request.LocalPath}");
+diagnostics.AppendLine($"错误详情: {ex}");
+```
+
+## 性能优化要点
+
+### 增量同步
+- 基于文件修改时间和大小判断
+- 避免重复传输未更改文件
+- 使用 `SftpFile.LastWriteTime` 和 `SftpFile.Length`
+
+### 并发控制
+- SFTP连接复用，避免频繁建立连接
+- 使用 `SemaphoreSlim` 控制并发数
+- 单个SftpClient不支持并发，需要连接池
+
+### 大文件处理
+- 分块传输大文件
+- 实时进度报告
+- 支持取消操作
+
+## UI集成要点
+
+### ViewModel绑定属性
+```csharp
+// 全局同步状态
+public bool IsGlobalSyncing { get; set; }
+public double GlobalSyncProgress { get; set; }
+
+// 时间显示
+public DateTimeOffset? LastSyncTime { get; set; }
+
+// 错误处理
+public string LastSyncErrorMessage { get; set; }
+public string DetailedDiagnostics { get; set; }
+```
+
+### 空状态处理
+- 当没有启用的同步组时，显示友好提示
+- 避免显示"同步失败"的误导信息
+
+## 常见错误避坑
+
+### ❌ 错误做法
+- 错误消息使用双冒号格式
+- 忘记处理取消令牌
+- 没有提供详细诊断信息
+- 同步组为空时显示错误状态
+
+### ✅ 正确做法
+- 使用标准错误消息格式 `[标签] 描述`
+- 正确处理 `CancellationToken`
+- 提供完整的诊断信息便于调试
+- 区分"无同步组"和"同步失败"状态
+
+## 日志记录规范
+```csharp
+using DotNetCampus.Logging;
+
+Log.Info($"[FileSync] 开始同步: {request.RemotePath} -> {request.LocalPath}");
+Log.Warning($"[FileSync] 跳过文件: {file.Name}, 原因: 权限不足");
+Log.Error($"[FileSync] 同步失败: {ex.Message}");
+```
+
+## 相关知识库文档
+- `SSH.NET-File-Sync-Guide.md` - SSH.NET详细使用指南
+- `File-Sync-Error-Handling-Optimization.md` - 错误处理优化
+- `Incremental-Sync-Optimization.md` - 增量同步实现
+- `Remote-To-Local-Sync-Implementation.md` - 同步实现细节
+
+---
+*最后更新：2025年7月9日*
+*下次更新时，请基于实际踩坑经验补充内容*

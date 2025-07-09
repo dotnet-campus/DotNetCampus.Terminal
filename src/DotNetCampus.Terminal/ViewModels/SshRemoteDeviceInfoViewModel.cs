@@ -24,6 +24,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     // 组合的子ViewModels - 使用简洁的属性名
     public SshDeviceSyncViewModel Sync { get; }
     public SshDeviceCommandsViewModel Commands { get; }
+    public SshDeviceDeployViewModel Deploy { get; }
 
     /// <summary>
     /// 生成本地唯一标识符
@@ -79,6 +80,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         var fileSyncService = Container.Current.EnsureGet<IFileSyncService>();
         Sync = new SshDeviceSyncViewModel(fileSyncService);
         Commands = new SshDeviceCommandsViewModel(this, GetCurrentDeviceInfo);
+        Deploy = new SshDeviceDeployViewModel();
 
         // 从配置中加载同步组数据
         Sync.InitializeSyncGroups(info.SyncGroups);

@@ -2,30 +2,150 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:DotNetCampus.Terminal.ViewModels"
+             xmlns:console="https://github.com/jinek/consolonia"
+             xmlns:vm="clr-namespace:DotNetCampus.Terminal.ViewModels.RemoteDevices.Ssh"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="DotNetCampus.Terminal.Views.RemoteDevices.Ssh.SshDeviceDeployView"
-             x:DataType="vm:SshRemoteDeviceInfoViewModel">
+             x:DataType="vm:SshDeviceDeployViewModel">
 
     <Design.DataContext>
-        <vm:SshRemoteDeviceInfoViewModel />
+        <vm:SshDeviceDeployViewModel />
     </Design.DataContext>
 
-    <!-- 部署功能预留区域 -->
-    <Grid RowDefinitions="Auto,*">
-        <TextBlock Grid.Row="0" Text="部署功能正在开发中..." 
-                   HorizontalAlignment="Center" 
-                   Foreground="DimGray" 
-                   FontStyle="Italic" 
-                   Margin="0 10" />
-        
-        <!-- 未来可能包含的功能 -->
-        <StackPanel Grid.Row="1" Spacing="10" IsVisible="False">
-            <TextBlock Text="计划功能：" FontWeight="Bold" />
-            <TextBlock Text="• 应用部署配置" Margin="10 0" />
-            <TextBlock Text="• 部署历史记录" Margin="10 0" />
-            <TextBlock Text="• 部署状态监控" Margin="10 0" />
-            <TextBlock Text="• 自动化脚本执行" Margin="10 0" />
+    <ScrollViewer>
+        <StackPanel Spacing="1" Margin="1">
+
+            <!-- 标题和说明 -->
+            <Border BorderBrush="DimGray" BorderThickness="1" Padding="1">
+                <StackPanel Spacing="0">
+                    <TextBlock Text="一键部署SSH密钥对" FontWeight="Bold" />
+                    <TextBlock Text="此功能将生成全局SSH密钥对并部署到远程设备，提高连接安全性"
+                               TextWrapping="Wrap" Foreground="DimGray" />
+                </StackPanel>
+            </Border>
+
+            <!-- 操作说明和安全提示 -->
+            <Border BorderBrush="Orange" BorderThickness="1" Padding="1">
+                <StackPanel Spacing="0">
+                    <TextBlock Text="⚠ 安全须知" FontWeight="Bold" Foreground="Orange" />
+                    <TextBlock Text="此操作将执行以下步骤：" />
+                    <TextBlock Text="1. 检查或生成新的SSH密钥对" Margin="2 0" />
+                    <TextBlock Text="2. 将公钥部署到远程设备的 ~/.ssh/authorized_keys" Margin="2 0" />
+                    <TextBlock Text="3. 验证密钥认证是否正常工作" Margin="2 0" />
+                    <TextBlock Text="4. 可选：禁用设备密码认证（提高安全性）"
+                               Margin="2 0" Foreground="Orange" />
+                </StackPanel>
+            </Border>
+
+            <!-- 配置选项 -->
+            <Border BorderBrush="DimGray" BorderThickness="1" Padding="1">
+                <StackPanel Spacing="0">
+                    <TextBlock Text="配置选项" FontWeight="Bold" />
+
+                    <!-- SSH密钥密码短语 -->
+                    <StackPanel Spacing="0">
+                        <TextBlock Text="SSH密钥密码短语（可选）:" />
+                        <TextBox Text="{Binding Passphrase}"
+                                 PasswordChar="*"
+                                 Watermark="留空表示不设置密码短语"
+                                 Width="40"
+                                 HorizontalAlignment="Left" />
+                        <TextBlock Text="建议：为提高安全性，请设置密码短语"
+                                   Foreground="DimGray" />
+                    </StackPanel>
+
+                    <!-- 安全选项 -->
+                    <CheckBox IsChecked="{Binding DisablePasswordAuth}"
+                              Content="部署成功后禁用密码认证（推荐）"
+                              Foreground="Orange" />
+
+                    <!-- 用户确认 -->
+                    <CheckBox IsChecked="{Binding ConfirmOperation}"
+                              Content="我理解此操作的安全影响并同意继续"
+                              FontWeight="Bold" />
+                </StackPanel>
+            </Border>
+
+            <!-- 部署进度和状态 -->
+            <Border BorderBrush="DimGray" BorderThickness="1" Padding="1"
+                    IsVisible="{Binding IsDeploying}">
+                <StackPanel Spacing="0">
+                    <TextBlock Text="部署进度" FontWeight="Bold" />
+                    <TextBlock Text="{Binding CurrentStep}" />
+                    <ProgressBar Value="{Binding ProgressPercent}"
+                                 Maximum="100"
+                                 Height="1" />
+                    <TextBlock Text="{Binding ProgressPercent, StringFormat={}{0}%}"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
+            </Border>
+
+            <!-- 错误信息显示 -->
+            <Border BorderBrush="Red" BorderThickness="1" Padding="1"
+                    IsVisible="{Binding HasError}">
+                <StackPanel Spacing="0">
+                    <TextBlock Text="❌ 部署失败" FontWeight="Bold" Foreground="Red" />
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               TextWrapping="Wrap"
+                               Foreground="Red" />
+                </StackPanel>
+            </Border>
+
+            <!-- 成功信息显示 -->
+            <Border BorderBrush="Green" BorderThickness="1" Padding="1"
+                    IsVisible="{Binding CanRollback}">
+                <StackPanel Spacing="0">
+                    <TextBlock Text="✅ 部署成功" FontWeight="Bold" Foreground="Green" />
+                    <TextBlock Text="SSH密钥已成功部署，您现在可以使用密钥认证连接到远程设备"
+                               TextWrapping="Wrap"
+                               Foreground="Green" />
+                </StackPanel>
+            </Border>
+
+            <!-- 操作按钮 -->
+            <StackPanel Orientation="Horizontal" Spacing="1" HorizontalAlignment="Left">
+                <!-- 主要操作按钮 -->
+                <Button Content="开始部署"
+                        Command="{Binding DeployKeyCommand}"
+                        IsVisible="{Binding !IsDeploying}"
+                        Background="DarkBlue"
+                        Foreground="White"
+                        Padding="2 0" />
+
+                <!-- 重试按钮 -->
+                <Button Content="重试部署"
+                        Command="{Binding RetryDeployCommand}"
+                        IsVisible="{Binding CanRetry}"
+                        Background="DarkOrange"
+                        Foreground="White"
+                        Padding="2 0" />
+
+                <!-- 回滚按钮 -->
+                <Button Content="回滚操作"
+                        Command="{Binding RollbackCommand}"
+                        IsVisible="{Binding CanRollback}"
+                        Background="DarkRed"
+                        Foreground="White"
+                        Padding="2 0" />
+
+                <!-- 清除错误按钮 -->
+                <Button Content="清除错误"
+                        Command="{Binding ClearErrorCommand}"
+                        IsVisible="{Binding HasError}"
+                        Padding="2 0" />
+            </StackPanel>
+
+            <!-- 帮助信息 -->
+            <Border BorderBrush="DimGray" BorderThickness="1" Padding="1">
+                <StackPanel Spacing="0">
+                    <TextBlock Text="💡 使用提示" FontWeight="Bold" />
+                    <TextBlock Text="• 首次部署需要输入远程设备的用户密码" />
+                    <TextBlock Text="• 部署成功后将自动切换为密钥认证" />
+                    <TextBlock Text="• 如果遇到问题，可以使用回滚功能恢复密码认证" />
+                    <TextBlock Text="• 全局密钥将用于所有已配置的SSH设备" />
+                </StackPanel>
+            </Border>
+
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </UserControl>

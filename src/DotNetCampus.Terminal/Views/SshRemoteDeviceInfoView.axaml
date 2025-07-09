@@ -23,7 +23,7 @@
         </TabItem>
 
         <TabItem Header="部署">
-            <sshViews:SshDeviceDeployView DataContext="{Binding}" />
+            <sshViews:SshDeviceDeployView DataContext="{Binding Deploy}" />
         </TabItem>
 
     </TabControl>

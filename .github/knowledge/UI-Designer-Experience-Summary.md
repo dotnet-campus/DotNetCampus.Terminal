@@ -3,6 +3,66 @@
 ## 必读提醒
 🔥 **在开始任何UI相关任务前，必须先阅读本文档！**
 
+## ❗ 致命错误避坑
+
+### 字符级测量单位错误
+**这是UI设计师最容易犯的致命错误！**
+
+#### ❌ 错误的像素思维
+```xml
+<!-- 错误：这些数值在控制台中是字符单位！ -->
+<StackPanel Spacing="10" Margin="10">          <!-- 10个字符间距！太大了！ -->
+<Border Padding="10">                          <!-- 10个字符内边距！ -->
+<TextBox Width="300">                          <!-- 300个字符宽度！ -->
+<ProgressBar Height="8">                       <!-- 8个字符高度！ -->
+<Button Padding="15,5">                        <!-- 15个字符宽，5个字符高！ -->
+<TextBlock FontSize="16">                      <!-- 控制台中无意义！ -->
+```
+
+#### ✅ 正确的字符思维
+```xml
+<!-- 正确：以字符为单位思考 -->
+<StackPanel Spacing="1" Margin="1">            <!-- 1个字符间距 -->
+<Border Padding="1">                           <!-- 1个字符内边距 -->
+<TextBox Width="40">                           <!-- 40个字符宽度 -->
+<ProgressBar Height="1">                       <!-- 1个字符高度 -->
+<Button Padding="2 0">                         <!-- 左右2个字符，上下0个字符 -->
+<TextBlock>                                    <!-- 不设置FontSize -->
+```
+
+#### 字符级度量对照表
+```
+Spacing="1"   = 1个字符间距
+Margin="1"    = 1个字符边距
+Padding="1"   = 1个字符内边距
+Width="20"    = 20个字符宽度
+Height="1"    = 1个字符高度
+Margin="2 0"  = 左右2个字符，上下0个字符
+Padding="1 0" = 左右1个字符，上下0个字符
+```
+
+#### 常用尺寸参考
+```xml
+<!-- 小组件 -->
+<Button Padding="1 0">短按钮</Button>
+<Button Padding="2 0">中等按钮</Button>
+
+<!-- 输入框 -->
+<TextBox Width="20">短输入框</TextBox>
+<TextBox Width="40">中等输入框</TextBox>
+<TextBox Width="60">长输入框</TextBox>
+
+<!-- 布局间距 -->
+<StackPanel Spacing="0">紧密布局</StackPanel>
+<StackPanel Spacing="1">标准布局</StackPanel>
+
+<!-- 边框内边距 -->
+<Border Padding="1">标准内边距</Border>
+<Border Padding="2">宽松内边距</Border>
+```
+
+**记住：在Consolonia中，每个数字都是字符数量，不是像素！**
+
 ## 核心技术栈速查
 
 ### ViewModel基类选择
@@ -99,6 +159,70 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
 - `UI-Progress-And-Binding-Best-Practices.md` - 进度显示最佳实践
 - `ViewModel-重构最佳实践.md` - ViewModel架构指南
 - `Interactive-Command-Pattern-Guide.md` - 交互式命令模式
+
+## 命令框架使用经验
+
+### 静态CanExecute模式
+项目框架的 `ActionCommand` 和 `AsyncCommand` 不支持动态刷新 CanExecute，需要手动管理：
+
+```csharp
+public SshDeviceDeployViewModel()
+{
+    // 初始化命令时不传递CanExecute委托
+    DeployKeyCommand = new AsyncCommand(DeployKeyAsync);
+    
+    // 手动设置初始状态
+    UpdateCommandStates();
+}
+
+// 在属性变更时手动更新命令状态
+public bool IsDeploying
+{
+    get => _isDeploying;
+    private set
+    {
+        if (SetFieldTrackingChanges(ref _isDeploying, value))
+        {
+            UpdateCommandStates(); // 关键：属性变更时更新命令状态
+        }
+    }
+}
+
+private void UpdateCommandStates()
+{
+    DeployKeyCommand.CanExecute = !IsDeploying && ConfirmOperation;
+    RetryDeployCommand.CanExecute = CanRetry;
+    // ...
+}
+```
+
+### UI安全设计模式
+SSH密钥部署等安全敏感操作的UI设计要点：
+
+1. **多步确认机制**：用户必须勾选"理解安全影响"
+2. **清晰的操作说明**：详细列出将执行的步骤
+3. **安全警告**：使用醒目颜色（Orange/Red）标识风险操作
+4. **进度反馈**：实时显示当前执行步骤和进度百分比
+5. **错误恢复**：提供重试和回滚功能
+6. **状态可视化**：不同阶段显示不同的UI区域（进度/错误/成功）
+
+### Consolonia布局最佳实践
+```xml
+<!-- 使用ScrollViewer包装长内容 -->
+<ScrollViewer>
+    <StackPanel Spacing="10" Margin="10">
+        <!-- 使用Border分组相关内容 -->
+        <Border BorderBrush="DimGray" BorderThickness="1" Padding="10">
+            <!-- 分组内容 -->
+        </Border>
+    </StackPanel>
+</ScrollViewer>
+
+<!-- 安全警告使用橙色边框 -->
+<Border BorderBrush="Orange" BorderThickness="1" Padding="10">
+    <TextBlock Text="⚠ 安全须知" Foreground="Orange" />
+</Border>
+```
 
 ---
 *最后更新：2025年7月9日*

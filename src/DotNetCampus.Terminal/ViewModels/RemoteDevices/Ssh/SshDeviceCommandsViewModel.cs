@@ -17,6 +17,11 @@ public partial record SshDeviceCommandsViewModel : TrackableBindableRecord
     private readonly Func<SshRemoteDeviceInfo> _getDeviceInfo;
     private readonly SshRemoteDeviceInfoViewModel _owner;
 
+    /// <summary>
+    /// 删除设备请求事件
+    /// </summary>
+    public event EventHandler? DeleteDeviceRequested;
+
     public SshDeviceCommandsViewModel(SshRemoteDeviceInfoViewModel owner, Func<SshRemoteDeviceInfo> getDeviceInfo)
     {
         _syncViewModel = owner.Sync;
@@ -61,6 +66,11 @@ public partial record SshDeviceCommandsViewModel : TrackableBindableRecord
     public AsyncCommand SaveConfigurationCommand { get; private set; } = null!;
 
     /// <summary>
+    /// 删除设备命令
+    /// </summary>
+    public ActionCommand DeleteDeviceCommand { get; private set; } = null!;
+
+    /// <summary>
     /// 初始化命令
     /// </summary>
     private void InitializeCommands()
@@ -72,6 +82,7 @@ public partial record SshDeviceCommandsViewModel : TrackableBindableRecord
         ShowDiagnosticsCommand = new ActionCommand(OnShowDiagnostics);
         OpenShellCommand = new AsyncCommand(OnOpenShellAsync);
         SaveConfigurationCommand = new AsyncCommand(OnSaveConfigurationAsync);
+        DeleteDeviceCommand = new ActionCommand(OnDeleteDevice);
     }
 
     /// <summary>
@@ -180,6 +191,44 @@ public partial record SshDeviceCommandsViewModel : TrackableBindableRecord
             var deviceInfo = _getDeviceInfo();
             Log.Error($"[UI] 保存设备配置失败: {deviceInfo.ConnectionName}, 错误: {ex.Message}", ex);
             // TODO: 显示错误消息给用户
+        }
+    }
+
+    /// <summary>
+    /// 删除设备的触发方法，通过事件通知View层显示确认弹窗
+    /// </summary>
+    private void OnDeleteDevice()
+    {
+        var deviceInfo = _getDeviceInfo();
+        Log.Info($"[UI] 触发删除设备请求: {deviceInfo.ConnectionName}");
+
+        // 通知View层显示删除确认弹窗
+        DeleteDeviceRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// 执行实际的删除操作（从View层调用）
+    /// </summary>
+    public async Task ExecuteDeleteAsync()
+    {
+        try
+        {
+            var deviceInfo = _getDeviceInfo();
+            Log.Info($"[UI] 开始删除设备: {deviceInfo.ConnectionName}");
+
+            // 获取配置管理器
+            var configurationManager = Container.Current.EnsureGet<ConfigurationManager>();
+
+            // 删除设备配置
+            await configurationManager.RemoveRemoteDeviceAsync(deviceInfo.ConnectionName);
+
+            Log.Info($"[UI] 设备删除成功: {deviceInfo.ConnectionName}");
+        }
+        catch (Exception ex)
+        {
+            var deviceInfo = _getDeviceInfo();
+            Log.Error($"[UI] 删除设备失败: {deviceInfo.ConnectionName}, 错误: {ex.Message}", ex);
+            throw; // 重新抛出异常，让调用者处理
         }
     }
 }

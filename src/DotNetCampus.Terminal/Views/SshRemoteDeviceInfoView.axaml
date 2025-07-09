@@ -159,11 +159,14 @@
                                  Text="{Binding ConnectionName, Mode=TwoWay}" />
                     </Border>
 
-                    <!-- 保存与重置 -->
+                    <!-- 保存与删除 -->
                     <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="1" HorizontalAlignment="Right">
                         <Button Content="保存"
-                                Margin="1,0"
+                                Margin="0 0 1 0" Padding="2 0"
                                 Command="{Binding Commands.SaveConfigurationCommand}" />
+                        <Button Content="删除" Background="DarkRed"
+                                Margin="0" Padding="2 0"
+                                Command="{Binding Commands.DeleteDeviceCommand}" />
                     </StackPanel>
                 </Grid>
 

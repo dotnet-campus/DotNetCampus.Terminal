@@ -10,6 +10,12 @@ UserName = "seewo"
 Password = "123"
 
 [[SshDevices.SyncGroups]]
+Name = "调试工具"
+RemotePath = "/home/seewo/lvyi/Tools"
+LocalPath = "D:\\WIP\\Desktop\\Linux调试工具"
+Enabled = true
+
+[[SshDevices.SyncGroups]]
 Name = "测试项目"
 RemotePath = "/home/seewo/lvyi/TestProject"
 LocalPath = "D:\\WIP\\Desktop\\xxxxx"

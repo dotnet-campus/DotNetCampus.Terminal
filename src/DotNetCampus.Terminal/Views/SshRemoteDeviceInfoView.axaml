@@ -32,6 +32,7 @@
                                                      Default="未知"
                                                      Online="在线"
                                                      Offline="离线" />
+        <converters:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
     </UserControl.Resources>
 
     <UserControl.Styles>
@@ -49,7 +50,7 @@
 
     <TabControl BorderThickness="0 1 0 0">
 
-        <TabItem Header="连接与同步">
+        <TabItem Header="操作">
 
             <Grid RowDefinitions="Auto,Auto,Auto,*">
 
@@ -65,7 +66,7 @@
                 </Grid>
 
                 <!-- 全局同步进度条 -->
-                <Grid Grid.Row="1" Margin="0 1 0 0" RowDefinitions="*,*" ColumnDefinitions="Auto,*,Auto">
+                <Grid Grid.Row="1" Margin="0 1 0 0" RowDefinitions="*,*,*" ColumnDefinitions="Auto,*,Auto">
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="同步进度" Width="8" />
                     <ProgressBar Grid.Row="0" Grid.Column="1"
                                  Value="{Binding GlobalSyncProgress}"
@@ -73,8 +74,13 @@
                                  Background="DimGray"
                                  Foreground="Green" />
                     <Button Grid.Row="0" Grid.Column="2" Content="立即同步" Command="{Binding SyncAllCommand}" />
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="最近同步" />
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="这里绑定最近的同步时间" />
+                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="1 0">
+                        <Run Foreground="DimGray" Text="最近同步于" />
+                        <Run Text="{Binding LastSyncTime, Converter={StaticResource DateTimeToStringConverter}, Mode=OneWay}" />
+                    </TextBlock>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Margin="1 0"
+                               Foreground="Red"
+                               Text="{Binding LastSyncErrorMessage, Mode=OneWay}" />
                 </Grid>
 
                 <!-- 操作按钮 -->
@@ -88,9 +94,14 @@
                 <!-- 同步组列表 -->
                 <ItemsControl Grid.Row="3" BorderThickness="0"
                               ItemsSource="{Binding SyncGroups}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel Margin="0 1 0 0" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="vm:SyncGroupViewModel">
-                            <Border BorderThickness="1" BorderBrush="DimGray">
+                            <Border Margin="0 -1 0 0" BorderThickness="0 1 0 1" BorderBrush="DimGray">
                                 <StackPanel Margin="1">
                                     <!-- 同步组名称和状态 -->
                                     <Grid ColumnDefinitions="3,Auto,*,Auto,Auto,Auto">
@@ -128,7 +139,7 @@
             </Grid>
         </TabItem>
 
-        <TabItem Header="连接信息">
+        <TabItem Header="配置">
             <Grid RowDefinitions="Auto,*,Auto">
 
                 <Grid Grid.Row="0" RowDefinitions="*,Auto" ColumnDefinitions="Auto,*">
@@ -175,7 +186,7 @@
             </Grid>
         </TabItem>
 
-        <TabItem Header="部署环境">
+        <TabItem Header="部署">
         </TabItem>
 
     </TabControl>

@@ -20,6 +20,8 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     private CancellationTokenSource? _syncCancellationTokenSource;
     private double _globalSyncProgress;
     private bool _isGlobalSyncing;
+    private DateTimeOffset? _lastSyncTime;
+    private string _lastSyncErrorMessage = string.Empty;
 
     public SshRemoteDeviceInfoViewModel() : base(new SshRemoteDeviceInfo
     {
@@ -209,6 +211,24 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     }
 
     /// <summary>
+    /// 最近同步时间
+    /// </summary>
+    public DateTimeOffset? LastSyncTime
+    {
+        get => _lastSyncTime;
+        private set => SetField(ref _lastSyncTime, value);
+    }
+
+    /// <summary>
+    /// 最近同步错误消息
+    /// </summary>
+    public string LastSyncErrorMessage
+    {
+        get => _lastSyncErrorMessage;
+        private set => SetField(ref _lastSyncErrorMessage, value);
+    }
+
+    /// <summary>
     /// 初始化命令
     /// </summary>
     private void InitializeCommands()
@@ -261,6 +281,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         // 设置全局同步状态
         IsGlobalSyncing = true;
         GlobalSyncProgress = 0;
+        LastSyncErrorMessage = string.Empty; // 开始同步时清空错误消息
 
         // 将所有启用的同步组状态设置为同步中
         foreach (var group in enabledGroups)
@@ -309,6 +330,8 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
                     {
                         group.Status = SyncGroupStatus.Normal;
                     }
+                    LastSyncTime = DateTimeOffset.Now;
+                    LastSyncErrorMessage = string.Empty; // 清空错误消息
                     Log.Info("[UI] 所有目录同步成功");
                     break;
                 case FileSyncResult.Failed:
@@ -316,9 +339,12 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
                     {
                         group.Status = SyncGroupStatus.Error;
                     }
+                    LastSyncErrorMessage = "同步失败";
                     Log.Error("[UI] 目录同步失败");
                     break;
                 case FileSyncResult.PartialSuccess:
+                    LastSyncTime = DateTimeOffset.Now;
+                    LastSyncErrorMessage = "部分目录同步失败";
                     Log.Warn("[UI] 部分目录同步成功，部分失败");
                     break;
                 case FileSyncResult.Cancelled:
@@ -326,6 +352,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
                     {
                         group.Status = SyncGroupStatus.Normal;
                     }
+                    LastSyncErrorMessage = "同步操作被取消";
                     Log.Info("[UI] 同步操作被取消");
                     break;
             }
@@ -337,6 +364,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
             {
                 group.Status = SyncGroupStatus.Error;
             }
+            LastSyncErrorMessage = $"同步异常: {ex.Message}";
             Log.Error($"[UI] 同步过程中发生错误: {ex.Message}");
         }
         finally

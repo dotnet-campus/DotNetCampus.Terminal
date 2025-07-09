@@ -11,16 +11,11 @@ namespace DotNetCampus.Terminal.ViewModels.RemoteDevices.Ssh;
 /// <summary>
 /// SSH设备命令处理的ViewModel
 /// </summary>
-public partial record SshDeviceCommandsViewModel : TrackableBindableRecord
+public record SshDeviceCommandsViewModel : TrackableBindableRecord
 {
     private readonly SshDeviceSyncViewModel _syncViewModel;
     private readonly Func<SshRemoteDeviceInfo> _getDeviceInfo;
     private readonly SshRemoteDeviceInfoViewModel _owner;
-
-    /// <summary>
-    /// 删除设备请求事件
-    /// </summary>
-    public event EventHandler? DeleteDeviceRequested;
 
     public SshDeviceCommandsViewModel(SshRemoteDeviceInfoViewModel owner, Func<SshRemoteDeviceInfo> getDeviceInfo)
     {
@@ -68,7 +63,7 @@ public partial record SshDeviceCommandsViewModel : TrackableBindableRecord
     /// <summary>
     /// 删除设备命令
     /// </summary>
-    public ActionCommand DeleteDeviceCommand { get; private set; } = null!;
+    public AsyncInteractiveCommand<DeleteDeviceInteraction> DeleteDeviceCommand { get; private set; } = null!;
 
     /// <summary>
     /// 初始化命令
@@ -82,7 +77,7 @@ public partial record SshDeviceCommandsViewModel : TrackableBindableRecord
         ShowDiagnosticsCommand = new ActionCommand(OnShowDiagnostics);
         OpenShellCommand = new AsyncCommand(OnOpenShellAsync);
         SaveConfigurationCommand = new AsyncCommand(OnSaveConfigurationAsync);
-        DeleteDeviceCommand = new ActionCommand(OnDeleteDevice);
+        DeleteDeviceCommand = new AsyncInteractiveCommand<DeleteDeviceInteraction>(OnDeleteDevice);
     }
 
     /// <summary>
@@ -197,19 +192,33 @@ public partial record SshDeviceCommandsViewModel : TrackableBindableRecord
     /// <summary>
     /// 删除设备的触发方法，通过事件通知View层显示确认弹窗
     /// </summary>
-    private void OnDeleteDevice()
+    private async Task OnDeleteDevice(DeleteDeviceInteraction interaction)
     {
         var deviceInfo = _getDeviceInfo();
         Log.Info($"[UI] 触发删除设备请求: {deviceInfo.ConnectionName}");
 
         // 通知View层显示删除确认弹窗
-        DeleteDeviceRequested?.Invoke(this, EventArgs.Empty);
+        var confirmed = await interaction.ConfirmDeleteAsync();
+
+        if (confirmed)
+        {
+            // 继续删除任务。
+            Log.Info($"[UI] 用户确认删除设备: {deviceInfo.ConnectionName}");
+
+            // 执行删除操作
+            await DeleteAsync();
+            Log.Info($"[UI] 设备删除完成: {deviceInfo.ConnectionName}");
+        }
+        else
+        {
+            Log.Info($"[UI] 用户取消删除设备: {deviceInfo.ConnectionName}");
+        }
     }
 
     /// <summary>
     /// 执行实际的删除操作（从View层调用）
     /// </summary>
-    public async Task ExecuteDeleteAsync()
+    private async Task DeleteAsync()
     {
         try
         {
@@ -231,4 +240,15 @@ public partial record SshDeviceCommandsViewModel : TrackableBindableRecord
             throw; // 重新抛出异常，让调用者处理
         }
     }
+}
+
+/// <summary>
+/// 为删除远程设备的命令提供 UI 交互
+/// </summary>
+public record DeleteDeviceInteraction : InteractiveCommandInteraction
+{
+    /// <summary>
+    /// 当请求用户确认是否删除设备时调用的异步方法
+    /// </summary>
+    public required Func<Task<bool>> ConfirmDeleteAsync { get; init; }
 }

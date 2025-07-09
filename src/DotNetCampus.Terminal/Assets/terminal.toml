@@ -65,3 +65,19 @@ RemotePath = "/home/seewo/backup"
 LocalPath = "D:\\Backup"
 Enabled = false
 Direction = "下载"  # 中文别名：从远程拉取备份
+
+# 测试设备 4
+[[SshDevices]]
+LocalId = "device_c3d4e54123a01b2"
+ConnectionName = "测试设备 4"
+Host = "172.20.114.73"
+Port = 22
+UserName = "seewo"
+Password = "123"
+
+[[SshDevices.SyncGroups]]
+Name = "生产备份"
+RemotePath = "/home/seewo/backup"
+LocalPath = "D:\\Backup"
+Enabled = false
+Direction = "下载"  # 中文别名：从远程拉取备份

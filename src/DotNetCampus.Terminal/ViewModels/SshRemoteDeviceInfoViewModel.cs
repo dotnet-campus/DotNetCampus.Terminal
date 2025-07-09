@@ -2,6 +2,7 @@
 using DotNetCampus.Terminal.FileSync;
 using DotNetCampus.Terminal.Framework.Input.Commands;
 using DotNetCampus.Terminal.Modules.Configurations.Models;
+using DotNetCampus.Terminal.Modules.Configurations;
 using DotNetCampus.Terminal.Utils;
 using Avalonia.Collections;
 using DotNetCampus.Terminal.Framework.DependencyInjection;
@@ -156,6 +157,11 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     public AsyncCommand OpenShellCommand { get; private set; } = null!;
 
     /// <summary>
+    /// 保存配置命令
+    /// </summary>
+    public AsyncCommand SaveConfigurationCommand { get; private set; } = null!;
+
+    /// <summary>
     /// 同步组列表
     /// </summary>
     public AvaloniaList<SyncGroupViewModel> SyncGroups { get; } = new();
@@ -271,6 +277,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         DisableAllCommand = new AsyncCommand(OnDisableAllAsync);
         ShowDiagnosticsCommand = new ActionCommand(OnShowDiagnostics);
         OpenShellCommand = new AsyncCommand(OnOpenShellAsync);
+        SaveConfigurationCommand = new AsyncCommand(OnSaveConfigurationAsync);
     }
 
     protected override async Task<bool> OnTestConnectionAsync()
@@ -521,5 +528,57 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         {
             Log.Error($"[UI] 打开新Shell连接时发生错误: {ex.Message}", ex);
         }
+    }
+
+    /// <summary>
+    /// 保存配置
+    /// </summary>
+    private async Task OnSaveConfigurationAsync()
+    {
+        try
+        {
+            Log.Info($"[UI] 开始保存设备配置: {ConnectionName}");
+
+            // 获取配置管理器
+            var configurationManager = Container.Current.EnsureGet<ConfigurationManager>();
+
+            // 将当前 ViewModel 的数据转换为设备信息模型
+            var deviceInfo = CreateSshRemoteDeviceInfo();
+
+            // 保存配置
+            await configurationManager.SaveRemoteDeviceAsync(deviceInfo);
+
+            Log.Info($"[UI] 设备配置保存成功: {ConnectionName}");
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"[UI] 保存设备配置失败: {ConnectionName}, 错误: {ex.Message}", ex);
+            // TODO: 显示错误消息给用户
+        }
+    }
+
+    /// <summary>
+    /// 根据当前 ViewModel 状态创建 SshRemoteDeviceInfo
+    /// </summary>
+    private SshRemoteDeviceInfo CreateSshRemoteDeviceInfo()
+    {
+        // 转换同步组配置
+        var syncGroups = SyncGroups.Select(sg => new SyncGroupConfiguration
+        {
+            Name = sg.Name,
+            RemotePath = sg.RemotePath,
+            LocalPath = sg.LocalPath,
+            Enabled = sg.Status != SyncGroupStatus.Disabled
+        }).ToList();
+
+        return new SshRemoteDeviceInfo
+        {
+            ConnectionName = ConnectionName,
+            Host = Host,
+            Port = Port,
+            UserName = UserName,
+            Password = Password,
+            SyncGroups = syncGroups
+        };
     }
 }

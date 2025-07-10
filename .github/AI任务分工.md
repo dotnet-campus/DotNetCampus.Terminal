@@ -20,7 +20,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - ✅ UI保存按钮绑定和命令实现
 - ✅ 设备唯一标识符优化（避免改名导致重复保存）
 - ✅ AOT兼容性配置系统迁移方案设计（TOML→JSON）
-- [ ] JSON配置系统实现（替代TOML）
+- ✅ JSON配置系统实现（替代TOML）
 - [ ] 配置迁移工具实现
 - [ ] 团队配置同步
 - [ ] 配置加密存储

@@ -1,5 +1,5 @@
 ﻿using DotNetCampus.Terminal.Modules.Configurations.Models;
-using DotNetCampus.Terminal.Modules.Configurations.TomlSource;
+using DotNetCampus.Terminal.Modules.Configurations.JsonSource;
 using DotNetCampus.Logging;
 
 namespace DotNetCampus.Terminal.Modules.Configurations;
@@ -8,7 +8,7 @@ public class ConfigurationManager
 {
     private readonly List<IRemoteDeviceConfigurationSource> _remoteDeviceSources =
     [
-        new TomlRemoteDeviceConfigurationSource(),
+        new JsonRemoteDeviceConfigurationSource(),
     ];
 
     public async Task<IReadOnlyList<RemoteDeviceGroup>> FetchRemoteDevicesAsync()
@@ -37,27 +37,21 @@ public class ConfigurationManager
         {
             Log.Info($"[Config] 开始保存设备配置: {deviceInfo.ConnectionName}");
 
-            // 目前只支持 SSH 设备，所以直接使用 TOML 源保存
-            // 未来如果有其他类型的设备或源，可以根据设备类型选择合适的源
-            if (deviceInfo is SshRemoteDeviceInfo)
+            if (!_remoteDeviceSources.Any())
             {
-                var tomlSource = _remoteDeviceSources.OfType<TomlRemoteDeviceConfigurationSource>().FirstOrDefault();
-                if (tomlSource != null)
-                {
-                    await tomlSource.SaveRemoteDeviceAsync(deviceInfo);
-                    Log.Info($"[Config] 设备配置保存成功: {deviceInfo.ConnectionName}");
-                }
-                else
-                {
-                    Log.Error("[Config] 未找到 TOML 配置源");
-                    throw new InvalidOperationException("未找到 TOML 配置源");
-                }
+                Log.Error("[Config] 未找到可用的配置源");
+                throw new InvalidOperationException("未找到可用的配置源");
             }
-            else
+
+            // 保存到所有配置源
+            var saveResults = new List<Task>();
+            foreach (var configSource in _remoteDeviceSources)
             {
-                Log.Error($"[Config] 不支持的设备类型: {deviceInfo.GetType().Name}");
-                throw new NotSupportedException($"不支持的设备类型: {deviceInfo.GetType().Name}");
+                saveResults.Add(configSource.SaveRemoteDeviceAsync(deviceInfo));
             }
+
+            await Task.WhenAll(saveResults);
+            Log.Info($"[Config] 设备配置保存成功到 {_remoteDeviceSources.Count} 个配置源: {deviceInfo.ConnectionName}");
         }
         catch (Exception ex)
         {
@@ -70,34 +64,28 @@ public class ConfigurationManager
     /// 删除远程设备配置
     /// </summary>
     /// <param name="connectionName">设备连接名称</param>
-    /// <param name="deviceType">设备类型</param>
     /// <returns>表示异步操作的任务</returns>
-    public async Task RemoveRemoteDeviceAsync(string connectionName, RemoteDeviceType deviceType = RemoteDeviceType.LinuxSsh)
+    public async Task RemoveRemoteDeviceAsync(string connectionName)
     {
         try
         {
             Log.Info($"[Config] 开始删除设备配置: {connectionName}");
 
-            // 目前只支持 SSH 设备，所以直接使用 TOML 源删除
-            if (deviceType == RemoteDeviceType.LinuxSsh)
+            if (!_remoteDeviceSources.Any())
             {
-                var tomlSource = _remoteDeviceSources.OfType<TomlRemoteDeviceConfigurationSource>().FirstOrDefault();
-                if (tomlSource != null)
-                {
-                    await tomlSource.RemoveRemoteDeviceAsync(connectionName);
-                    Log.Info($"[Config] 设备配置删除成功: {connectionName}");
-                }
-                else
-                {
-                    Log.Error("[Config] 未找到 TOML 配置源");
-                    throw new InvalidOperationException("未找到 TOML 配置源");
-                }
+                Log.Error("[Config] 未找到可用的配置源");
+                throw new InvalidOperationException("未找到可用的配置源");
             }
-            else
+
+            // 从所有配置源删除
+            var removeResults = new List<Task>();
+            foreach (var configSource in _remoteDeviceSources)
             {
-                Log.Error($"[Config] 不支持的设备类型: {deviceType}");
-                throw new NotSupportedException($"不支持的设备类型: {deviceType}");
+                removeResults.Add(configSource.RemoveRemoteDeviceAsync(connectionName));
             }
+
+            await Task.WhenAll(removeResults);
+            Log.Info($"[Config] 设备配置删除成功从 {_remoteDeviceSources.Count} 个配置源: {connectionName}");
         }
         catch (Exception ex)
         {

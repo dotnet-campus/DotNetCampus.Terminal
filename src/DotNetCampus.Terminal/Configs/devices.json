@@ -1,0 +1,42 @@
+{
+  "sshDevices": [
+    {
+      "localId": "device_example_001",
+      "connectionName": "开发服务器",
+      "host": "192.168.1.100",
+      "port": 22,
+      "userName": "developer",
+      "password": "123",
+      "syncGroups": [
+        {
+          "name": "项目产物",
+          "remotePath": "/home/developer/projects",
+          "localPath": "C:\\Projects\\Artifacts",
+          "enabled": true
+        },
+        {
+          "name": "日志文件",
+          "remotePath": "/var/log/myapp",
+          "localPath": "C:\\Logs",
+          "enabled": false
+        }
+      ]
+    },
+    {
+      "localId": "device_example_002",
+      "connectionName": "测试环境",
+      "host": "test.example.com",
+      "port": 2222,
+      "userName": "testuser",
+      "password": "123456",
+      "syncGroups": [
+        {
+          "name": "测试数据",
+          "remotePath": "/opt/testdata",
+          "localPath": "D:\\TestData",
+          "enabled": true
+        }
+      ]
+    }
+  ]
+}

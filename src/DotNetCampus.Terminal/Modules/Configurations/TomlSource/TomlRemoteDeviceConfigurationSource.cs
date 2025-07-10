@@ -233,4 +233,9 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
         return devices.FindIndex(d =>
             d.ConnectionName.Equals(deviceInfo.ConnectionName, StringComparison.OrdinalIgnoreCase));
     }
+
+    /// <summary>
+    /// 获取配置源文件路径
+    /// </summary>
+    public string GetConfigurationSourcePath() => _configurationPath;
 }

@@ -24,6 +24,9 @@
     <None Include="Configs\devices.toml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Configs\devices.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="..\..\LICENSE" Pack="true" PackagePath="">
       <Link>LICENSE</Link>
     </None>

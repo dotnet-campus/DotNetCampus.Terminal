@@ -31,4 +31,10 @@ public interface IRemoteDeviceConfigurationSource
     /// <param name="connectionName">要删除的设备连接名称。</param>
     /// <returns>表示异步操作的任务。</returns>
     Task RemoveRemoteDeviceAsync(string connectionName);
+
+    /// <summary>
+    /// 获取配置源文件路径。
+    /// </summary>
+    /// <returns>配置源文件路径。</returns>
+    string GetConfigurationSourcePath();
 }

@@ -1,14 +1,44 @@
-# System.Text.Json AOT配置系统使用指南
+# System.Text.Json 使用指南
 
-## 概述
+System.Text.Json 是 .NET 内置的高性能 JSON 序列化库，支持 AOT 编译和源生成器。项目中使用它替代 TOML 配置系统，提供更好的 AOT 兼容性。
 
-本文档描述基于System.Text.Json和源生成器的AOT兼容配置系统，用于替代原有的TOML配置系统。
+## 核心特性
+
+### AOT 兼容性
+- 使用源生成器避免运行时反射
+- 零依赖的 JSON 序列化
+- 支持静态编译优化
+
+### 高性能序列化
+- 基于 Span&lt;T&gt; 的内存高效处理
+- 预编译序列化逻辑
+- 支持异步流处理
+
+## 项目中的应用场景
+
+### 1. 设备配置管理
+替代原有的 TOML 配置系统，提供 AOT 兼容的设备配置存储。
+
+### 2. 配置文件迁移
+从 TOML 格式平滑迁移到 JSON 格式，保持数据完整性。
+
+### 3. 高性能序列化
+利用源生成器实现零反射的高性能配置读写。
+
+## 基础使用
+
+### 安装
+```xml
+<!-- 默认包含在 .NET 中，无需额外安装 -->
+<FrameworkReference Include="Microsoft.NETCore.App" />
+```
 
 ## 核心组件
 
 ### 1. JSON源生成器上下文
 
 ```csharp
+// Configurations/DataSources/ConfigurationJsonContext.cs
 using System.Text.Json.Serialization;
 
 [JsonSerializable(typeof(DeviceConfiguration))]
@@ -36,6 +66,7 @@ public partial class ConfigurationJsonContext : JsonSerializerContext
 ### 2. JSON配置源实现
 
 ```csharp
+// Configurations/DataSources/JsonRemoteDeviceConfigurationSource.cs
 public class JsonRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSource
 {
     private readonly string _configurationPath;
@@ -446,3 +477,41 @@ public class ConfigurationManager
 4. **妥善处理错误和异常**
 5. **定期备份配置文件**
 6. **使用结构化日志记录操作**
+
+## 与项目集成
+
+### 依赖注入配置
+```csharp
+// Modules/Configurations/ConfigurationModule.cs
+public static class ConfigurationModule
+{
+    public static IServiceCollection AddConfiguration(this IServiceCollection services)
+    {
+        services.AddSingleton<IRemoteDeviceConfigurationSource, JsonRemoteDeviceConfigurationSource>();
+        services.AddSingleton<ConfigurationMigrationService>();
+        return services;
+    }
+}
+```
+
+### 日志集成
+```csharp
+// 使用 DotNetCampus.Logging 命名空间
+using DotNetCampus.Logging;
+
+public class JsonRemoteDeviceConfigurationSource
+{
+    public async Task SaveAsync()
+    {
+        try
+        {
+            // 保存逻辑
+            Log.Info("[Config] JSON配置保存成功");
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"[Config] JSON配置保存失败: {ex.Message}");
+        }
+    }
+}
+```

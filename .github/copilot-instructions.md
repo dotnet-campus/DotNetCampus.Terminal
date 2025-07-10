@@ -117,6 +117,7 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 - `依赖库文档/DotNetCampus.Logger/01-日志框架使用指南.md` - 日志使用指南
 - `依赖库文档/SSH.NET/01-基础使用指南.md` - SSH.NET基础使用
 - `依赖库文档/SSH.NET/02-文件同步实现.md` - 文件同步指南
+- `依赖库文档/System.Text.Json/01-JSON配置系统使用指南.md` - JSON配置系统使用
 - `依赖库文档/Tomlet/01-TOML解析使用指南.md` - TOML配置解析
 - `依赖库文档/DotNet9/01-新特性在项目中的应用.md` - .NET 9新特性
 

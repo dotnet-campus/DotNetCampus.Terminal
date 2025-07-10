@@ -1,5 +1,9 @@
 # DotNetCampus Terminal
 
+[![CI](https://github.com/dotnet-campus/DotNetCampus.Terminal/actions/workflows/ci.yml/badge.svg)](https://github.com/dotnet-campus/DotNetCampus.Terminal/actions/workflows/ci.yml)
+[![Release](https://github.com/dotnet-campus/DotNetCampus.Terminal/actions/workflows/release.yml/badge.svg)](https://github.com/dotnet-campus/DotNetCampus.Terminal/actions/workflows/release.yml)
+[![Code Quality](https://github.com/dotnet-campus/DotNetCampus.Terminal/actions/workflows/code-quality.yml/badge.svg)](https://github.com/dotnet-campus/DotNetCampus.Terminal/actions/workflows/code-quality.yml)
+
 名字还没取。等做好了能用了再取名字吧！
 
 ## 这是什么？

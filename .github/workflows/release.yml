@@ -1,0 +1,128 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            runtime: win-x64
+            artifact-name: DotNetCampus.Terminal-win-x64.exe
+            path-separator: '\'
+          - os: ubuntu-latest
+            runtime: linux-x64
+            artifact-name: DotNetCampus.Terminal-linux-x64
+            path-separator: '/'
+          - os: macos-latest
+            runtime: osx-x64
+            artifact-name: DotNetCampus.Terminal-osx-x64
+            path-separator: '/'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Install dotnet tool TagToVersion
+      run: dotnet tool install -g dotnetCampus.TagToVersion
+      
+    - name: Set tag to version
+      run: dotnet TagToVersion -t ${{ github.ref }}
+      
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Publish (Windows)
+      if: matrix.os == 'windows-latest'
+      run: dotnet publish .\src\DotNetCampus.Terminal\ -p:PublishAot=true -r ${{ matrix.runtime }} --configuration Release --output .\publish\${{ matrix.runtime }}
+      
+    - name: Publish (Unix)
+      if: matrix.os != 'windows-latest'
+      run: dotnet publish ./src/DotNetCampus.Terminal/ -p:PublishAot=true -r ${{ matrix.runtime }} --configuration Release --output ./publish/${{ matrix.runtime }}
+      
+    - name: Rename executable (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        if (Test-Path ".\publish\${{ matrix.runtime }}\DotNetCampus.Terminal.exe") {
+          Rename-Item ".\publish\${{ matrix.runtime }}\DotNetCampus.Terminal.exe" "${{ matrix.artifact-name }}"
+        }
+      shell: pwsh
+      
+    - name: Rename executable (Unix)
+      if: matrix.os != 'windows-latest'
+      run: |
+        if [ -f "./publish/${{ matrix.runtime }}/DotNetCampus.Terminal" ]; then
+          mv "./publish/${{ matrix.runtime }}/DotNetCampus.Terminal" "./publish/${{ matrix.runtime }}/${{ matrix.artifact-name }}"
+        fi
+      
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact-name }}
+        path: |
+          .\publish\${{ matrix.runtime }}\${{ matrix.artifact-name }}
+          ./publish/${{ matrix.runtime }}/${{ matrix.artifact-name }}
+        if-no-files-found: error
+        retention-days: 7
+        
+  create-release:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ./artifacts
+        
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Release ${{ github.ref_name }}
+        body: |
+          ## 🚀 Release ${{ github.ref_name }}
+          
+          ### 📦 Downloads
+          
+          | Platform | Download |
+          |----------|----------|
+          | Windows (x64) | [DotNetCampus.Terminal-win-x64.exe](./DotNetCampus.Terminal-win-x64.exe) |
+          | Linux (x64) | [DotNetCampus.Terminal-linux-x64](./DotNetCampus.Terminal-linux-x64) |
+          | macOS (x64) | [DotNetCampus.Terminal-osx-x64](./DotNetCampus.Terminal-osx-x64) |
+          
+          ### 🔧 Installation
+          
+          **Windows:**
+          ```bash
+          # Download and run directly
+          DotNetCampus.Terminal-win-x64.exe
+          ```
+          
+          **Linux/macOS:**
+          ```bash
+          # Make executable and run
+          chmod +x DotNetCampus.Terminal-*
+          ./DotNetCampus.Terminal-*
+          ```
+          
+          ### 📝 What's Changed
+          
+          See [CHANGELOG.md](./CHANGELOG.md) for detailed changes.
+          
+        files: |
+          ./artifacts/DotNetCampus.Terminal-win-x64.exe/*
+          ./artifacts/DotNetCampus.Terminal-linux-x64/*
+          ./artifacts/DotNetCampus.Terminal-osx-x64/*
+        draft: false
+        prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

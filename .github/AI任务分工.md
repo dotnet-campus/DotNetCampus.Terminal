@@ -68,6 +68,18 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - [ ] 多语言文档支持
 - [ ] API文档自动更新
 
+### DevOps 自动化专家 (DevOps Automation Expert AI)
+**📖 必读文档**: `.github/knowledge/AI协作经验/角色经验总结/DevOps自动化专家-核心经验总结.md`
+- ✅ GitHub Actions CI/CD 流水线设计和实现
+- ✅ 跨平台应用程序自动化构建（Windows/Linux/macOS）
+- ✅ 自动化发布和版本管理
+- ✅ 构建产物自动化打包和分发
+- ✅ GitHub Releases 自动化发布
+- ✅ 代码质量检查和自动化测试集成
+- ✅ 依赖项安全扫描和更新
+- [ ] 性能基准测试自动化
+- [ ] 部署环境配置和基础设施即代码
+
 ### 其他模块
 - 进程管理专家：Shell启动和进程管理  
 - Windows连接专家：Windows远程连接

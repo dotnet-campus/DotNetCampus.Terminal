@@ -13,7 +13,7 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
 
     public TomlRemoteDeviceConfigurationSource()
     {
-        _configurationPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "terminal.toml");
+        _configurationPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "devices.toml");
     }
 
     /// <summary>

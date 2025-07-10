@@ -151,14 +151,14 @@ public class SyncGroupConfiguration
 ## 文件位置
 
 ### 默认位置
-- 程序目录: `./Assets/terminal.toml`
-- 用户配置: `~/.config/dotnetcampus-terminal/terminal.toml`
-- 桌面配置: `~/Desktop/terminal.toml`
+- **主要位置**: `./Config/devices.toml` (程序配置目录)
+- 备用位置: `~/.config/dotnetcampus-terminal/devices.toml`
+- 调试位置: `~/Desktop/devices.toml`
 
 ### 优先级
 1. 程序启动参数指定的配置文件
-2. 用户配置目录
-3. 程序目录配置文件
+2. 程序配置目录 (./Config/devices.toml)
+3. 用户配置目录
 4. 桌面配置文件
 
 ## 实现注意事项

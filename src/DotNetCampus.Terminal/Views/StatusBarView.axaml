@@ -5,7 +5,8 @@
              xmlns:console="https://github.com/jinek/consolonia"
              xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="30"
-             x:Class="DotNetCampus.Terminal.Views.StatusBarView">
+             x:Class="DotNetCampus.Terminal.Views.StatusBarView"
+             x:DataType="vm:StatusBarViewModel">
 
     <Design.DataContext>
         <vm:StatusBarViewModel />

@@ -10,6 +10,7 @@
              xmlns:converters="clr-namespace:DotNetCampus.Terminal.Views.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="DotNetCampus.Terminal.Views.MainView"
+             x:DataType="vm:MainViewModel"
              Background="Black">
 
     <Design.DataContext>

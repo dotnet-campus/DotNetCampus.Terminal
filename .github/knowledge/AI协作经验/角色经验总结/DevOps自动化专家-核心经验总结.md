@@ -23,6 +23,11 @@
 - ✅ 支持预发布版本识别 (alpha/beta/rc)
 - ✅ 自动创建 GitHub Releases 并上传构建产物
 - ✅ **优化发布页面**: 统一英文描述，提升国际化标准
+- ✅ **修复发布产物命名问题**: 
+  - 产物文件夹内保持原始 exe 文件名 (DotNetCampus.Terminal.exe)
+  - 仅 zip 包使用规范化命名 (DotNetCampus.Terminal.win-x64.1.0.0.zip)
+  - 过滤 .pdb/.dbg/.dsym 调试文件以减小包体积
+  - zip 包命名规范：使用 `.` 分割，版本号不带 `v` 前缀
 
 ### 4. 代码质量检查和自动化测试集成
 - ✅ 创建了代码质量检查流水线 (`.github/workflows/code-quality.yml`)
@@ -194,6 +199,39 @@ cd temp-release && zip -r ../${{ matrix.artifact-name }}.zip * && cd ..
 - 提供详细的安装指南，覆盖各个平台
 
 **经验教训**: 开源项目的发布页面应该保持国际化标准，使用英文可以让更多开发者理解和使用
+
+### 8. 发布产物命名规范优化 ⭐⭐
+**问题**: 初期的命名规范存在以下问题：
+1. **exe 文件重命名**: 擅自修改产物文件夹内的 exe 文件名，造成混乱
+2. **调试文件冗余**: .pdb/.dbg/.dsym 文件大幅增加包体积
+3. **命名格式不统一**: 使用连字符分割，版本号带 `v` 前缀
+
+**最终解决方案**:
+```yaml
+# 1. 保持产物文件夹内原始文件名
+# 删除所有重命名 exe 文件的步骤
+
+# 2. 过滤调试文件
+# Windows: 排除 .pdb, .dbg 文件
+Get-ChildItem -Path ".\publish\${{ matrix.runtime }}" -Recurse | 
+  Where-Object { $_.Extension -notin @('.pdb', '.dbg') }
+
+# Unix: 排除 .pdb, .dbg, .dsym 文件
+find ./publish/${{ matrix.runtime }} -type f ! -name "*.pdb" ! -name "*.dbg" ! -path "*.dsym*"
+
+# 3. 统一命名规范：使用 . 分割，版本号不带 v
+$zipName = "DotNetCampus.Terminal.${{ matrix.runtime }}.${{ steps.get_version.outputs.version }}.zip"
+```
+
+**最终命名格式**:
+- `DotNetCampus.Terminal.win-x64.1.0.0.zip`
+- `DotNetCampus.Terminal.linux-x64.1.0.0.zip`  
+- `DotNetCampus.Terminal.osx-x64.1.0.0.zip`
+
+**经验教训**: 
+- **产物内容不变原则**: 发布产物文件夹内的文件应保持原始名称，只有打包文件名需要规范化
+- **体积优化**: 生产环境不需要调试符号文件，过滤可显著减小包体积
+- **命名一致性**: 统一的命名规范有助于用户识别和自动化脚本处理
 
 ## 📋 待实现功能
 

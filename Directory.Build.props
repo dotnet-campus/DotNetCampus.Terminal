@@ -18,6 +18,7 @@
     <Authors>dotnet-campus</Authors>
     <Company>dotnet campus（.NET 职业技术学院）</Company>
     <Copyright>Copyright $([System.DateTime]::Now.ToString(`yyyy`)) &#169; dotnet campus, All Rights Reserved.</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/dotnet-campus/DotNetCampus.Terminal</RepositoryUrl>
     <PackageProjectUrl>https://github.com/dotnet-campus/DotNetCampus.Terminal</PackageProjectUrl>

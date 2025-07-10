@@ -24,6 +24,9 @@
     <None Include="Config\devices.toml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="">
+      <Link>LICENSE</Link>
+    </None>
   </ItemGroup>
 
 </Project>

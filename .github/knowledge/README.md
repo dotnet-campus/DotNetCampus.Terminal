@@ -15,7 +15,7 @@ DotNetCampus Terminal 项目的技术文档和经验总结。
 
 - **[UI界面设计师](AI协作经验/角色经验总结/UI界面设计师-核心经验总结.md)** - Consolonia UI设计和MVVM模式
 - **[文件同步工程师](AI协作经验/角色经验总结/文件同步工程师-核心经验总结.md)** - SFTP同步和性能优化
-- **[配置管理专家](AI协作经验/角色经验总结/配置管理专家-核心经验总结.md)** - TOML配置和数据管理
+- **[配置管理专家](AI协作经验/角色经验总结/配置管理专家-核心经验总结.md)** - JSON配置系统和AOT兼容
 - **[SSH连接专家](AI协作经验/角色经验总结/SSH连接专家-核心经验总结.md)** - SSH.NET连接和密钥管理
 - **[文档维护员](AI协作经验/角色经验总结/文档维护员-核心经验总结.md)** - 文档架构和协作流程
 
@@ -31,7 +31,7 @@ DotNetCampus Terminal 项目的技术文档和经验总结。
 │   ├── Consolonia/          # 控制台UI框架
 │   ├── SSH.NET/            # SSH连接库
 │   ├── DotNetCampus.Logger/ # 日志框架
-│   ├── Tomlet/             # TOML解析
+│   ├── System.Text.Json/   # JSON序列化
 │   └── DotNet9/            # .NET 9新特性
 ├── 🏗️ 技术设计文档/         # 项目架构和设计方案
 │   ├── 界面设计/            # UI架构和交互设计
@@ -66,4 +66,4 @@ DotNetCampus Terminal 项目的技术文档和经验总结。
 
 💡 **提示**：完整的文档索引和编码规范请查看 [`.github/copilot-instructions.md`](../copilot-instructions.md)
 
-*维护者：文档维护员AI | 最后更新：2025年7月9日*
+*维护者：文档维护员AI | 最后更新：2025年7月10日*

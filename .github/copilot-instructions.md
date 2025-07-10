@@ -12,7 +12,7 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 3. 按照职位要求和经验总结执行后续行动
 4. 遵循该角色的技术规范和工作流程
 
-**技术栈**：.NET 9.0, Consolonia, SSH.NET, Tomlet, DotNetCampus.Logger
+**技术栈**：.NET 9.0, Consolonia, SSH.NET, System.Text.Json, DotNetCampus.Logger
 
 ## 核心编码规范
 
@@ -118,7 +118,6 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 - `依赖库文档/SSH.NET/01-基础使用指南.md` - SSH.NET基础使用
 - `依赖库文档/SSH.NET/02-文件同步实现.md` - 文件同步指南
 - `依赖库文档/System.Text.Json/01-JSON配置系统使用指南.md` - JSON配置系统使用
-- `依赖库文档/Tomlet/01-TOML解析使用指南.md` - TOML配置解析
 - `依赖库文档/DotNet9/01-新特性在项目中的应用.md` - .NET 9新特性
 
 #### 技术设计文档
@@ -128,7 +127,7 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 - `技术设计文档/界面设计/04-ViewModel重构最佳实践.md` - ViewModel重构
 - `技术设计文档/界面设计/05-TUI与Shell集成解决方案.md` - Shell集成方案
 - `技术设计文档/界面设计/06-交互式命令模式设计.md` - 交互式命令设计
-- `技术设计文档/配置管理/01-TOML配置文件架构设计.md` - 配置架构设计
+- `技术设计文档/配置管理/01-JSON配置系统架构设计.md` - 配置架构设计
 - `技术设计文档/配置管理/02-配置保存功能实现.md` - 配置保存实现
 - `技术设计文档/配置管理/03-配置数据源迁移方案.md` - 配置迁移方案
 - `技术设计文档/配置管理/04-设备唯一标识符设计.md` - 设备ID设计
@@ -143,7 +142,6 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 
 #### AI协作经验
 - `AI协作经验/实现经验总结/设备唯一ID实现技术总结.md` - 设备ID实现经验
-- `AI协作经验/实现经验总结/TOML配置功能实现踩坑记录.md` - 配置功能踩坑记录
 - `AI协作经验/AI多角色协作开发经验.md` - 多角色协作经验
 
 **重要提醒**：

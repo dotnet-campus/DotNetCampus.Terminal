@@ -170,7 +170,7 @@ public record SshDeviceCommandsViewModel : TrackableBindableRecord
             // 创建新的设备信息，包含更新的同步组配置
             var updatedDeviceInfo = currentDeviceInfo with
             {
-                SyncGroups = _syncViewModel.GetSyncGroupConfigurations()
+                SyncDirectories = _syncViewModel.GetSyncGroupConfigurations()
             };
 
             // 保存配置

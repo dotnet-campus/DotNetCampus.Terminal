@@ -102,32 +102,28 @@ public static class SyncDirectionParser
 }
 
 /// <summary>
-/// 同步组配置
+/// 同步目录配置
 /// </summary>
 public class SyncGroupConfiguration
 {
     /// <summary>
-    /// 同步组名称
+    /// 同步目录名称
     /// </summary>
-    [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// 远程路径
     /// </summary>
-    [JsonPropertyName("remotePath")]
     public string RemotePath { get; set; } = string.Empty;
 
     /// <summary>
     /// 本地路径
     /// </summary>
-    [JsonPropertyName("localPath")]
     public string LocalPath { get; set; } = string.Empty;
 
     /// <summary>
     /// 是否启用
     /// </summary>
-    [JsonPropertyName("isEnabled")]
     public bool Enabled { get; set; } = true;
 
     private SyncDirection _direction = SyncDirection.LocalToRemote;
@@ -136,7 +132,6 @@ public class SyncGroupConfiguration
     /// 同步方向，默认为本地到远程
     /// 支持多种别名：Push/Pull, Upload/Download, LocalToRemote/RemoteToLocal 等
     /// </summary>
-    [JsonPropertyName("syncDirection")]
     public string Direction
     {
         get => _direction.ToString();
@@ -148,10 +143,4 @@ public class SyncGroupConfiguration
     /// </summary>
     [JsonIgnore]
     public SyncDirection DirectionEnum => _direction;
-
-    /// <summary>
-    /// 排除模式列表（可选）
-    /// </summary>
-    [JsonPropertyName("excludePatterns")]
-    public List<string> ExcludePatterns { get; set; } = [];
 }

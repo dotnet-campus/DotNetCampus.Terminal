@@ -14,7 +14,8 @@ namespace DotNetCampus.Terminal.Modules.Configurations.JsonSource;
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     GenerationMode = JsonSourceGenerationMode.Default,
-    UseStringEnumConverter = true
+    UseStringEnumConverter = true,
+    AllowTrailingCommas = true
 )]
 public partial class ConfigurationJsonContext : JsonSerializerContext
 {

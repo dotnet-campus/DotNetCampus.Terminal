@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using DotNetCampus.Logging;
 using DotNetCampus.Terminal.Modules.Configurations;
 using DotNetCampus.Terminal.Modules.Configurations.Models;
@@ -46,9 +47,16 @@ public class JsonRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
                 return [];
             }
 
-            var deviceConfiguration = JsonSerializer.Deserialize(
+            // 创建带注释支持的序列化选项
+            var jsonOptions = new JsonSerializerOptions(ConfigurationJsonContext.Default.Options)
+            {
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true
+            };
+
+            var deviceConfiguration = JsonSerializer.Deserialize<DeviceConfiguration>(
                 jsonContent, 
-                ConfigurationJsonContext.Default.DeviceConfiguration
+                jsonOptions
             );
 
             if (deviceConfiguration?.SshDevices == null)

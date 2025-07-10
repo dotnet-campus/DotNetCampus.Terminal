@@ -44,7 +44,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         Port = 22,
         UserName = "username",
         Password = "password",
-        SyncGroups =
+        SyncDirectories =
         [
             new SyncGroupConfiguration
             {
@@ -83,7 +83,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         Deploy = new SshDeviceDeployViewModel(GetCurrentDeviceInfo);
 
         // 从配置中加载同步组数据
-        Sync.InitializeSyncGroups(info.SyncGroups);
+        Sync.InitializeSyncGroups(info.SyncDirectories);
     }
 
     #region 基础属性
@@ -180,7 +180,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
             Port = Port,
             UserName = UserName,
             Password = Password,
-            SyncGroups = Sync.GetSyncGroupConfigurations(),
+            SyncDirectories = Sync.GetSyncGroupConfigurations(),
         };
     }
 

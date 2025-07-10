@@ -47,9 +47,9 @@ public record SshRemoteDeviceInfo : IRemoteDeviceInfo
     public string? Password { get; init; }
 
     /// <summary>
-    /// 同步组配置列表
+    /// 同步目录配置列表
     /// </summary>
-    public IReadOnlyList<SyncGroupConfiguration> SyncGroups { get; init; } = [];
+    public IReadOnlyList<SyncGroupConfiguration> SyncDirectories { get; init; } = [];
 }
 
 /// <summary>

@@ -1,6 +1,12 @@
 ﻿<Project>
   <PropertyGroup>
-    <!-- 版本号，人工指定。最终生成的版本号将是四位，最后一位由 git 提交数决定。 -->
-    <Version>0.1.0</Version>
+    <!-- 
+    版本号配置文件 - 重要说明：
+    1. 此版本号仅在本地编译时生效
+    2. CI/CD 发布时会被 dotnetCampus.TagToVersion 工具自动覆盖（从 Git Tag 提取版本号）
+    3. 请勿提交此文件的版本号更改到 Git 仓库
+    4. 如需发布新版本，请使用 Git Tag：git tag v1.0.0 && git push origin v1.0.0
+    -->
+    <Version>0.0.0-alpha00</Version>
   </PropertyGroup>
 </Project>

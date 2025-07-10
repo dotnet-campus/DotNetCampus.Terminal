@@ -15,12 +15,14 @@
 - ✅ 支持三大平台：Windows (win-x64)、Linux (linux-x64)、macOS (osx-x64)
 - ✅ 使用 PublishAot=true 进行 AOT 编译
 - ✅ 自动重命名可执行文件为平台特定名称
+- ✅ **修复发布产物上传问题**: 解决了 .exe.zip 后缀和 404 链接问题
 
 ### 3. 自动化发布和版本管理
 - ✅ 集成了 dotnetCampus.TagToVersion 工具
 - ✅ 版本号自动从 Git Tag 提取并写入 Version.props
 - ✅ 支持预发布版本识别 (alpha/beta/rc)
 - ✅ 自动创建 GitHub Releases 并上传构建产物
+- ✅ **优化发布页面**: 统一英文描述，提升国际化标准
 
 ### 4. 代码质量检查和自动化测试集成
 - ✅ 创建了代码质量检查流水线 (`.github/workflows/code-quality.yml`)
@@ -55,13 +57,14 @@
   if: matrix.os != 'windows-latest'
   run: dotnet publish ./src/DotNetCampus.Terminal/ -p:PublishAot=true -r ${{ matrix.runtime }}
 
-# 3. 条件执行和矩阵策略
+# 3. 条件执行和矩阵策略 (修正版)
 strategy:
   matrix:
     include:
       - os: windows-latest
         runtime: win-x64
-        artifact-name: DotNetCampus.Terminal-win-x64.exe
+        artifact-name: DotNetCampus.Terminal-win-x64        # 用于 zip 文件名
+        executable-name: DotNetCampus.Terminal-win-x64.exe  # 用于可执行文件名
 ```
 
 ### 版本管理策略
@@ -94,7 +97,7 @@ strategy:
   if: matrix.os == 'windows-latest'
   run: |
     if (Test-Path ".\publish\${{ matrix.runtime }}\DotNetCampus.Terminal.exe") {
-      Rename-Item ".\publish\${{ matrix.runtime }}\DotNetCampus.Terminal.exe" "${{ matrix.artifact-name }}"
+      Rename-Item ".\publish\${{ matrix.runtime }}\DotNetCampus.Terminal.exe" "${{ matrix.executable-name }}"
     }
   shell: pwsh
 
@@ -103,7 +106,7 @@ strategy:
   if: matrix.os != 'windows-latest'
   run: |
     if [ -f "./publish/${{ matrix.runtime }}/DotNetCampus.Terminal" ]; then
-      mv "./publish/${{ matrix.runtime }}/DotNetCampus.Terminal" "./publish/${{ matrix.runtime }}/${{ matrix.artifact-name }}"
+      mv "./publish/${{ matrix.runtime }}/DotNetCampus.Terminal" "./publish/${{ matrix.runtime }}/${{ matrix.executable-name }}"
     fi
 ```
 
@@ -119,6 +122,78 @@ strategy:
 - 保留 CodeQL 和依赖项检查等核心安全功能
 
 **经验教训**: 在多人协作项目中，代码格式标准化需要全团队讨论决定，不能单方面强制实施
+
+### 5. GitHub Release 产物上传问题 ⭐⭐⭐
+**问题**: Release 页面只有 Windows 版本，其他平台缺失且文件链接 404
+**根本原因**:
+1. 只上传了单个可执行文件，没有上传完整的发布包
+2. 文件夹结构包含多余的外层目录
+3. artifacts 下载路径不正确
+4. **命名规范错误**: `DotNetCampus.Terminal-win-x64.exe` 作为 artifact-name 导致生成 `.exe.zip` 后缀
+
+**解决方案**:
+```yaml
+# 1. 分离 artifact-name 和 executable-name
+matrix:
+  include:
+    - os: windows-latest
+      runtime: win-x64
+      artifact-name: DotNetCampus.Terminal-win-x64        # 用于 zip 文件名
+      executable-name: DotNetCampus.Terminal-win-x64.exe  # 用于可执行文件名
+
+# 2. 创建完整的 zip 包，包含所有发布文件
+- name: Create release package (Windows)
+  if: matrix.os == 'windows-latest'
+  run: |
+    # 创建临时文件夹，复制所有发布文件
+    New-Item -ItemType Directory -Path ".\temp-release" -Force
+    Copy-Item -Path ".\publish\${{ matrix.runtime }}\*" -Destination ".\temp-release\" -Recurse
+    # 创建 zip 包，不包含外层文件夹
+    Compress-Archive -Path ".\temp-release\*" -DestinationPath ".\${{ matrix.artifact-name }}.zip"
+
+# 3. 上传 zip 文件而不是单个可执行文件
+- name: Upload artifacts
+  uses: actions/upload-artifact@v4
+  with:
+    name: ${{ matrix.artifact-name }}
+    path: ${{ matrix.artifact-name }}.zip
+
+# 4. 正确的文件路径引用
+files: |
+  ./artifacts/DotNetCampus.Terminal-win-x64/DotNetCampus.Terminal-win-x64.zip
+  ./artifacts/DotNetCampus.Terminal-linux-x64/DotNetCampus.Terminal-linux-x64.zip
+  ./artifacts/DotNetCampus.Terminal-osx-x64/DotNetCampus.Terminal-osx-x64.zip
+```
+
+**经验教训**: 
+- AOT 发布的应用程序除了主程序外，还可能包含其他必要文件
+- 应该打包完整的发布目录而不是只上传可执行文件
+- GitHub Actions 的 artifacts 下载会创建以 artifact name 命名的文件夹
+- **命名规范很重要**: artifact-name 不应包含文件扩展名，否则会产生混乱的后缀
+
+### 6. 跨平台 zip 创建兼容性问题
+**问题**: Windows 和 Unix 系统的压缩命令不同
+**解决方案**:
+```yaml
+# Windows: 使用 PowerShell 的 Compress-Archive
+Compress-Archive -Path ".\temp-release\*" -DestinationPath ".\${{ matrix.artifact-name }}.zip"
+
+# Unix: 使用 zip 命令，注意工作目录
+cd temp-release && zip -r ../${{ matrix.artifact-name }}.zip * && cd ..
+```
+
+**注意事项**: 
+- zip 命令需要进入目录内部执行，避免包含外层文件夹
+- PowerShell 的 Compress-Archive 直接指定源路径和目标路径
+
+### 7. Release 页面国际化标准 ⭐
+**问题**: 发布页面中英文混杂，不符合国际开源项目标准
+**解决方案**: 
+- 统一使用英文描述，提升项目专业性
+- 保持表格格式清晰，便于用户快速定位下载链接
+- 提供详细的安装指南，覆盖各个平台
+
+**经验教训**: 开源项目的发布页面应该保持国际化标准，使用英文可以让更多开发者理解和使用
 
 ## 📋 待实现功能
 

@@ -1,4 +1,5 @@
-﻿using DotNetCampus.Terminal.Modules.Configurations.Models;
+﻿using Consolonia.Controls;
+using DotNetCampus.Terminal.Modules.Configurations.Models;
 using Tomlet;
 using DotNetCampus.Logging;
 
@@ -13,7 +14,8 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
 
     public TomlRemoteDeviceConfigurationSource()
     {
-        _configurationPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Config", "devices.toml");
+        var basePath = Path.GetDirectoryName(Environment.ProcessPath)!;
+        _configurationPath = Path.Combine(basePath, "Configs", "devices.toml");
     }
 
     /// <summary>
@@ -126,17 +128,17 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
             var deviceConfiguration = await LoadTomlConfigurationAsync();
 
             // 查找要删除的设备（兼容性：仍使用连接名称查找）
-            var deviceIndex = deviceConfiguration.SshDevices.FindIndex(d => 
+            var deviceIndex = deviceConfiguration.SshDevices.FindIndex(d =>
                 d.ConnectionName.Equals(connectionName, StringComparison.OrdinalIgnoreCase));
 
             if (deviceIndex >= 0)
             {
                 var removedDevice = deviceConfiguration.SshDevices[deviceIndex];
                 deviceConfiguration.SshDevices.RemoveAt(deviceIndex);
-                
+
                 // 保存到文件
                 await SaveTomlConfigurationAsync(deviceConfiguration);
-                
+
                 Log.Info($"[Config] 设备配置删除成功: {connectionName} (LocalId: {removedDevice.LocalId})");
             }
             else
@@ -221,14 +223,14 @@ public class TomlRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
         // 2. 使用RemoteId匹配（如果两者都非空）
         if (!string.IsNullOrEmpty(deviceInfo.RemoteId))
         {
-            index = devices.FindIndex(d => 
-                !string.IsNullOrEmpty(d.RemoteId) && 
+            index = devices.FindIndex(d =>
+                !string.IsNullOrEmpty(d.RemoteId) &&
                 d.RemoteId == deviceInfo.RemoteId);
             if (index >= 0) return index;
         }
 
         // 3. 降级到ConnectionName匹配（兼容性）
-        return devices.FindIndex(d => 
+        return devices.FindIndex(d =>
             d.ConnectionName.Equals(deviceInfo.ConnectionName, StringComparison.OrdinalIgnoreCase));
     }
 }

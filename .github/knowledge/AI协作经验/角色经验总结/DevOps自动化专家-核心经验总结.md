@@ -16,6 +16,7 @@
 - ✅ 使用 PublishAot=true 进行 AOT 编译
 - ✅ 自动重命名可执行文件为平台特定名称
 - ✅ **修复发布产物上传问题**: 解决了 .exe.zip 后缀和 404 链接问题
+- ✅ **修复跨平台文件夹结构问题**: 解决了 macOS/Linux 版本中 devices.toml 文件位置错误的问题
 
 ### 3. 自动化发布和版本管理
 - ✅ 集成了 dotnetCampus.TagToVersion 工具
@@ -119,7 +120,28 @@ strategy:
 **问题**: 需要同时支持 Windows 和 Unix 路径格式
 **解决方案**: 在 `upload-artifact` 中同时指定两种路径格式
 
-### 4. 代码格式检查的团队协作问题 ⭐
+### 4. 跨平台文件夹结构保留问题 ⚠️⚠️⚠️
+**问题**: macOS 和 Linux 打包时，`devices.toml` 等配置文件没有保留原有的文件夹结构
+**现象**: 
+- Windows 版本的 zip 包中 `devices.toml` 在 `Config/devices.toml` 路径（正确）
+- macOS/Linux 版本的 zip 包中 `devices.toml` 在根目录（错误）
+
+**根本原因**: 
+- Windows PowerShell 的 `Copy-Item -Recurse` 会保留文件夹结构
+- Unix 的 `find ... -exec cp {} ...` 只复制文件到目标根目录，丢失文件夹结构
+
+**解决方案**: 使用 `rsync` 保留文件夹结构
+```yaml
+# 错误的方式 (会丢失文件夹结构)
+find ./publish/${{ matrix.runtime }} -type f ! -name "*.pdb" ! -name "*.dbg" ! -path "*.dsym*" -exec cp {} ./temp-release/ \;
+
+# 正确的方式 (保留文件夹结构)  
+rsync -av --exclude='*.pdb' --exclude='*.dbg' --exclude='*.dsym' ./publish/${{ matrix.runtime }}/ ./temp-release/
+```
+
+**重要**: 配置文件如 `devices.toml` 需要保持其在 `Config/` 文件夹中的相对路径，应用程序才能正确找到它们。
+
+### 6. 代码格式检查的团队协作问题 ⭐
 **问题**: 团队对 .editorconfig 标准尚未统一，强制格式检查可能导致CI失败
 **解决方案**: 
 - 暂时移除 .editorconfig 文件和相关的格式检查步骤
@@ -128,7 +150,7 @@ strategy:
 
 **经验教训**: 在多人协作项目中，代码格式标准化需要全团队讨论决定，不能单方面强制实施
 
-### 5. GitHub Release 产物上传问题 ⭐⭐⭐
+### 7. GitHub Release 产物上传问题 ⭐⭐⭐
 **问题**: Release 页面只有 Windows 版本，其他平台缺失且文件链接 404
 **根本原因**:
 1. 只上传了单个可执行文件，没有上传完整的发布包
@@ -176,7 +198,7 @@ files: |
 - GitHub Actions 的 artifacts 下载会创建以 artifact name 命名的文件夹
 - **命名规范很重要**: artifact-name 不应包含文件扩展名，否则会产生混乱的后缀
 
-### 6. 跨平台 zip 创建兼容性问题
+### 8. 跨平台 zip 创建兼容性问题
 **问题**: Windows 和 Unix 系统的压缩命令不同
 **解决方案**:
 ```yaml
@@ -191,7 +213,7 @@ cd temp-release && zip -r ../${{ matrix.artifact-name }}.zip * && cd ..
 - zip 命令需要进入目录内部执行，避免包含外层文件夹
 - PowerShell 的 Compress-Archive 直接指定源路径和目标路径
 
-### 7. Release 页面国际化标准 ⭐
+### 9. Release 页面国际化标准 ⭐
 **问题**: 发布页面中英文混杂，不符合国际开源项目标准
 **解决方案**: 
 - 统一使用英文描述，提升项目专业性
@@ -200,7 +222,7 @@ cd temp-release && zip -r ../${{ matrix.artifact-name }}.zip * && cd ..
 
 **经验教训**: 开源项目的发布页面应该保持国际化标准，使用英文可以让更多开发者理解和使用
 
-### 8. 发布产物命名规范优化 ⭐⭐
+### 10. 发布产物命名规范优化 ⭐⭐
 **问题**: 初期的命名规范存在以下问题：
 1. **exe 文件重命名**: 擅自修改产物文件夹内的 exe 文件名，造成混乱
 2. **调试文件冗余**: .pdb/.dbg/.dsym 文件大幅增加包体积

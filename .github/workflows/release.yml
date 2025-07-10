@@ -81,8 +81,8 @@ jobs:
       run: |
         # 创建临时文件夹
         mkdir -p ./temp-release
-        # 复制所有发布文件，排除调试文件（macOS 的 .dsym 文件夹也排除）
-        find ./publish/${{ matrix.runtime }} -type f ! -name "*.pdb" ! -name "*.dbg" ! -path "*.dsym*" -exec cp {} ./temp-release/ \;
+        # 使用 rsync 保留文件夹结构，排除调试文件
+        rsync -av --exclude='*.pdb' --exclude='*.dbg' --exclude='*.dsym' ./publish/${{ matrix.runtime }}/ ./temp-release/
         # 创建带版本号的 zip 包 (使用 . 分割)
         zip_name="DotNetCampus.Terminal.${{ matrix.runtime }}.${{ steps.get_version.outputs.version }}.zip"
         cd temp-release && zip -r ../$zip_name * && cd ..

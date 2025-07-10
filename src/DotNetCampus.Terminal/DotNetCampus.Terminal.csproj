@@ -11,7 +11,6 @@
   <ItemGroup>
     <PackageReference Include="Consolonia" />
     <PackageReference Include="DotNetCampus.Logger" />
-    <PackageReference Include="Samboy063.Tomlet" />
     <PackageReference Include="SSH.NET" />
   </ItemGroup>
 
@@ -21,9 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Configs\devices.toml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Configs\devices.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -1,61 +1,6 @@
+using System.Text.Json.Serialization;
+
 namespace DotNetCampus.Terminal.Modules.Configurations.Models;
-
-/// <summary>
-/// TOML 设备配置文件根对象
-/// </summary>
-public class TomlDeviceConfiguration
-{
-    /// <summary>
-    /// SSH 设备配置列表
-    /// </summary>
-    public List<SshDeviceConfiguration> SshDevices { get; set; } = new();
-}
-
-/// <summary>
-/// SSH 设备配置
-/// </summary>
-public class SshDeviceConfiguration
-{
-    /// <summary>
-    /// 本地唯一标识符，用于在本地环境中唯一标识设备
-    /// </summary>
-    public string LocalId { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 远程设备唯一标识符，可能是设备序列号、MAC地址等
-    /// </summary>
-    public string? RemoteId { get; set; }
-
-    /// <summary>
-    /// 连接名称
-    /// </summary>
-    public string ConnectionName { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 主机地址
-    /// </summary>
-    public string Host { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 端口号
-    /// </summary>
-    public int Port { get; set; } = 22;
-
-    /// <summary>
-    /// 用户名
-    /// </summary>
-    public string UserName { get; set; } = string.Empty;
-
-    /// <summary>
-    /// 密码（可选）
-    /// </summary>
-    public string? Password { get; set; }
-
-    /// <summary>
-    /// 同步组配置列表
-    /// </summary>
-    public List<SyncGroupConfiguration> SyncGroups { get; set; } = new();
-}
 
 /// <summary>
 /// 同步方向
@@ -164,21 +109,25 @@ public class SyncGroupConfiguration
     /// <summary>
     /// 同步组名称
     /// </summary>
+    [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// 远程路径
     /// </summary>
+    [JsonPropertyName("remotePath")]
     public string RemotePath { get; set; } = string.Empty;
 
     /// <summary>
     /// 本地路径
     /// </summary>
+    [JsonPropertyName("localPath")]
     public string LocalPath { get; set; } = string.Empty;
 
     /// <summary>
     /// 是否启用
     /// </summary>
+    [JsonPropertyName("isEnabled")]
     public bool Enabled { get; set; } = true;
 
     private SyncDirection _direction = SyncDirection.LocalToRemote;
@@ -187,6 +136,7 @@ public class SyncGroupConfiguration
     /// 同步方向，默认为本地到远程
     /// 支持多种别名：Push/Pull, Upload/Download, LocalToRemote/RemoteToLocal 等
     /// </summary>
+    [JsonPropertyName("syncDirection")]
     public string Direction
     {
         get => _direction.ToString();
@@ -196,5 +146,12 @@ public class SyncGroupConfiguration
     /// <summary>
     /// 获取解析后的同步方向枚举值
     /// </summary>
+    [JsonIgnore]
     public SyncDirection DirectionEnum => _direction;
+
+    /// <summary>
+    /// 排除模式列表（可选）
+    /// </summary>
+    [JsonPropertyName("excludePatterns")]
+    public List<string> ExcludePatterns { get; set; } = [];
 }

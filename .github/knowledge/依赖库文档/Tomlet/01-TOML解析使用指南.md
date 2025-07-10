@@ -1,5 +1,7 @@
 # Tomlet 库使用指南
 
+> ⚠️ **文档过时警告**: 由于AOT发布限制，Tomlet库已被弃用。请查看 [TOML到JSON迁移技术方案](../../技术设计文档/配置管理/05-TOML到JSON迁移技术方案.md) 了解新的JSON配置系统。
+
 Tomlet 是一个零依赖的 .NET TOML 解析库，完全实现 TOML 1.0.0 规范。
 
 ## 核心 API

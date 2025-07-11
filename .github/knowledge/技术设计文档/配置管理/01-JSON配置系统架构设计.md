@@ -4,17 +4,9 @@
 
 DotNetCampus Terminal 使用基于 `System.Text.Json` + 源生成器的AOT兼容配置系统，完全替代了之前的TOML配置方案。
 
-## 📜 配置系统演进历史
+## 📜 配置系统架构
 
-### TOML时代 (已废弃)
-**时间**: 项目初期 - 2025年7月10日  
-**技术方案**: `Samboy063.Tomlet` 库 + TOML格式  
-**废弃原因**:
-- 🔥 **AOT兼容性问题**: Tomlet库依赖反射，无法在AOT环境下工作
-- 🔥 **官方推荐**: Microsoft推荐使用 System.Text.Json + 源生成器
-- 🔥 **性能考虑**: JSON + 源生成器性能更优，编译时生成代码
-
-### JSON时代 (当前)
+### 当前方案
 **时间**: 2025年7月10日 - 至今  
 **技术方案**: `System.Text.Json` + 源生成器 + JSON格式  
 **优势**:

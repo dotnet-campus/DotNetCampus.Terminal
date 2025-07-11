@@ -17,20 +17,20 @@ public static class RemoteDeviceNodeExtensions
     {
         return node switch
         {
-            TrackableBindableRecord trackable => trackable.HasUnsavedChanges,
-            _ => false
+            TrackingUnsavedBindableRecord trackable => trackable.HasUnsavedChanges,
+            _ => false,
         };
     }
-    
+
     /// <summary>
     /// 重置节点的变更跟踪状态
     /// </summary>
     /// <param name="node">远程设备节点</param>
     public static void ResetChangeTracking(this IRemoteDeviceNode node)
     {
-        if (node is TrackableBindableRecord trackable)
+        if (node is TrackingUnsavedBindableRecord trackable)
         {
-            trackable.ResetChangeTracking();
+            trackable.MarkAsSaved();
         }
     }
 }

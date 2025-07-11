@@ -92,14 +92,14 @@
         <!-- 同步组列表 -->
         <ItemsControl Grid.Row="3" BorderThickness="0"
                       IsEnabled="{Binding !Sync.IsGlobalSyncing}"
-                      ItemsSource="{Binding Sync.SyncGroups}">
+                      ItemsSource="{Binding Sync.DirectorySyncingList}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <VirtualizingStackPanel Margin="0 1 0 0" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="vm:SyncGroupViewModel">
+                <DataTemplate x:DataType="vm:DirectorySyncingViewModel">
                     <Border Margin="0 -1 0 0" BorderThickness="0 1 0 1" BorderBrush="DimGray">
                         <StackPanel>
                             <!-- 同步组名称和状态 -->

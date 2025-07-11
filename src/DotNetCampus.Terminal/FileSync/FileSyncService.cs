@@ -22,72 +22,72 @@ public class FileSyncService : IFileSyncService
     /// <inheritdoc />
     public async Task<SyncResult<int>> SyncDirectoryAsync(
         SshRemoteDeviceInfo sshInfo,
-        SyncGroupConfiguration syncGroup,
+        DirectorySyncingModel syncingModel,
         IProgress<FileSyncProgress>? progressCallback = null,
         CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrEmpty(syncGroup.LocalPath) || string.IsNullOrEmpty(syncGroup.RemotePath))
+        if (string.IsNullOrEmpty(syncingModel.LocalPath) || string.IsNullOrEmpty(syncingModel.RemotePath))
         {
             var error = new SyncError(
                 "同步组的本地路径或远程路径为空",
                 SyncErrorType.ConfigurationError,
-                $"同步组: {syncGroup.Name}");
+                $"同步组: {syncingModel.Name}");
             Log.Error($"[FileSync] {error.GetUserFriendlyMessage()}");
             return SyncResult<int>.Failure(error);
         }
 
-        if (!syncGroup.Enabled)
+        if (!syncingModel.Enabled)
         {
-            Log.Info($"[FileSync] 同步组 {syncGroup.Name} 已被禁用，跳过同步");
+            Log.Info($"[FileSync] 同步组 {syncingModel.Name} 已被禁用，跳过同步");
             return SyncResult<int>.Cancelled("同步组已被禁用");
         }
 
-        var directionText = syncGroup.DirectionEnum == SyncDirection.LocalToRemote 
-            ? $"{syncGroup.LocalPath} -> {syncGroup.RemotePath}" 
-            : $"{syncGroup.RemotePath} -> {syncGroup.LocalPath}";
-        Log.Info($"[FileSync] 开始增量同步目录 {syncGroup.Name}: {directionText}");
+        var directionText = syncingModel.GetDirection() == SyncDirection.LocalToRemote
+            ? $"{syncingModel.LocalPath} -> {syncingModel.RemotePath}"
+            : $"{syncingModel.RemotePath} -> {syncingModel.LocalPath}";
+        Log.Info($"[FileSync] 开始增量同步目录 {syncingModel.Name}: {directionText}");
 
         try
         {
             // 使用Task.Run包装同步操作以避免UI线程阻塞
             return await Task.Run(() => SyncDirectoryInternalAsync(
-                sshInfo, syncGroup, progressCallback, cancellationToken), cancellationToken);
+                sshInfo, syncingModel, progressCallback, cancellationToken), cancellationToken);
         }
         catch (OperationCanceledException ex)
         {
-            Log.Warn($"[FileSync] 同步操作被取消: {syncGroup.Name}");
+            Log.Warn($"[FileSync] 同步操作被取消: {syncingModel.Name}");
             return SyncResult<int>.Cancelled($"同步操作被取消: {ex.Message}");
         }
         catch (Exception ex)
         {
-            Log.Error($"[FileSync] 同步目录时发生错误: {syncGroup.Name}. 错误: {ex.Message}");
-            return SyncResult<int>.Failure(ex, $"同步目录 {syncGroup.Name}", syncGroup.Name);
+            Log.Error($"[FileSync] 同步目录时发生错误: {syncingModel.Name}. 错误: {ex.Message}");
+            return SyncResult<int>.Failure(ex, $"同步目录 {syncingModel.Name}", syncingModel.Name);
         }
     }
 
     /// <inheritdoc />
     public async Task<MultiSyncResult> SyncMultipleDirectoriesAsync(
         SshRemoteDeviceInfo sshInfo,
-        IEnumerable<SyncGroupConfiguration> syncGroups,
+        IEnumerable<DirectorySyncingModel> syncingModels,
         IProgress<FileSyncProgress>? progressCallback = null,
         CancellationToken cancellationToken = default)
     {
-        var enabledSyncGroups = syncGroups.Where(sg => sg.Enabled).ToList();
-        if (enabledSyncGroups.Count == 0)
+        var enabledSyncingModels = syncingModels.Where(sg => sg.Enabled).ToList();
+        if (enabledSyncingModels.Count == 0)
         {
             Log.Info("[FileSync] 没有启用的同步组，跳过同步");
             return new MultiSyncResult
             {
                 GroupResults = [],
-                OverallResult = FileSyncResult.Cancelled
+                OverallResult = FileSyncResult.Cancelled,
             };
         }
 
-        Log.Info($"[FileSync] 开始同步多个目录，共 {enabledSyncGroups.Count} 个同步组");
+        Log.Info($"[FileSync] 开始同步多个目录，共 {enabledSyncingModels.Count} 个同步组");
 
         var groupResults = new List<GroupSyncResult>();
 
-        foreach (var syncGroup in enabledSyncGroups)
+        foreach (var syncingModel in enabledSyncingModels)
         {
             if (cancellationToken.IsCancellationRequested)
             {
@@ -95,20 +95,20 @@ public class FileSyncService : IFileSyncService
                 break;
             }
 
-            var result = await SyncDirectoryAsync(sshInfo, syncGroup, progressCallback, cancellationToken);
-            
+            var result = await SyncDirectoryAsync(sshInfo, syncingModel, progressCallback, cancellationToken);
+
             if (result.IsSuccess)
             {
-                groupResults.Add(GroupSyncResult.Success(syncGroup.Name, result.Value));
+                groupResults.Add(GroupSyncResult.Success(syncingModel.Name, result.Value));
             }
             else if (result.Error?.ErrorType == SyncErrorType.Cancelled)
             {
-                groupResults.Add(GroupSyncResult.Failure(syncGroup.Name, result.Error));
+                groupResults.Add(GroupSyncResult.Failure(syncingModel.Name, result.Error));
                 break; // 取消后不继续其他组
             }
             else
             {
-                groupResults.Add(GroupSyncResult.Failure(syncGroup.Name, result.Error!));
+                groupResults.Add(GroupSyncResult.Failure(syncingModel.Name, result.Error!));
             }
         }
 
@@ -130,22 +130,22 @@ public class FileSyncService : IFileSyncService
         return new MultiSyncResult
         {
             GroupResults = groupResults,
-            OverallResult = overallResult
+            OverallResult = overallResult,
         };
     }
 
     private Task<SyncResult<int>> SyncDirectoryInternalAsync(
         SshRemoteDeviceInfo sshInfo,
-        SyncGroupConfiguration syncGroup,
+        DirectorySyncingModel syncingModel,
         IProgress<FileSyncProgress>? progressCallback,
         CancellationToken cancellationToken)
     {
         // 根据同步方向选择同步方法
-        return syncGroup.DirectionEnum switch
+        return syncingModel.GetDirection() switch
         {
-            SyncDirection.LocalToRemote => _localToRemoteSync.ExecuteAsync(sshInfo, syncGroup, progressCallback, cancellationToken),
-            SyncDirection.RemoteToLocal => _remoteToLocalSync.ExecuteAsync(sshInfo, syncGroup, progressCallback, cancellationToken),
-            _ => Task.FromResult(SyncResult<int>.Failure($"不支持的同步方向: {syncGroup.DirectionEnum}", SyncErrorType.ConfigurationError, syncGroup.Name))
+            SyncDirection.LocalToRemote => _localToRemoteSync.ExecuteAsync(sshInfo, syncingModel, progressCallback, cancellationToken),
+            SyncDirection.RemoteToLocal => _remoteToLocalSync.ExecuteAsync(sshInfo, syncingModel, progressCallback, cancellationToken),
+            _ => Task.FromResult(SyncResult<int>.Failure($"不支持的同步方向: {syncingModel.GetDirection()}", SyncErrorType.ConfigurationError, syncingModel.Name)),
         };
     }
 }

@@ -51,11 +51,11 @@ public class JsonRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
             var jsonOptions = new JsonSerializerOptions(ConfigurationJsonContext.Default.Options)
             {
                 ReadCommentHandling = JsonCommentHandling.Skip,
-                AllowTrailingCommas = true
+                AllowTrailingCommas = true,
             };
 
             var deviceConfiguration = JsonSerializer.Deserialize<DeviceConfiguration>(
-                jsonContent, 
+                jsonContent,
                 jsonOptions
             );
 
@@ -184,7 +184,7 @@ public class JsonRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
     private async Task SaveConfigurationAsync(DeviceConfiguration configuration)
     {
         var jsonContent = JsonSerializer.Serialize(
-            configuration, 
+            configuration,
             ConfigurationJsonContext.Default.DeviceConfiguration
         );
 
@@ -207,10 +207,10 @@ public class JsonRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
         // 优先使用LocalId进行查找
         if (!string.IsNullOrEmpty(targetDevice.LocalId))
         {
-            var index = devices.FindIndex(d => 
-                !string.IsNullOrEmpty(d.LocalId) && 
+            var index = devices.FindIndex(d =>
+                !string.IsNullOrEmpty(d.LocalId) &&
                 d.LocalId.Equals(targetDevice.LocalId, StringComparison.OrdinalIgnoreCase));
-            
+
             if (index >= 0)
             {
                 return index;

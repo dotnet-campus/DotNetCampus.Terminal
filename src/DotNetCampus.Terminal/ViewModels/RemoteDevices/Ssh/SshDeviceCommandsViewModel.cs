@@ -11,7 +11,7 @@ namespace DotNetCampus.Terminal.ViewModels.RemoteDevices.Ssh;
 /// <summary>
 /// SSH设备命令处理的ViewModel
 /// </summary>
-public record SshDeviceCommandsViewModel : TrackableBindableRecord
+public record SshDeviceCommandsViewModel : BindableRecord
 {
     private readonly SshDeviceSyncViewModel _syncViewModel;
     private readonly Func<SshRemoteDeviceInfo> _getDeviceInfo;
@@ -170,7 +170,7 @@ public record SshDeviceCommandsViewModel : TrackableBindableRecord
             // 创建新的设备信息，包含更新的同步组配置
             var updatedDeviceInfo = currentDeviceInfo with
             {
-                SyncDirectories = _syncViewModel.GetSyncGroupConfigurations()
+                SyncDirectories = _syncViewModel.GetDirectorySyncingModels(),
             };
 
             // 保存配置

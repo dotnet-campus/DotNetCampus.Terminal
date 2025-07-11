@@ -9,11 +9,11 @@ namespace DotNetCampus.Terminal.ViewModels.RemoteDevices.Ssh;
 /// <summary>
 /// SSH设备部署相关的ViewModel - 专门处理SSH密钥部署功能
 /// </summary>
-public partial record SshDeviceDeployViewModel : TrackableBindableRecord
+public record SshDeviceDeployViewModel : BindableRecord
 {
     private readonly Func<SshRemoteDeviceInfo> _getDeviceInfo;
     private readonly SshKeyDeploymentService _deploymentService;
-    
+
     private bool _isDeploying;
     private string _currentStep = string.Empty;
     private int _progressPercent;
@@ -29,13 +29,13 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
     {
         _getDeviceInfo = getDeviceInfo ?? throw new ArgumentNullException(nameof(getDeviceInfo));
         _deploymentService = new SshKeyDeploymentService();
-        
+
         // 初始化命令
         DeployKeyCommand = new AsyncCommand(DeployKeyAsync);
         RetryDeployCommand = new AsyncCommand(DeployKeyAsync);
         RollbackCommand = new AsyncCommand(RollbackAsync);
         ClearErrorCommand = new ActionCommand(ClearError);
-        
+
         // 初始化命令状态
         UpdateCommandStates();
     }
@@ -50,7 +50,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
         get => _isDeploying;
         private set
         {
-            if (SetFieldTrackingChanges(ref _isDeploying, value))
+            if (SetField(ref _isDeploying, value))
             {
                 UpdateCommandStates();
             }
@@ -63,7 +63,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
     public string CurrentStep
     {
         get => _currentStep;
-        private set => SetFieldTrackingChanges(ref _currentStep, value);
+        private set => SetField(ref _currentStep, value);
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
     public int ProgressPercent
     {
         get => _progressPercent;
-        private set => SetFieldTrackingChanges(ref _progressPercent, value);
+        private set => SetField(ref _progressPercent, value);
     }
 
     /// <summary>
@@ -83,7 +83,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
         get => _hasError;
         private set
         {
-            if (SetFieldTrackingChanges(ref _hasError, value))
+            if (SetField(ref _hasError, value))
             {
                 UpdateCommandStates();
             }
@@ -96,7 +96,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
     public string ErrorMessage
     {
         get => _errorMessage;
-        private set => SetFieldTrackingChanges(ref _errorMessage, value);
+        private set => SetField(ref _errorMessage, value);
     }
 
     /// <summary>
@@ -107,7 +107,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
         get => _canRetry;
         private set
         {
-            if (SetFieldTrackingChanges(ref _canRetry, value))
+            if (SetField(ref _canRetry, value))
             {
                 UpdateCommandStates();
             }
@@ -122,7 +122,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
         get => _canRollback;
         private set
         {
-            if (SetFieldTrackingChanges(ref _canRollback, value))
+            if (SetField(ref _canRollback, value))
             {
                 UpdateCommandStates();
             }
@@ -141,7 +141,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
         get => _confirmOperation;
         set
         {
-            if (SetFieldTrackingChanges(ref _confirmOperation, value))
+            if (SetField(ref _confirmOperation, value))
             {
                 UpdateCommandStates();
             }
@@ -154,7 +154,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
     public bool DisablePasswordAuth
     {
         get => _disablePasswordAuth;
-        set => SetFieldTrackingChanges(ref _disablePasswordAuth, value);
+        set => SetField(ref _disablePasswordAuth, value);
     }
 
     /// <summary>
@@ -163,7 +163,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
     public string Passphrase
     {
         get => _passphrase;
-        set => SetFieldTrackingChanges(ref _passphrase, value);
+        set => SetField(ref _passphrase, value);
     }
 
     #endregion
@@ -242,9 +242,9 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
                 CurrentStep = "部署完成";
                 ProgressPercent = 100;
                 CanRollback = true;
-                
+
                 Log.Info($"[SSH] 设备 {deviceInfo.ConnectionName} 的SSH密钥部署成功");
-                
+
                 // 显示成功的详细步骤
                 foreach (var step in result.Steps.TakeLast(3)) // 显示最后3个重要步骤
                 {
@@ -270,7 +270,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
                 }
 
                 Log.Error($"[SSH] 设备 {deviceInfo.ConnectionName} 的SSH密钥部署失败: {result.ErrorMessage}");
-                
+
                 // 记录详细的错误步骤
                 foreach (var step in result.Steps)
                 {
@@ -284,7 +284,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
             ErrorMessage = ex.Message;
             CanRetry = true;
             CurrentStep = "部署异常";
-            
+
             Log.Error($"[SSH] 密钥部署过程中发生异常: {ex.Message}", ex);
         }
         finally
@@ -330,7 +330,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
                 CurrentStep = "回滚完成";
                 ProgressPercent = 100;
                 CanRollback = false;
-                
+
                 Log.Info($"[SSH] 设备 {deviceInfo.ConnectionName} 的SSH密钥回滚成功");
             }
             else
@@ -338,7 +338,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
                 CurrentStep = "回滚失败";
                 ErrorMessage = result.ErrorMessage ?? "回滚操作失败";
                 HasError = true;
-                
+
                 Log.Error($"[SSH] 设备 {deviceInfo.ConnectionName} 的SSH密钥回滚失败: {result.ErrorMessage}");
             }
         }
@@ -347,7 +347,7 @@ public partial record SshDeviceDeployViewModel : TrackableBindableRecord
             CurrentStep = "回滚异常";
             ErrorMessage = ex.Message;
             HasError = true;
-            
+
             Log.Error($"[SSH] 回滚过程中发生异常: {ex.Message}", ex);
         }
     }

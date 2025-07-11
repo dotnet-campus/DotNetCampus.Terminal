@@ -100,7 +100,7 @@ public record StatusBarViewModel : BindableRecord
     {
         Log.Info("[StatusBar] F1 - 显示帮助");
         StatusTip.ShowTip("F1 - 正在打开GitHub仓库...");
-        
+
         try
         {
             // 在默认浏览器中打开GitHub仓库
@@ -108,9 +108,9 @@ public record StatusBarViewModel : BindableRecord
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
             {
                 FileName = url,
-                UseShellExecute = true
+                UseShellExecute = true,
             });
-            
+
             StatusTip.ShowTip("F1 - 已在浏览器中打开GitHub仓库");
         }
         catch (Exception ex)

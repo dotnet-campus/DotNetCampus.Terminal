@@ -10,7 +10,8 @@ namespace DotNetCampus.Terminal.Modules.SshManagement;
 public static class GlobalSshKeyManager
 {
     // 扩展密钥检测列表，覆盖更多常见的命名方式
-    private static readonly string[] KeyPriority = {
+    private static readonly string[] KeyPriority =
+    [
         // 标准命名
         "id_ed25519",     // Ed25519 (现代、安全)
         "id_rsa",         // RSA (广泛兼容)
@@ -21,7 +22,7 @@ public static class GlobalSshKeyManager
         "ssh_host_rsa_key",     // 某些工具生成的命名
         "github_rsa",           // GitHub专用密钥
         "gitlab_rsa",           // GitLab专用密钥
-    };
+    ];
 
     /// <summary>
     /// 查找现有的SSH私钥文件
@@ -107,7 +108,7 @@ public static class GlobalSshKeyManager
                 "-----BEGIN EC PRIVATE KEY-----",       // ECDSA 私钥
                 "-----BEGIN DSA PRIVATE KEY-----",      // DSA 私钥
                 "-----BEGIN PRIVATE KEY-----",          // PKCS#8 格式
-                "-----BEGIN ENCRYPTED PRIVATE KEY-----" // 加密的私钥
+                "-----BEGIN ENCRYPTED PRIVATE KEY-----", // 加密的私钥
             };
 
             if (validHeaders.Any(header => firstLine.StartsWith(header)))
@@ -147,7 +148,7 @@ public static class GlobalSshKeyManager
         {
             privateKeyPath + ".pub",                    // 标准命名
             privateKeyPath.Replace("_key", "_key.pub"), // 某些工具的命名习惯
-            Path.ChangeExtension(privateKeyPath, ".pub") // 直接替换扩展名
+            Path.ChangeExtension(privateKeyPath, ".pub"), // 直接替换扩展名
         };
 
         foreach (var publicKeyPath in possiblePublicKeyPaths)
@@ -195,7 +196,7 @@ public static class GlobalSshKeyManager
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
-                RedirectStandardError = true
+                RedirectStandardError = true,
             };
 
             using var process = Process.Start(startInfo);
@@ -244,7 +245,7 @@ public static class GlobalSshKeyManager
                 var line when line?.StartsWith("-----BEGIN DSA PRIVATE KEY-----") == true => "DSA (PEM)",
                 var line when line?.StartsWith("-----BEGIN PRIVATE KEY-----") == true => "PKCS#8",
                 var line when line?.StartsWith("-----BEGIN ENCRYPTED PRIVATE KEY-----") == true => "Encrypted PKCS#8",
-                _ => "Unknown"
+                _ => "Unknown",
             };
         }
         catch

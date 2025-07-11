@@ -5,21 +5,21 @@ using DotNetCampus.Terminal.Modules.Configurations.Models;
 namespace DotNetCampus.Terminal.ViewModels;
 
 /// <summary>
-/// 同步组视图模型
+/// 本地与远程设备同步一组目录的视图模型。
 /// </summary>
-public record SyncGroupViewModel : TrackableBindableRecord
+public record DirectorySyncingViewModel : TrackingUnsavedBindableRecord
 {
     private string _name = string.Empty;
     private string _remotePath = string.Empty;
     private string _localPath = string.Empty;
-    private SyncGroupStatus _status = SyncGroupStatus.Normal;
+    private DirectorySyncingStatus _status = DirectorySyncingStatus.Normal;
     private string _statusText = string.Empty;
     private double _syncProgress;
     private bool _isEnabled = true;
     private bool _isSyncing;
     private SyncDirection _direction = SyncDirection.LocalToRemote;
 
-    public SyncGroupViewModel()
+    public DirectorySyncingViewModel()
     {
         SyncCommand = new AsyncCommand(OnSyncAsync);
         UpdateStatusDisplay();
@@ -37,7 +37,7 @@ public record SyncGroupViewModel : TrackableBindableRecord
     public string Name
     {
         get => _name;
-        set => SetFieldTrackingChanges(ref _name, value);
+        set => SetFieldAndUnsaved(ref _name, value);
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public record SyncGroupViewModel : TrackableBindableRecord
     public string RemotePath
     {
         get => _remotePath;
-        set => SetFieldTrackingChanges(ref _remotePath, value);
+        set => SetFieldAndUnsaved(ref _remotePath, value);
     }
 
     /// <summary>
@@ -55,13 +55,13 @@ public record SyncGroupViewModel : TrackableBindableRecord
     public string LocalPath
     {
         get => _localPath;
-        set => SetFieldTrackingChanges(ref _localPath, value);
+        set => SetFieldAndUnsaved(ref _localPath, value);
     }
 
     /// <summary>
     /// 同步状态
     /// </summary>
-    public SyncGroupStatus Status
+    public DirectorySyncingStatus Status
     {
         get => _status;
         set
@@ -92,9 +92,9 @@ public record SyncGroupViewModel : TrackableBindableRecord
         get => _isEnabled;
         set
         {
-            if (SetFieldTrackingChanges(ref _isEnabled, value))
+            if (SetFieldAndUnsaved(ref _isEnabled, value))
             {
-                Status = value ? SyncGroupStatus.Normal : SyncGroupStatus.Disabled;
+                Status = value ? DirectorySyncingStatus.Normal : DirectorySyncingStatus.Disabled;
             }
         }
     }
@@ -139,10 +139,10 @@ public record SyncGroupViewModel : TrackableBindableRecord
     /// </summary>
     public string StatusSymbol => Status switch
     {
-        SyncGroupStatus.Normal => "✓",
-        SyncGroupStatus.Error => "⚠",
-        SyncGroupStatus.Disabled => "✗",
-        SyncGroupStatus.Syncing => "◐",
+        DirectorySyncingStatus.Normal => "✓",
+        DirectorySyncingStatus.Error => "⚠",
+        DirectorySyncingStatus.Disabled => "✗",
+        DirectorySyncingStatus.Syncing => "◐",
         _ => "○",
     };
 
@@ -151,10 +151,10 @@ public record SyncGroupViewModel : TrackableBindableRecord
     /// </summary>
     public string StatusColor => Status switch
     {
-        SyncGroupStatus.Normal => "Green",
-        SyncGroupStatus.Error => "Yellow",
-        SyncGroupStatus.Disabled => "Red",
-        SyncGroupStatus.Syncing => "Cyan",
+        DirectorySyncingStatus.Normal => "Green",
+        DirectorySyncingStatus.Error => "Yellow",
+        DirectorySyncingStatus.Disabled => "Red",
+        DirectorySyncingStatus.Syncing => "Cyan",
         _ => "DimGray",
     };
 
@@ -162,14 +162,14 @@ public record SyncGroupViewModel : TrackableBindableRecord
     {
         StatusText = Status switch
         {
-            SyncGroupStatus.Normal => string.Empty,
-            SyncGroupStatus.Error => "(同步出错)",
-            SyncGroupStatus.Disabled => "(已禁用)",
-            SyncGroupStatus.Syncing => "(同步中)",
+            DirectorySyncingStatus.Normal => string.Empty,
+            DirectorySyncingStatus.Error => "(同步出错)",
+            DirectorySyncingStatus.Disabled => "(已禁用)",
+            DirectorySyncingStatus.Syncing => "(同步中)",
             _ => string.Empty,
         };
 
-        IsSyncing = Status == SyncGroupStatus.Syncing;
+        IsSyncing = Status == DirectorySyncingStatus.Syncing;
     }
 
     /// <summary>
@@ -177,12 +177,12 @@ public record SyncGroupViewModel : TrackableBindableRecord
     /// </summary>
     private async Task OnSyncAsync()
     {
-        if (Status == SyncGroupStatus.Syncing)
+        if (Status == DirectorySyncingStatus.Syncing)
         {
             return;
         }
 
-        Status = SyncGroupStatus.Syncing;
+        Status = DirectorySyncingStatus.Syncing;
         SyncProgress = 0;
 
         try
@@ -190,19 +190,19 @@ public record SyncGroupViewModel : TrackableBindableRecord
             // 这里需要获取父ViewModel中的SshInfo和FileSyncService
             // 当前直接通过UpdateStatus模拟进度展示
 
-            for (int i = 0; i <= 10; i++)
+            for (var i = 0; i <= 10; i++)
             {
                 SyncProgress = i * 10;
                 await Task.Delay(200); // 模拟同步过程
             }
 
-            Status = SyncGroupStatus.Normal;
+            Status = DirectorySyncingStatus.Normal;
             SyncProgress = 100;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"同步过程中发生错误: {ex.Message}");
-            Status = SyncGroupStatus.Error;
+            Status = DirectorySyncingStatus.Error;
         }
     }
 
@@ -230,9 +230,9 @@ public record SyncGroupViewModel : TrackableBindableRecord
 }
 
 /// <summary>
-/// 同步组状态
+/// 目录同步状态
 /// </summary>
-public enum SyncGroupStatus
+public enum DirectorySyncingStatus
 {
     /// <summary>
     /// 正常

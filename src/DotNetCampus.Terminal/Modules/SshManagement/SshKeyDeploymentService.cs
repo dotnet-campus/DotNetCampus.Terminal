@@ -56,7 +56,7 @@ public class SshKeyDeploymentService
 
             // 2. 检查密钥是否需要密码短语
             progress?.Report(("验证密钥文件", 30));
-            bool needsPassphrase = false;
+            var needsPassphrase = false;
             try
             {
                 var testKey = new PrivateKeyFile(privateKeyPath);
@@ -161,7 +161,7 @@ public class SshKeyDeploymentService
             $"echo '{publicKeyContent}' >> ~/.ssh/authorized_keys",
             "chmod 600 ~/.ssh/authorized_keys",
             // 去重：移除重复的公钥条目
-            "sort ~/.ssh/authorized_keys | uniq > ~/.ssh/authorized_keys.tmp && mv ~/.ssh/authorized_keys.tmp ~/.ssh/authorized_keys"
+            "sort ~/.ssh/authorized_keys | uniq > ~/.ssh/authorized_keys.tmp && mv ~/.ssh/authorized_keys.tmp ~/.ssh/authorized_keys",
         };
 
         result.AddStep("正在部署公钥到远程设备...");
@@ -174,7 +174,7 @@ public class SshKeyDeploymentService
             {
                 throw new InvalidOperationException($"命令执行失败: {command}, 错误: {commandResult.Error}");
             }
-            
+
             // 添加小延迟以避免命令执行过快
             await Task.Delay(100);
         }
@@ -206,7 +206,7 @@ public class SshKeyDeploymentService
 
             // 检查是否有sudo权限
             var sudoTest = await Task.Run(() => client.RunCommand("sudo -n echo 'test' 2>/dev/null"));
-            bool hasSudo = sudoTest.ExitStatus == 0;
+            var hasSudo = sudoTest.ExitStatus == 0;
 
             if (!hasSudo)
             {
@@ -226,7 +226,7 @@ public class SshKeyDeploymentService
             {
                 "sudo sed -i 's/#*PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config",
                 "sudo sed -i 's/#*ChallengeResponseAuthentication.*/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config",
-                "sudo sed -i 's/#*UsePAM.*/UsePAM no/' /etc/ssh/sshd_config"
+                "sudo sed -i 's/#*UsePAM.*/UsePAM no/' /etc/ssh/sshd_config",
             };
 
             foreach (var command in commands)
@@ -236,7 +236,7 @@ public class SshKeyDeploymentService
                 {
                     result.AddWarning($"配置命令执行失败: {command}");
                 }
-                
+
                 // 添加小延迟
                 await Task.Delay(100);
             }

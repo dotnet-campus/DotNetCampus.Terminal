@@ -18,7 +18,7 @@ public class KeyDeploymentResult
     /// <summary>
     /// 部署步骤列表
     /// </summary>
-    public List<string> Steps { get; set; } = new();
+    public List<string> Steps { get; set; } = [];
 
     /// <summary>
     /// 是否需要密码短语

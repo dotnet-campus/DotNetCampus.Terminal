@@ -48,7 +48,7 @@ public enum SyncErrorType
     /// <summary>
     /// 文件传输错误
     /// </summary>
-    TransferError
+    TransferError,
 }
 
 /// <summary>
@@ -84,16 +84,16 @@ public record SyncError(
             _ when exception.Message.Contains("authentication", StringComparison.OrdinalIgnoreCase) => SyncErrorType.AuthenticationError,
             _ when exception.Message.Contains("network", StringComparison.OrdinalIgnoreCase) => SyncErrorType.NetworkError,
             _ when exception.Message.Contains("path", StringComparison.OrdinalIgnoreCase) => SyncErrorType.LocalPathError,
-            _ => SyncErrorType.Unknown
+            _ => SyncErrorType.Unknown,
         };
 
-        var message = string.IsNullOrEmpty(operation) 
-            ? exception.Message 
+        var message = string.IsNullOrEmpty(operation)
+            ? exception.Message
             : $"{operation}: {exception.Message}";
 
         return new SyncError(message, errorType, context)
         {
-            InnerException = exception.InnerException?.Message
+            InnerException = exception.InnerException?.Message,
         };
     }
 
@@ -112,7 +112,7 @@ public record SyncError(
             SyncErrorType.ConfigurationError => $"配置错误: {Message}",
             SyncErrorType.Cancelled => "同步操作被取消",
             SyncErrorType.TransferError => $"文件传输失败: {Message}",
-            _ => $"同步失败: {Message}"
+            _ => $"同步失败: {Message}",
         };
     }
 
@@ -131,7 +131,7 @@ public record SyncError(
             SyncErrorType.ConfigurationError => $"配置错误({Message})",
             SyncErrorType.Cancelled => "操作被取消",
             SyncErrorType.TransferError => $"文件传输失败({Message})",
-            _ => $"同步失败({Message})"
+            _ => $"同步失败({Message})",
         };
     }
 
@@ -144,7 +144,7 @@ public record SyncError(
         {
             $"错误类型: {ErrorType}",
             $"错误消息: {Message}",
-            $"发生时间: {Timestamp:yyyy-MM-dd HH:mm:ss}"
+            $"发生时间: {Timestamp:yyyy-MM-dd HH:mm:ss}",
         };
 
         if (!string.IsNullOrEmpty(Context))

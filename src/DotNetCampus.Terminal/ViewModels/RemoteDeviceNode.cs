@@ -41,7 +41,7 @@ public record FavoriteDeviceGroupNode : IRemoteDeviceNode
     public AvaloniaList<IRemoteDeviceNode> Children { get; init; } = [];
 }
 
-public record RemoteDeviceGroupNode(RemoteDeviceGroup Info) : TrackableBindableRecord, IRemoteDeviceNode
+public record RemoteDeviceGroupNode(RemoteDeviceGroup Info) : TrackingUnsavedBindableRecord, IRemoteDeviceNode
 {
     private int _onlineCount;
 
@@ -78,7 +78,7 @@ public record RemoteDeviceGroupNode(RemoteDeviceGroup Info) : TrackableBindableR
     }
 }
 
-public abstract record RemoteDeviceInfoNode : TrackableBindableRecord, IRemoteDeviceNode
+public abstract record RemoteDeviceInfoNode : TrackingUnsavedBindableRecord, IRemoteDeviceNode
 {
     private IRemoteDeviceInfo _info;
     private ConnectionState _connectionState;
@@ -94,7 +94,7 @@ public abstract record RemoteDeviceInfoNode : TrackableBindableRecord, IRemoteDe
     public IRemoteDeviceInfo Info
     {
         get => _info;
-        protected set => SetFieldTrackingChanges(ref _info, value);
+        protected set => SetFieldAndUnsaved(ref _info, value);
     }
 
     public ConnectionState ConnectionState

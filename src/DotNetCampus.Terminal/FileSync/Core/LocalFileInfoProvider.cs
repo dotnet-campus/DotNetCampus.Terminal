@@ -22,12 +22,12 @@ public class LocalFileInfoProvider
             {
                 var info = new System.IO.FileInfo(file);
                 var relativePath = file.Substring(localPath.Length).TrimStart('\\', '/').Replace('\\', '/');
-                
+
                 fileInfos[relativePath] = new FileChangeInfo
                 {
                     FilePath = file,
                     Size = info.Length,
-                    LastWriteTime = info.LastWriteTime
+                    LastWriteTime = info.LastWriteTime,
                 };
             }
         }

@@ -49,7 +49,7 @@ public record SshRemoteDeviceInfo : IRemoteDeviceInfo
     /// <summary>
     /// 同步目录配置列表
     /// </summary>
-    public IReadOnlyList<SyncGroupConfiguration> SyncDirectories { get; init; } = [];
+    public IReadOnlyList<DirectorySyncingModel> SyncDirectories { get; init; } = [];
 }
 
 /// <summary>

@@ -24,7 +24,7 @@ public static class SshKeyGenerator
             "ed25519" => Path.Combine(sshDir, "id_ed25519"),
             "rsa" => Path.Combine(sshDir, "id_rsa"),
             "ecdsa" => Path.Combine(sshDir, "id_ecdsa"),
-            _ => throw new ArgumentException($"不支持的密钥类型: {keyType}")
+            _ => throw new ArgumentException($"不支持的密钥类型: {keyType}"),
         };
 
         if (File.Exists(keyPath))
@@ -41,7 +41,7 @@ public static class SshKeyGenerator
             "ed25519" => $"-t ed25519 -f \"{keyPath}\" -C \"{comment}\" -N \"\"",
             "rsa" => $"-t rsa -b {keySize} -f \"{keyPath}\" -C \"{comment}\" -N \"\"",
             "ecdsa" => $"-t ecdsa -b 256 -f \"{keyPath}\" -C \"{comment}\" -N \"\"",
-            _ => throw new ArgumentException($"不支持的密钥类型: {keyType}")
+            _ => throw new ArgumentException($"不支持的密钥类型: {keyType}"),
         };
 
         // 使用 ssh-keygen 生成密钥
@@ -52,7 +52,7 @@ public static class SshKeyGenerator
             UseShellExecute = false,
             CreateNoWindow = true,
             RedirectStandardOutput = true,
-            RedirectStandardError = true
+            RedirectStandardError = true,
         };
 
         Log.Info($"[SSH] 开始生成{keyType.ToUpper()}密钥对: {keyPath}");
@@ -124,7 +124,7 @@ public static class SshKeyGenerator
             "ed25519" => Path.Combine(sshDir, "id_ed25519"),
             "rsa" => Path.Combine(sshDir, "id_rsa"),
             "ecdsa" => Path.Combine(sshDir, "id_ecdsa"),
-            _ => throw new ArgumentException($"不支持的密钥类型: {keyType}")
+            _ => throw new ArgumentException($"不支持的密钥类型: {keyType}"),
         };
 
         if (File.Exists(keyPath))
@@ -140,7 +140,7 @@ public static class SshKeyGenerator
             "ed25519" => $"-t ed25519 -f \"{keyPath}\" -C \"{comment}\" -N \"{passphrase}\"",
             "rsa" => $"-t rsa -b {keySize} -f \"{keyPath}\" -C \"{comment}\" -N \"{passphrase}\"",
             "ecdsa" => $"-t ecdsa -b 256 -f \"{keyPath}\" -C \"{comment}\" -N \"{passphrase}\"",
-            _ => throw new ArgumentException($"不支持的密钥类型: {keyType}")
+            _ => throw new ArgumentException($"不支持的密钥类型: {keyType}"),
         };
 
         var startInfo = new ProcessStartInfo
@@ -150,7 +150,7 @@ public static class SshKeyGenerator
             UseShellExecute = false,
             CreateNoWindow = true,
             RedirectStandardOutput = true,
-            RedirectStandardError = true
+            RedirectStandardError = true,
         };
 
         Log.Info($"[SSH] 开始生成带密码短语的{keyType.ToUpper()}密钥对: {keyPath}");
@@ -209,7 +209,7 @@ public static class SshKeyGenerator
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
-                RedirectStandardError = true
+                RedirectStandardError = true,
             };
 
             using var process = Process.Start(startInfo);
@@ -246,7 +246,7 @@ public static class SshKeyGenerator
                 FileName = "chmod",
                 Arguments = $"{permissions} \"{filePath}\"",
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
             };
 
             using var process = Process.Start(startInfo);

@@ -53,12 +53,12 @@ public class RemoteFileInfoProvider
                 else if (entry.IsRegularFile)
                 {
                     var relativePath = fullPath.Substring(basePath.Length).TrimStart('/');
-                    
+
                     fileInfos[relativePath] = new FileChangeInfo
                     {
                         FilePath = fullPath,
                         Size = entry.Length,
-                        LastWriteTime = entry.LastWriteTime
+                        LastWriteTime = entry.LastWriteTime,
                     };
                 }
             }

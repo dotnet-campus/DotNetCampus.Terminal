@@ -27,22 +27,22 @@ public class RemoteToLocalSyncOperation
     /// </summary>
     public Task<SyncResult<int>> ExecuteAsync(
         SshRemoteDeviceInfo sshInfo,
-        SyncGroupConfiguration syncGroup,
+        DirectorySyncingModel syncingModel,
         IProgress<FileSyncProgress>? progressCallback,
         CancellationToken cancellationToken)
     {
         // 确保本地目录存在
-        if (!Directory.Exists(syncGroup.LocalPath))
+        if (!Directory.Exists(syncingModel.LocalPath))
         {
             try
             {
-                Directory.CreateDirectory(syncGroup.LocalPath);
-                Log.Info($"[FileSync] 创建本地目录: {syncGroup.LocalPath}");
+                Directory.CreateDirectory(syncingModel.LocalPath);
+                Log.Info($"[FileSync] 创建本地目录: {syncingModel.LocalPath}");
             }
             catch (Exception ex)
             {
-                Log.Error($"[FileSync] 无法创建本地目录: {syncGroup.LocalPath}. 错误: {ex.Message}");
-                return Task.FromResult(SyncResult<int>.Failure(ex, "创建本地目录", syncGroup.LocalPath));
+                Log.Error($"[FileSync] 无法创建本地目录: {syncingModel.LocalPath}. 错误: {ex.Message}");
+                return Task.FromResult(SyncResult<int>.Failure(ex, "创建本地目录", syncingModel.LocalPath));
             }
         }
 
@@ -65,28 +65,28 @@ public class RemoteToLocalSyncOperation
             }
 
             // 检查远程目录是否存在
-            if (!client.Exists(syncGroup.RemotePath))
+            if (!client.Exists(syncingModel.RemotePath))
             {
                 var error = new SyncError(
                     "远程目录不存在",
                     SyncErrorType.RemotePathNotFound,
-                    syncGroup.RemotePath);
+                    syncingModel.RemotePath);
                 Log.Error($"[FileSync] {error.GetUserFriendlyMessage()}");
                 return Task.FromResult(SyncResult<int>.Failure(error));
             }
 
             // 获取本地和远程文件信息用于增量比较
-            var localFileInfos = _localFileProvider.GetFileInfos(syncGroup.LocalPath);
-            var remoteFileInfos = _remoteFileProvider.GetFileInfos(client, syncGroup.RemotePath);
-            
+            var localFileInfos = _localFileProvider.GetFileInfos(syncingModel.LocalPath);
+            var remoteFileInfos = _remoteFileProvider.GetFileInfos(client, syncingModel.RemotePath);
+
             // 找出需要同步的文件（新文件或已修改的文件）
-            var filesToSync = _syncComparator.GetFilesToSyncRemoteToLocal(remoteFileInfos, localFileInfos, syncGroup.RemotePath, syncGroup.LocalPath);
-            int totalFiles = filesToSync.Count;
-            int processedFiles = 0;
+            var filesToSync = _syncComparator.GetFilesToSyncRemoteToLocal(remoteFileInfos, localFileInfos, syncingModel.RemotePath, syncingModel.LocalPath);
+            var totalFiles = filesToSync.Count;
+            var processedFiles = 0;
 
             if (totalFiles == 0)
             {
-                Log.Info($"[FileSync] 没有文件需要同步: {syncGroup.Name}");
+                Log.Info($"[FileSync] 没有文件需要同步: {syncingModel.Name}");
                 return Task.FromResult(SyncResult<int>.Success(0));
             }
 
@@ -104,11 +104,11 @@ public class RemoteToLocalSyncOperation
                 try
                 {
                     // 计算相对路径并确定本地路径
-                    string relativePath = remoteFile.Substring(syncGroup.RemotePath.Length).TrimStart('/');
-                    string localFilePath = Path.Combine(syncGroup.LocalPath, relativePath.Replace('/', '\\'));
+                    var relativePath = remoteFile.Substring(syncingModel.RemotePath.Length).TrimStart('/');
+                    var localFilePath = Path.Combine(syncingModel.LocalPath, relativePath.Replace('/', '\\'));
 
                     // 确保本地目录存在
-                    string localDirectory = Path.GetDirectoryName(localFilePath) ?? syncGroup.LocalPath;
+                    var localDirectory = Path.GetDirectoryName(localFilePath) ?? syncingModel.LocalPath;
                     if (!Directory.Exists(localDirectory))
                     {
                         Directory.CreateDirectory(localDirectory);
@@ -122,7 +122,7 @@ public class RemoteToLocalSyncOperation
                     {
                         // 获取远程文件信息用于进度计算
                         var fileInfo = client.Get(remoteFile);
-                        long fileSize = fileInfo.Length;
+                        var fileSize = fileInfo.Length;
 
                         client.DownloadFile(remoteFile, fileStream, progress =>
                         {
@@ -135,7 +135,7 @@ public class RemoteToLocalSyncOperation
                                 CurrentFileProgress = currentProgress,
                                 TotalProgress = totalProgress,
                                 ProcessedFiles = processedFiles,
-                                TotalFiles = totalFiles
+                                TotalFiles = totalFiles,
                             });
                         });
                     }
@@ -143,14 +143,14 @@ public class RemoteToLocalSyncOperation
                     processedFiles++;
 
                     // 报告总体进度
-                    double overallProgress = (double)processedFiles / totalFiles * 100;
+                    var overallProgress = (double)processedFiles / totalFiles * 100;
                     progressCallback?.Report(new FileSyncProgress
                     {
                         CurrentFile = remoteFile,
                         CurrentFileProgress = 100,
                         TotalProgress = overallProgress,
                         ProcessedFiles = processedFiles,
-                        TotalFiles = totalFiles
+                        TotalFiles = totalFiles,
                     });
                 }
                 catch (Exception ex)
@@ -160,13 +160,13 @@ public class RemoteToLocalSyncOperation
                 }
             }
 
-            Log.Info($"[FileSync] 远程到本地同步完成: {syncGroup.Name}");
+            Log.Info($"[FileSync] 远程到本地同步完成: {syncingModel.Name}");
             return Task.FromResult(SyncResult<int>.Success(processedFiles));
         }
         catch (Exception ex)
         {
-            Log.Error($"[FileSync] 执行远程到本地同步时发生错误: {syncGroup.Name}. 错误: {ex.Message}");
-            return Task.FromResult(SyncResult<int>.Failure(ex, "执行远程到本地同步", syncGroup.Name));
+            Log.Error($"[FileSync] 执行远程到本地同步时发生错误: {syncingModel.Name}. 错误: {ex.Message}");
+            return Task.FromResult(SyncResult<int>.Failure(ex, "执行远程到本地同步", syncingModel.Name));
         }
         finally
         {

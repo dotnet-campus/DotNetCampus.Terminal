@@ -46,14 +46,14 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         Password = "password",
         SyncDirectories =
         [
-            new SyncGroupConfiguration
+            new DirectorySyncingModel
             {
                 Name = "设计时项目",
                 RemotePath = "/home/user/projects/design",
                 LocalPath = @"D:\Projects\Design",
                 Enabled = true,
             },
-            new SyncGroupConfiguration
+            new DirectorySyncingModel
             {
                 Name = "设计时文档",
                 RemotePath = "/home/user/documents",
@@ -83,7 +83,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         Deploy = new SshDeviceDeployViewModel(GetCurrentDeviceInfo);
 
         // 从配置中加载同步组数据
-        Sync.InitializeSyncGroups(info.SyncDirectories);
+        Sync.InitializeSyncingModels(info.SyncDirectories);
     }
 
     #region 基础属性
@@ -94,7 +94,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     public string LocalId
     {
         get => _localId;
-        set => SetFieldTrackingChanges(ref _localId, value);
+        set => SetFieldAndUnsaved(ref _localId, value);
     }
 
     /// <summary>
@@ -103,13 +103,13 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     public string? RemoteId
     {
         get => _remoteId;
-        set => SetFieldTrackingChanges(ref _remoteId, value);
+        set => SetFieldAndUnsaved(ref _remoteId, value);
     }
 
     public string ConnectionName
     {
         get => _connectionName;
-        set => SetFieldTrackingChanges(ref _connectionName, value);
+        set => SetFieldAndUnsaved(ref _connectionName, value);
     }
 
     public string Host
@@ -117,7 +117,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         get => _host;
         set
         {
-            if (SetFieldTrackingChanges(ref _host, value))
+            if (SetFieldAndUnsaved(ref _host, value))
             {
                 OnPropertyChanged(nameof(Address));
             }
@@ -129,7 +129,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         get => _port;
         set
         {
-            if (SetFieldTrackingChanges(ref _port, value))
+            if (SetFieldAndUnsaved(ref _port, value))
             {
                 OnPropertyChanged(nameof(Address));
             }
@@ -143,13 +143,13 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
     public string UserName
     {
         get => _userName;
-        set => SetFieldTrackingChanges(ref _userName, value);
+        set => SetFieldAndUnsaved(ref _userName, value);
     }
 
     public string? Password
     {
         get => _password;
-        set => SetFieldTrackingChanges(ref _password, value);
+        set => SetFieldAndUnsaved(ref _password, value);
     }
 
     #endregion
@@ -163,7 +163,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         Info = currentInfo;
 
         // 重置变更跟踪状态
-        ResetChangeTracking();
+        MarkAsSaved();
     }
 
     /// <summary>
@@ -180,7 +180,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
             Port = Port,
             UserName = UserName,
             Password = Password,
-            SyncDirectories = Sync.GetSyncGroupConfigurations(),
+            SyncDirectories = Sync.GetDirectorySyncingModels(),
         };
     }
 

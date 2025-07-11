@@ -98,7 +98,7 @@ public static class ShellUtils
     private static string BuildSshCommand(string host, int port, string userName, string? password)
     {
         var sshCmd = $"ssh {userName}@{host}";
-        
+
         if (port != 22)
         {
             sshCmd += $" -p {port}";
@@ -107,7 +107,7 @@ public static class ShellUtils
         // 如果有密码，可以使用sshpass（Linux/macOS）或其他方式
         // 但为了安全起见，通常建议让用户手动输入密码
         Log.Info($"[Shell] 构建SSH命令: {sshCmd}");
-        
+
         return sshCmd;
     }
 
@@ -125,7 +125,7 @@ public static class ShellUtils
             TerminalType.MacTerminal => await LaunchMacTerminalTabAsync(command),
             TerminalType.GnomeTerminal => await LaunchGnomeTerminalTabAsync(command),
             TerminalType.XTerm => await LaunchXTermAsync(command),
-            _ => await LaunchFallbackAsync(command)
+            _ => await LaunchFallbackAsync(command),
         };
     }
 
@@ -141,7 +141,7 @@ public static class ShellUtils
             {
                 FileName = "wt",
                 Arguments = $"new-tab {command}",
-                UseShellExecute = false
+                UseShellExecute = false,
             };
 
             using var process = Process.Start(startInfo);
@@ -171,7 +171,7 @@ public static class ShellUtils
             {
                 FileName = "code",
                 Arguments = $"--new-window --terminal-cmd \"{command}\"",
-                UseShellExecute = false
+                UseShellExecute = false,
             };
 
             using var process = Process.Start(startInfo);
@@ -200,7 +200,7 @@ public static class ShellUtils
             {
                 FileName = "powershell",
                 Arguments = $"-NoExit -Command \"{command}\"",
-                UseShellExecute = true
+                UseShellExecute = true,
             };
 
             using var process = Process.Start(startInfo);
@@ -234,7 +234,7 @@ public static class ShellUtils
             {
                 FileName = "osascript",
                 Arguments = $"-e '{appleScript}'",
-                UseShellExecute = false
+                UseShellExecute = false,
             };
 
             using var process = Process.Start(startInfo);
@@ -272,7 +272,7 @@ public static class ShellUtils
             {
                 FileName = "osascript",
                 Arguments = $"-e '{appleScript}'",
-                UseShellExecute = false
+                UseShellExecute = false,
             };
 
             using var process = Process.Start(startInfo);
@@ -301,7 +301,7 @@ public static class ShellUtils
             {
                 FileName = "gnome-terminal",
                 Arguments = $"--tab -e \"{command}\"",
-                UseShellExecute = false
+                UseShellExecute = false,
             };
 
             using var process = Process.Start(startInfo);
@@ -330,7 +330,7 @@ public static class ShellUtils
             {
                 FileName = "xterm",
                 Arguments = $"-e {command}",
-                UseShellExecute = false
+                UseShellExecute = false,
             };
 
             using var process = Process.Start(startInfo);
@@ -359,7 +359,7 @@ public static class ShellUtils
                 {
                     FileName = "cmd",
                     Arguments = $"/k {command}",
-                    UseShellExecute = true
+                    UseShellExecute = true,
                 };
 
                 using var process = Process.Start(startInfo);
@@ -372,7 +372,7 @@ public static class ShellUtils
                 {
                     FileName = "bash",
                     Arguments = $"-c \"{command}; exec bash\"",
-                    UseShellExecute = true
+                    UseShellExecute = true,
                 };
 
                 using var process = Process.Start(startInfo);
@@ -430,5 +430,5 @@ public enum TerminalType
     /// <summary>
     /// XTerm
     /// </summary>
-    XTerm
+    XTerm,
 }

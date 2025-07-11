@@ -15,7 +15,7 @@ public enum SyncDirection
     /// <summary>
     /// 远程到本地 (Pull/Download)
     /// </summary>
-    RemoteToLocal = 1
+    RemoteToLocal = 1,
 }
 
 /// <summary>
@@ -55,7 +55,7 @@ public static class SyncDirectionParser
             "入" or "下载" or "拉取" => SyncDirection.RemoteToLocal,
 
             // 默认值
-            _ => SyncDirection.LocalToRemote
+            _ => SyncDirection.LocalToRemote,
         };
     }
 
@@ -70,7 +70,7 @@ public static class SyncDirectionParser
         {
             SyncDirection.LocalToRemote => "本地 → 远程 (Push/Upload)",
             SyncDirection.RemoteToLocal => "远程 → 本地 (Pull/Download)",
-            _ => "未知方向"
+            _ => "未知方向",
         };
     }
 
@@ -96,7 +96,7 @@ public static class SyncDirectionParser
             ["Download"] = SyncDirection.RemoteToLocal,
             ["Fetch"] = SyncDirection.RemoteToLocal,
             ["下载"] = SyncDirection.RemoteToLocal,
-            ["拉取"] = SyncDirection.RemoteToLocal
+            ["拉取"] = SyncDirection.RemoteToLocal,
         };
     }
 }
@@ -104,7 +104,7 @@ public static class SyncDirectionParser
 /// <summary>
 /// 同步目录配置
 /// </summary>
-public class SyncGroupConfiguration
+public class DirectorySyncingModel
 {
     /// <summary>
     /// 同步目录名称
@@ -141,6 +141,5 @@ public class SyncGroupConfiguration
     /// <summary>
     /// 获取解析后的同步方向枚举值
     /// </summary>
-    [JsonIgnore]
-    public SyncDirection DirectionEnum => _direction;
+    public SyncDirection GetDirection() => _direction;
 }

@@ -21,7 +21,7 @@ public class IncrementalSyncComparator
 
         foreach (var (relativePath, localFile) in localFiles)
         {
-            bool needSync = false;
+            var needSync = false;
 
             if (!remoteFiles.TryGetValue(relativePath, out var remoteFile))
             {
@@ -61,7 +61,7 @@ public class IncrementalSyncComparator
 
         foreach (var (relativePath, remoteFile) in remoteFiles)
         {
-            bool needSync = false;
+            var needSync = false;
 
             if (!localFiles.TryGetValue(relativePath, out var localFile))
             {

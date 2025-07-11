@@ -9,7 +9,7 @@ namespace DotNetCampus.Terminal.ViewModels.RemoteDevices.Ssh;
 /// <summary>
 /// SSH设备同步相关的ViewModel
 /// </summary>
-public partial record SshDeviceSyncViewModel : TrackableBindableRecord
+public partial record SshDeviceSyncViewModel : TrackingUnsavedBindableRecord
 {
     private readonly IFileSyncService? _fileSyncService;
     private CancellationTokenSource? _syncCancellationTokenSource;
@@ -18,7 +18,7 @@ public partial record SshDeviceSyncViewModel : TrackableBindableRecord
     private DateTimeOffset? _lastSyncTime;
     private string _lastSyncErrorMessage = string.Empty;
     private string _detailedDiagnostics = string.Empty;
-    private SyncGroupViewModel? _selectedSyncGroup;
+    private DirectorySyncingViewModel? _selectedSyncingModel;
 
     public SshDeviceSyncViewModel(IFileSyncService? fileSyncService)
     {
@@ -28,15 +28,15 @@ public partial record SshDeviceSyncViewModel : TrackableBindableRecord
     /// <summary>
     /// 同步组列表
     /// </summary>
-    public AvaloniaList<SyncGroupViewModel> SyncGroups { get; } = new();
+    public AvaloniaList<DirectorySyncingViewModel> DirectorySyncingList { get; } = [];
 
     /// <summary>
     /// 选中的同步组
     /// </summary>
-    public SyncGroupViewModel? SelectedSyncGroup
+    public DirectorySyncingViewModel? SelectedDirectorySyncing
     {
-        get => _selectedSyncGroup;
-        set => SetField(ref _selectedSyncGroup, value);
+        get => _selectedSyncingModel;
+        set => SetField(ref _selectedSyncingModel, value);
     }
 
     /// <summary>
@@ -103,7 +103,7 @@ public partial record SshDeviceSyncViewModel : TrackableBindableRecord
             return;
         }
 
-        var enabledGroups = SyncGroups.Where(sg => sg.IsEnabled).ToList();
+        var enabledGroups = DirectorySyncingList.Where(sg => sg.IsEnabled).ToList();
 
         if (enabledGroups.Count == 0)
         {
@@ -125,19 +125,19 @@ public partial record SshDeviceSyncViewModel : TrackableBindableRecord
         // 将所有启用的同步组状态设置为同步中
         foreach (var group in enabledGroups)
         {
-            group.Status = SyncGroupStatus.Syncing;
+            group.Status = DirectorySyncingStatus.Syncing;
         }
 
         try
         {
             // 构建同步配置
-            var syncConfigs = enabledGroups.Select(group => new SyncGroupConfiguration
+            var syncConfigs = enabledGroups.Select(group => new DirectorySyncingModel
             {
                 Name = group.Name,
                 RemotePath = group.RemotePath,
                 LocalPath = group.LocalPath,
                 Enabled = true,
-                Direction = group.Direction.ToString() // 设置字符串值，会通过解析器转换为枚举
+                Direction = group.Direction.ToString(), // 设置字符串值，会通过解析器转换为枚举
             }).ToList();
 
             // 创建进度报告
@@ -169,7 +169,7 @@ public partial record SshDeviceSyncViewModel : TrackableBindableRecord
                 case FileSyncResult.Success:
                     foreach (var group in enabledGroups)
                     {
-                        group.Status = SyncGroupStatus.Normal;
+                        group.Status = DirectorySyncingStatus.Normal;
                     }
                     LastSyncTime = DateTimeOffset.Now;
                     LastSyncErrorMessage = string.Empty; // 清空错误消息
@@ -179,7 +179,7 @@ public partial record SshDeviceSyncViewModel : TrackableBindableRecord
                 case FileSyncResult.Failed:
                     foreach (var group in enabledGroups)
                     {
-                        group.Status = SyncGroupStatus.Error;
+                        group.Status = DirectorySyncingStatus.Error;
                     }
                     // 使用详细的错误信息
                     LastSyncErrorMessage = result.GetErrorSummary();
@@ -196,7 +196,7 @@ public partial record SshDeviceSyncViewModel : TrackableBindableRecord
                 case FileSyncResult.Cancelled:
                     foreach (var group in enabledGroups)
                     {
-                        group.Status = SyncGroupStatus.Normal;
+                        group.Status = DirectorySyncingStatus.Normal;
                     }
                     LastSyncErrorMessage = "同步操作被取消";
                     DetailedDiagnostics = string.Empty;
@@ -209,7 +209,7 @@ public partial record SshDeviceSyncViewModel : TrackableBindableRecord
             // 发生异常时将所有同步组状态设置为错误
             foreach (var group in enabledGroups)
             {
-                group.Status = SyncGroupStatus.Error;
+                group.Status = DirectorySyncingStatus.Error;
             }
             LastSyncErrorMessage = $"同步异常: {ex.Message}";
             DetailedDiagnostics = $"异常类型: {ex.GetType().Name}\n错误消息: {ex.Message}\n堆栈跟踪: {ex.StackTrace}";
@@ -256,7 +256,7 @@ public partial record SshDeviceSyncViewModel : TrackableBindableRecord
     /// </summary>
     public async Task EnableAllAsync()
     {
-        foreach (var group in SyncGroups)
+        foreach (var group in DirectorySyncingList)
         {
             group.IsEnabled = true;
         }
@@ -268,7 +268,7 @@ public partial record SshDeviceSyncViewModel : TrackableBindableRecord
     /// </summary>
     public async Task DisableAllAsync()
     {
-        foreach (var group in SyncGroups)
+        foreach (var group in DirectorySyncingList)
         {
             group.IsEnabled = false;
         }
@@ -295,31 +295,31 @@ public partial record SshDeviceSyncViewModel : TrackableBindableRecord
     /// <summary>
     /// 初始化同步组数据
     /// </summary>
-    public void InitializeSyncGroups(IEnumerable<SyncGroupConfiguration> syncGroupConfigs)
+    public void InitializeSyncingModels(IEnumerable<DirectorySyncingModel> syncingModels)
     {
-        SyncGroups.Clear();
-        
-        foreach (var syncGroup in syncGroupConfigs)
+        DirectorySyncingList.Clear();
+
+        foreach (var syncingModel in syncingModels)
         {
-            SyncGroups.Add(new SyncGroupViewModel
+            DirectorySyncingList.Add(new DirectorySyncingViewModel
             {
-                Name = syncGroup.Name,
-                RemotePath = syncGroup.RemotePath,
-                LocalPath = syncGroup.LocalPath,
-                IsEnabled = syncGroup.Enabled,
-                Direction = syncGroup.DirectionEnum
+                Name = syncingModel.Name,
+                RemotePath = syncingModel.RemotePath,
+                LocalPath = syncingModel.LocalPath,
+                IsEnabled = syncingModel.Enabled,
+                Direction = syncingModel.GetDirection(),
             });
         }
 
         // 如果没有配置同步组，添加一个示例（仅用于演示）
-        if (SyncGroups.Count == 0)
+        if (DirectorySyncingList.Count == 0)
         {
-            SyncGroups.Add(new SyncGroupViewModel
+            DirectorySyncingList.Add(new DirectorySyncingViewModel
             {
                 Name = "示例同步组",
                 RemotePath = "/home/user/example",
                 LocalPath = @"D:\Example",
-                Status = SyncGroupStatus.Normal
+                Status = DirectorySyncingStatus.Normal,
             });
         }
     }
@@ -327,14 +327,14 @@ public partial record SshDeviceSyncViewModel : TrackableBindableRecord
     /// <summary>
     /// 获取同步组配置
     /// </summary>
-    public List<SyncGroupConfiguration> GetSyncGroupConfigurations()
+    public List<DirectorySyncingModel> GetDirectorySyncingModels()
     {
-        return SyncGroups.Select(sg => new SyncGroupConfiguration
+        return DirectorySyncingList.Select(sg => new DirectorySyncingModel
         {
             Name = sg.Name,
             RemotePath = sg.RemotePath,
             LocalPath = sg.LocalPath,
-            Enabled = sg.Status != SyncGroupStatus.Disabled
+            Enabled = sg.Status != DirectorySyncingStatus.Disabled,
         }).ToList();
     }
 }

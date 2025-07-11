@@ -26,7 +26,7 @@ public enum FileSyncResult
     /// <summary>
     /// 同步部分成功（部分文件同步成功，部分失败）
     /// </summary>
-    PartialSuccess
+    PartialSuccess,
 }
 
 /// <summary>
@@ -69,13 +69,13 @@ public interface IFileSyncService
     /// 同步单个目录
     /// </summary>
     /// <param name="sshInfo">SSH连接信息</param>
-    /// <param name="syncGroup">同步组配置</param>
+    /// <param name="syncingModel">同步组配置</param>
     /// <param name="progressCallback">进度回调</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>包含详细错误信息的同步结果</returns>
     Task<SyncResult<int>> SyncDirectoryAsync(
         SshRemoteDeviceInfo sshInfo,
-        SyncGroupConfiguration syncGroup,
+        DirectorySyncingModel syncingModel,
         IProgress<FileSyncProgress>? progressCallback = null,
         CancellationToken cancellationToken = default);
 
@@ -83,13 +83,13 @@ public interface IFileSyncService
     /// 同步多个目录
     /// </summary>
     /// <param name="sshInfo">SSH连接信息</param>
-    /// <param name="syncGroups">同步组配置列表</param>
+    /// <param name="syncingModels">同步组配置列表</param>
     /// <param name="progressCallback">进度回调</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>包含详细错误信息的多组同步结果</returns>
     Task<MultiSyncResult> SyncMultipleDirectoriesAsync(
         SshRemoteDeviceInfo sshInfo,
-        IEnumerable<SyncGroupConfiguration> syncGroups,
+        IEnumerable<DirectorySyncingModel> syncingModels,
         IProgress<FileSyncProgress>? progressCallback = null,
         CancellationToken cancellationToken = default);
 }

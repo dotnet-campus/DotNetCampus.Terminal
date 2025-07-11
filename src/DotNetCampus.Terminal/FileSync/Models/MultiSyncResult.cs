@@ -65,7 +65,7 @@ public class MultiSyncResult
                 SyncErrorType.LocalPathError => "本地路径错误",
                 SyncErrorType.ConfigurationError => "配置错误",
                 SyncErrorType.TransferError => "传输错误",
-                _ => "其他错误"
+                _ => "其他错误",
             };
 
             summaryLines.Add($"{typeName} {count}个");
@@ -80,7 +80,7 @@ public class MultiSyncResult
     public string GetDetailedDiagnostics()
     {
         var diagnostics = new List<string>();
-        
+
         diagnostics.Add($"总体结果: {OverallResult}");
         diagnostics.Add($"同步组总数: {GroupResults.Count}");
         diagnostics.Add($"成功: {GroupResults.Count(r => r.IsSuccess)}");
@@ -135,7 +135,7 @@ public record GroupSyncResult
         {
             GroupName = groupName,
             IsSuccess = true,
-            SyncedFileCount = syncedFileCount
+            SyncedFileCount = syncedFileCount,
         };
     }
 
@@ -148,7 +148,7 @@ public record GroupSyncResult
         {
             GroupName = groupName,
             IsSuccess = false,
-            Error = error
+            Error = error,
         };
     }
 }

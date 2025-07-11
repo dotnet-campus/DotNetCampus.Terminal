@@ -13,10 +13,10 @@ public class SftpOperationHelper
     /// </summary>
     public void EnsureRemoteDirectoryExists(SftpClient client, string remoteDirectory)
     {
-        string[] directories = remoteDirectory.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-        string currentPath = "/";
+        var directories = remoteDirectory.Split(['/'], StringSplitOptions.RemoveEmptyEntries);
+        var currentPath = "/";
 
-        foreach (string directory in directories)
+        foreach (var directory in directories)
         {
             currentPath = Path.Combine(currentPath, directory).Replace('\\', '/');
 

@@ -8,7 +8,7 @@ namespace DotNetCampus.Terminal.Modules.Configurations.JsonSource;
 /// </summary>
 [JsonSerializable(typeof(DeviceConfiguration))]
 [JsonSerializable(typeof(SshRemoteDeviceInfo))]
-[JsonSerializable(typeof(SyncGroupConfiguration))]
+[JsonSerializable(typeof(DirectorySyncingModel))]
 [JsonSourceGenerationOptions(
     WriteIndented = true,
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,

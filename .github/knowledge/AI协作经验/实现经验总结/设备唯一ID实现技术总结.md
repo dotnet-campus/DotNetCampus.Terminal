@@ -13,7 +13,7 @@
 ### 1. 数据模型扩展 ✅
 - **SshRemoteDeviceInfo**: 添加了 `LocalId` (required) 和 `RemoteId` (可空) 字段
 - **SshDeviceConfiguration**: 添加了对应的 LocalId 和 RemoteId 字段
-- **数据转换**: 更新了 TomlRemoteDeviceConfigurationSource 中的转换逻辑
+- **数据转换**: 更新了 JsonRemoteDeviceConfigurationSource 中的转换逻辑
 
 ### 2. 保存逻辑重构 ✅
 - **多重匹配策略**: 实现了 LocalId → RemoteId → ConnectionName 的降级匹配逻辑
@@ -27,7 +27,7 @@
 - **GetCurrentDeviceInfo**: 包含新字段的设备信息生成
 
 ### 4. 配置文件更新 ✅
-- **TOML格式**: 手动为现有设备配置添加了 LocalId 字段
+- **JSON格式**: 手动为现有设备配置添加了 LocalId 字段
 - **兼容性**: 移除了自动生成 LocalId 的逻辑，要求配置文件中必须包含 LocalId
 
 ## 技术实现细节
@@ -45,16 +45,21 @@ private static string GenerateLocalId()
 2. **RemoteId** - 如果LocalId未找到且RemoteId非空
 3. **ConnectionName** - 兼容性降级方案
 
-### TOML配置示例
-```toml
-[[SshDevices]]
-LocalId = "device_a1b2c3d4e5f67890"
-RemoteId = null  # 当前版本保持为空，等待部署模块生成
-ConnectionName = "开发服务器"
-Host = "192.168.1.100"
-Port = 22
-UserName = "developer"
-Password = "secret123"
+### JSON配置示例
+```json
+{
+  "sshDevices": [
+    {
+      "localId": "device_a1b2c3d4e5f67890",
+      "remoteId": null,
+      "connectionName": "开发服务器",
+      "host": "192.168.1.100",
+      "port": 22,
+      "userName": "developer",
+      "password": "secret123"
+    }
+  ]
+}
 ```
 
 ## 验证结果
@@ -62,8 +67,8 @@ Password = "secret123"
 ### ✅ 功能验证
 - 新创建的设备自动生成LocalId
 - 修改设备连接名称后保存不会创建重复设备  
-- 现有TOML文件可以正常加载（已手动添加LocalId）
-- 保存配置后TOML文件包含LocalId字段
+- 现有JSON文件可以正常加载（已手动添加LocalId）
+- 保存配置后JSON文件包含LocalId字段
 
 ### ✅ 兼容性验证
 - 现有配置文件已手动迁移（添加LocalId）
@@ -79,12 +84,12 @@ Password = "secret123"
 
 ### 核心文件
 - `src/DotNetCampus.Terminal/Modules/Configurations/Models/SshRemoteDeviceInfo.cs` - 数据模型
-- `src/DotNetCampus.Terminal/Modules/Configurations/Models/TomlDeviceConfiguration.cs` - TOML模型  
-- `src/DotNetCampus.Terminal/Modules/Configurations/TomlSource/TomlRemoteDeviceConfigurationSource.cs` - 配置源
+- `src/DotNetCampus.Terminal/Modules/Configurations/Models/SyncModels.cs` - 同步模型  
+- `src/DotNetCampus.Terminal/Modules/Configurations/JsonSource/JsonRemoteDeviceConfigurationSource.cs` - 配置源
 - `src/DotNetCampus.Terminal/ViewModels/SshRemoteDeviceInfoViewModel.cs` - ViewModel
 
 ### 配置文件
-- `src/DotNetCampus.Terminal/Assets/terminal.toml` - 手动添加LocalId
+- `src/DotNetCampus.Terminal/Configs/devices.json` - 手动添加LocalId
 
 ### 文档更新
 - `.github/knowledge/Device-Unique-ID-Design.md` - 设计文档

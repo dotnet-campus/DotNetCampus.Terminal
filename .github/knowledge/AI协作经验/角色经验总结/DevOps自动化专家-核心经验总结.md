@@ -16,7 +16,7 @@
 - ✅ 使用 PublishAot=true 进行 AOT 编译
 - ✅ 自动重命名可执行文件为平台特定名称
 - ✅ **修复发布产物上传问题**: 解决了 .exe.zip 后缀和 404 链接问题
-- ✅ **修复跨平台文件夹结构问题**: 解决了 macOS/Linux 版本中 devices.toml 文件位置错误的问题
+- ✅ **修复跨平台文件夹结构问题**: 解决了 macOS/Linux 版本中 devices.json 文件位置错误的问题
 
 ### 3. 自动化发布和版本管理
 - ✅ 集成了 dotnetCampus.TagToVersion 工具
@@ -121,10 +121,10 @@ strategy:
 **解决方案**: 在 `upload-artifact` 中同时指定两种路径格式
 
 ### 4. 跨平台文件夹结构保留问题 ⚠️⚠️⚠️
-**问题**: macOS 和 Linux 打包时，`devices.toml` 等配置文件没有保留原有的文件夹结构
+**问题**: macOS 和 Linux 打包时，`devices.json` 等配置文件没有保留原有的文件夹结构
 **现象**: 
-- Windows 版本的 zip 包中 `devices.toml` 在 `Config/devices.toml` 路径（正确）
-- macOS/Linux 版本的 zip 包中 `devices.toml` 在根目录（错误）
+- Windows 版本的 zip 包中 `devices.json` 在 `Config/devices.json` 路径（正确）
+- macOS/Linux 版本的 zip 包中 `devices.json` 在根目录（错误）
 
 **根本原因**: 
 - Windows PowerShell 的 `Copy-Item -Recurse` 会保留文件夹结构
@@ -139,7 +139,7 @@ find ./publish/${{ matrix.runtime }} -type f ! -name "*.pdb" ! -name "*.dbg" ! -
 rsync -av --exclude='*.pdb' --exclude='*.dbg' --exclude='*.dsym' ./publish/${{ matrix.runtime }}/ ./temp-release/
 ```
 
-**重要**: 配置文件如 `devices.toml` 需要保持其在 `Config/` 文件夹中的相对路径，应用程序才能正确找到它们。
+**重要**: 配置文件如 `devices.json` 需要保持其在 `Config/` 文件夹中的相对路径，应用程序才能正确找到它们。
 
 ### 6. 代码格式检查的团队协作问题 ⭐
 **问题**: 团队对 .editorconfig 标准尚未统一，强制格式检查可能导致CI失败

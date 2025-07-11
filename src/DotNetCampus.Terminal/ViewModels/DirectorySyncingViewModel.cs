@@ -32,7 +32,7 @@ public record DirectorySyncingViewModel : TrackingUnsavedBindableRecord
     public AsyncCommand SyncCommand { get; }
 
     /// <summary>
-    /// 同步组名称
+    /// 目录同步名称
     /// </summary>
     public string Name
     {

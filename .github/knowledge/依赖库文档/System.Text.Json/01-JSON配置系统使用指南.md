@@ -43,7 +43,7 @@ using System.Text.Json.Serialization;
 
 [JsonSerializable(typeof(DeviceConfiguration))]
 [JsonSerializable(typeof(SshRemoteDeviceInfo))]
-[JsonSerializable(typeof(SyncGroupConfiguration))]
+[JsonSerializable(typeof(DirectorySyncingModel))]
 [JsonSourceGenerationOptions(
     WriteIndented = true,
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
@@ -172,7 +172,7 @@ public class JsonRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
       "port": 22,
       "userName": "developer",
       "password": "optional_password",
-      "syncGroups": [
+      "syncDirectories": [
         {
           "name": "项目代码",
           "remotePath": "/home/developer/projects",
@@ -200,7 +200,7 @@ public class JsonRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
       "host": "test.example.com",
       "port": 2222,
       "userName": "testuser",
-      "syncGroups": []
+      "syncDirectories": []
     }
   ]
 }
@@ -216,8 +216,8 @@ public class JsonRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
   - **port**: SSH端口（默认22）
   - **userName**: 用户名（必需）
   - **password**: 密码（可选，建议使用密钥认证）
-  - **syncGroups**: 同步组配置数组
-    - **name**: 同步组名称
+  - **SyncDirectories**: 目录同步配置数组
+    - **name**: 目录同步名称
     - **remotePath**: 远程路径
     - **localPath**: 本地路径
     - **isEnabled**: 是否启用同步
@@ -232,9 +232,9 @@ public class JsonRemoteDeviceConfigurationSource : IRemoteDeviceConfigurationSou
 // 必须标记所有需要序列化的类型
 [JsonSerializable(typeof(DeviceConfiguration))]
 [JsonSerializable(typeof(SshRemoteDeviceInfo))]
-[JsonSerializable(typeof(SyncGroupConfiguration))]
+[JsonSerializable(typeof(DirectorySyncingModel))]
 [JsonSerializable(typeof(List<SshRemoteDeviceInfo>))]
-[JsonSerializable(typeof(List<SyncGroupConfiguration>))]
+[JsonSerializable(typeof(List<DirectorySyncingModel>))]
 ```
 
 ### 2. 序列化调用

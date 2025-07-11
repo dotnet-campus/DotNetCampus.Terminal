@@ -69,7 +69,7 @@ public interface IFileSyncService
     /// 同步单个目录
     /// </summary>
     /// <param name="sshInfo">SSH连接信息</param>
-    /// <param name="syncingModel">同步组配置</param>
+    /// <param name="syncingModel">目录同步配置</param>
     /// <param name="progressCallback">进度回调</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>包含详细错误信息的同步结果</returns>
@@ -83,7 +83,7 @@ public interface IFileSyncService
     /// 同步多个目录
     /// </summary>
     /// <param name="sshInfo">SSH连接信息</param>
-    /// <param name="syncingModels">同步组配置列表</param>
+    /// <param name="syncingModels">目录同步配置列表</param>
     /// <param name="progressCallback">进度回调</param>
     /// <param name="cancellationToken">取消令牌</param>
     /// <returns>包含详细错误信息的多组同步结果</returns>

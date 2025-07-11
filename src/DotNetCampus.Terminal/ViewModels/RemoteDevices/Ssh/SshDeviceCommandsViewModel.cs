@@ -98,7 +98,7 @@ public record SshDeviceCommandsViewModel : BindableRecord
     }
 
     /// <summary>
-    /// 启用所有同步组
+    /// 启用所有目录同步
     /// </summary>
     private async Task OnEnableAllAsync()
     {
@@ -106,7 +106,7 @@ public record SshDeviceCommandsViewModel : BindableRecord
     }
 
     /// <summary>
-    /// 禁用所有同步组
+    /// 禁用所有目录同步
     /// </summary>
     private async Task OnDisableAllAsync()
     {
@@ -167,7 +167,7 @@ public record SshDeviceCommandsViewModel : BindableRecord
             // 获取配置管理器
             var configurationManager = Container.Current.EnsureGet<ConfigurationManager>();
 
-            // 创建新的设备信息，包含更新的同步组配置
+            // 创建新的设备信息，包含更新的目录同步配置
             var updatedDeviceInfo = currentDeviceInfo with
             {
                 SyncDirectories = _syncViewModel.GetDirectorySyncingModels(),

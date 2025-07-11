@@ -89,7 +89,7 @@
                     Command="{Binding Commands.EnableAllCommand}" />
         </Grid>
 
-        <!-- 同步组列表 -->
+        <!-- 目录同步列表 -->
         <ItemsControl Grid.Row="3" BorderThickness="0"
                       IsEnabled="{Binding !Sync.IsGlobalSyncing}"
                       ItemsSource="{Binding Sync.DirectorySyncingList}">
@@ -102,7 +102,7 @@
                 <DataTemplate x:DataType="vm:DirectorySyncingViewModel">
                     <Border Margin="0 -1 0 0" BorderThickness="0 1 0 1" BorderBrush="DimGray">
                         <StackPanel>
-                            <!-- 同步组名称和状态 -->
+                            <!-- 目录同步名称和状态 -->
                             <Grid ColumnDefinitions="3,Auto,*,Auto,Auto,Auto">
                                 <TextBlock Grid.Column="0" Width="3"
                                            TextAlignment="Center"

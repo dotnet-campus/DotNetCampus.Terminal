@@ -34,7 +34,7 @@ Views/
 - 连接测试功能
 
 #### 同步ViewModel职责
-- 同步组管理
+- 目录同步管理
 - 同步进度追踪
 - 同步状态管理
 - 错误信息处理
@@ -81,7 +81,7 @@ public SshRemoteDeviceInfoViewModel(SshRemoteDeviceInfo info) : base(info)
     CommandsViewModel = new SshDeviceCommandsViewModel(SyncViewModel, GetCurrentDeviceInfo);
     
     // 3. 最后加载数据
-    SyncViewModel.InitializeSyncGroups(info.SyncGroups);
+    SyncViewModel.InitializeDirectorySyncing(info.SyncDirectories);
 }
 ```
 
@@ -154,7 +154,7 @@ public SshDeviceCommandsViewModel Commands { get; }
 ```csharp
 var updatedDeviceInfo = currentDeviceInfo with
 {
-    SyncGroups = _syncViewModel.GetSyncGroupConfigurations()
+    SyncDirectories = _syncViewModel.GetDirectorySyncingModels()
 };
 ```
 

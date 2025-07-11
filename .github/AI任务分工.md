@@ -34,7 +34,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - ✅ 增量同步优化
 - ✅ 错误处理优化和诊断信息改进
 - ✅ 错误消息格式优化（解决双冒号问题）
-- ✅ "没有启用的同步组"UI错误提示优化
+- ✅ "没有启用的目录同步"UI错误提示优化
 
 ### UI界面设计师 (UI Designer AI)
 **📖 必读文档**: `.github/knowledge/AI协作经验/角色经验总结/UI界面设计师-核心经验总结.md`
@@ -68,6 +68,7 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
 - ✅ 项目文档维护和技术标准制定
 - ✅ AI角色权限和职责优化
 - ✅ Copilot指令文档完善
+- ✅ SyncGroup术语重命名（同步组→目录同步，SyncGroupConfiguration→DirectorySyncingModel）
 - [ ] 自动化文档生成工具
 - [ ] 多语言文档支持
 - [ ] API文档自动更新

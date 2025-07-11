@@ -82,7 +82,7 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
         Commands = new SshDeviceCommandsViewModel(this, GetCurrentDeviceInfo);
         Deploy = new SshDeviceDeployViewModel(GetCurrentDeviceInfo);
 
-        // 从配置中加载同步组数据
+        // 从配置中加载目录同步数据
         Sync.InitializeSyncingModels(info.SyncDirectories);
     }
 

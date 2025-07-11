@@ -37,7 +37,7 @@ public record DeviceConfiguration
 // 2. AOT源生成器上下文
 [JsonSerializable(typeof(DeviceConfiguration))]
 [JsonSerializable(typeof(SshRemoteDeviceInfo))]
-[JsonSerializable(typeof(SyncGroupConfiguration))]
+[JsonSerializable(typeof(DirectorySyncingModel))]
 [JsonSourceGenerationOptions(
     WriteIndented = true,
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
@@ -93,7 +93,7 @@ Modules/Configurations/
       "port": 22,
       "userName": "developer",
       "password": "dev123",
-      "syncGroups": [
+      "syncDirectories": [
         {
           "name": "项目源码",
           "remotePath": "/home/developer/projects",

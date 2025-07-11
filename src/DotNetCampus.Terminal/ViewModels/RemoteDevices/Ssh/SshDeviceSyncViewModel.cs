@@ -26,12 +26,12 @@ public partial record SshDeviceSyncViewModel : TrackingUnsavedBindableRecord
     }
 
     /// <summary>
-    /// 同步组列表
+    /// 目录同步列表
     /// </summary>
     public AvaloniaList<DirectorySyncingViewModel> DirectorySyncingList { get; } = [];
 
     /// <summary>
-    /// 选中的同步组
+    /// 选中的目录同步
     /// </summary>
     public DirectorySyncingViewModel? SelectedDirectorySyncing
     {
@@ -107,9 +107,9 @@ public partial record SshDeviceSyncViewModel : TrackingUnsavedBindableRecord
 
         if (enabledGroups.Count == 0)
         {
-            Log.Info("[UI] 没有启用的同步组，跳过同步");
-            LastSyncErrorMessage = "没有启用的同步组";
-            DetailedDiagnostics = "请至少启用一个同步组后再执行同步操作。您可以通过勾选同步组列表中的复选框来启用同步组，或使用「全部启用」按钮一次性启用所有同步组。";
+            Log.Info("[UI] 没有启用的目录同步，跳过同步");
+            LastSyncErrorMessage = "没有启用的目录同步";
+            DetailedDiagnostics = "请至少启用一个目录同步后再执行同步操作。您可以通过勾选目录同步列表中的复选框来启用目录同步，或使用「全部启用」按钮一次性启用所有目录同步。";
             return;
         }
 
@@ -122,7 +122,7 @@ public partial record SshDeviceSyncViewModel : TrackingUnsavedBindableRecord
         LastSyncErrorMessage = string.Empty; // 开始同步时清空错误消息
         DetailedDiagnostics = string.Empty; // 清空详细诊断信息
 
-        // 将所有启用的同步组状态设置为同步中
+        // 将所有启用的目录同步状态设置为同步中
         foreach (var group in enabledGroups)
         {
             group.Status = DirectorySyncingStatus.Syncing;
@@ -146,7 +146,7 @@ public partial record SshDeviceSyncViewModel : TrackingUnsavedBindableRecord
                 // 更新全局进度
                 GlobalSyncProgress = p.TotalProgress;
 
-                // 查找当前处理的文件所属的同步组
+                // 查找当前处理的文件所属的目录同步
                 var currentGroup = enabledGroups.FirstOrDefault(
                     g => p.CurrentFile.StartsWith(g.LocalPath, StringComparison.OrdinalIgnoreCase));
 
@@ -206,7 +206,7 @@ public partial record SshDeviceSyncViewModel : TrackingUnsavedBindableRecord
         }
         catch (Exception ex)
         {
-            // 发生异常时将所有同步组状态设置为错误
+            // 发生异常时将所有目录同步状态设置为错误
             foreach (var group in enabledGroups)
             {
                 group.Status = DirectorySyncingStatus.Error;
@@ -252,7 +252,7 @@ public partial record SshDeviceSyncViewModel : TrackingUnsavedBindableRecord
     }
 
     /// <summary>
-    /// 启用所有同步组
+    /// 启用所有目录同步
     /// </summary>
     public async Task EnableAllAsync()
     {
@@ -264,7 +264,7 @@ public partial record SshDeviceSyncViewModel : TrackingUnsavedBindableRecord
     }
 
     /// <summary>
-    /// 禁用所有同步组
+    /// 禁用所有目录同步
     /// </summary>
     public async Task DisableAllAsync()
     {
@@ -293,7 +293,7 @@ public partial record SshDeviceSyncViewModel : TrackingUnsavedBindableRecord
     }
 
     /// <summary>
-    /// 初始化同步组数据
+    /// 初始化目录同步数据
     /// </summary>
     public void InitializeSyncingModels(IEnumerable<DirectorySyncingModel> syncingModels)
     {
@@ -311,12 +311,12 @@ public partial record SshDeviceSyncViewModel : TrackingUnsavedBindableRecord
             });
         }
 
-        // 如果没有配置同步组，添加一个示例（仅用于演示）
+        // 如果没有配置目录同步，添加一个示例（仅用于演示）
         if (DirectorySyncingList.Count == 0)
         {
             DirectorySyncingList.Add(new DirectorySyncingViewModel
             {
-                Name = "示例同步组",
+                Name = "示例目录同步",
                 RemotePath = "/home/user/example",
                 LocalPath = @"D:\Example",
                 Status = DirectorySyncingStatus.Normal,
@@ -325,7 +325,7 @@ public partial record SshDeviceSyncViewModel : TrackingUnsavedBindableRecord
     }
 
     /// <summary>
-    /// 获取同步组配置
+    /// 获取目录同步配置
     /// </summary>
     public List<DirectorySyncingModel> GetDirectorySyncingModels()
     {

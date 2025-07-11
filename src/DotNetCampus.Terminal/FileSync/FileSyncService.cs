@@ -29,17 +29,17 @@ public class FileSyncService : IFileSyncService
         if (string.IsNullOrEmpty(syncingModel.LocalPath) || string.IsNullOrEmpty(syncingModel.RemotePath))
         {
             var error = new SyncError(
-                "同步组的本地路径或远程路径为空",
+                "目录同步的本地路径或远程路径为空",
                 SyncErrorType.ConfigurationError,
-                $"同步组: {syncingModel.Name}");
+                $"目录同步: {syncingModel.Name}");
             Log.Error($"[FileSync] {error.GetUserFriendlyMessage()}");
             return SyncResult<int>.Failure(error);
         }
 
         if (!syncingModel.Enabled)
         {
-            Log.Info($"[FileSync] 同步组 {syncingModel.Name} 已被禁用，跳过同步");
-            return SyncResult<int>.Cancelled("同步组已被禁用");
+            Log.Info($"[FileSync] 目录同步 {syncingModel.Name} 已被禁用，跳过同步");
+            return SyncResult<int>.Cancelled("目录同步已被禁用");
         }
 
         var directionText = syncingModel.GetDirection() == SyncDirection.LocalToRemote
@@ -75,7 +75,7 @@ public class FileSyncService : IFileSyncService
         var enabledSyncingModels = syncingModels.Where(sg => sg.Enabled).ToList();
         if (enabledSyncingModels.Count == 0)
         {
-            Log.Info("[FileSync] 没有启用的同步组，跳过同步");
+            Log.Info("[FileSync] 没有启用的目录同步，跳过同步");
             return new MultiSyncResult
             {
                 GroupResults = [],
@@ -83,7 +83,7 @@ public class FileSyncService : IFileSyncService
             };
         }
 
-        Log.Info($"[FileSync] 开始同步多个目录，共 {enabledSyncingModels.Count} 个同步组");
+        Log.Info($"[FileSync] 开始同步多个目录，共 {enabledSyncingModels.Count} 个目录同步");
 
         var groupResults = new List<GroupSyncResult>();
 

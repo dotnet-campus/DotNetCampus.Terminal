@@ -3,12 +3,12 @@ using DotNetCampus.Terminal.FileSync.Models;
 namespace DotNetCampus.Terminal.FileSync.Models;
 
 /// <summary>
-/// 多个同步组的同步结果
+/// 多个目录同步的同步结果
 /// </summary>
 public class MultiSyncResult
 {
     /// <summary>
-    /// 个别同步组的结果
+    /// 个别目录同步的结果
     /// </summary>
     public required List<GroupSyncResult> GroupResults { get; init; }
 
@@ -82,14 +82,14 @@ public class MultiSyncResult
         var diagnostics = new List<string>();
 
         diagnostics.Add($"总体结果: {OverallResult}");
-        diagnostics.Add($"同步组总数: {GroupResults.Count}");
+        diagnostics.Add($"目录同步总数: {GroupResults.Count}");
         diagnostics.Add($"成功: {GroupResults.Count(r => r.IsSuccess)}");
         diagnostics.Add($"失败: {GroupResults.Count(r => !r.IsSuccess)}");
         diagnostics.Add("");
 
         foreach (var groupResult in GroupResults.Where(r => !r.IsSuccess))
         {
-            diagnostics.Add($"同步组: {groupResult.GroupName}");
+            diagnostics.Add($"目录同步: {groupResult.GroupName}");
             if (groupResult.Error != null)
             {
                 diagnostics.Add(groupResult.Error.GetDiagnosticInfo());
@@ -102,12 +102,12 @@ public class MultiSyncResult
 }
 
 /// <summary>
-/// 单个同步组的结果
+/// 单个目录同步的结果
 /// </summary>
 public record GroupSyncResult
 {
     /// <summary>
-    /// 同步组名称
+    /// 目录同步名称
     /// </summary>
     public required string GroupName { get; init; }
 

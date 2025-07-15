@@ -6,10 +6,5 @@
         xmlns:views="using:DotNetCampus.Terminal.Views"
         x:Class="DotNetCampus.Terminal.Views.MainWindow"
         Title="Consolonia">
-    <LayoutTransformControl>
-        <LayoutTransformControl.LayoutTransform>
-            <ScaleTransform ScaleX="16" ScaleY="16" />
-        </LayoutTransformControl.LayoutTransform>
-        <views:MainView />
-    </LayoutTransformControl>
+    <views:MainView />
 </Window>

@@ -5,7 +5,7 @@
              RequestedThemeVariant="Dark">
 
     <Application.Styles>
-        <console:TurboVisionDarkTheme />
+        <FluentTheme />
         <Style Selector="Border.GroupBox">
             <Setter Property="BorderThickness" Value="1" />
             <Setter Property="BorderBrush" Value="DimGray" />

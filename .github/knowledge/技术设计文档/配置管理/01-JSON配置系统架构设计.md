@@ -2,7 +2,7 @@
 
 ## 系统概述
 
-DotNetCampus Terminal 使用基于 `System.Text.Json` + 源生成器的AOT兼容配置系统，完全替代了之前的TOML配置方案。
+DotNetCampus Terminal 使用基于 `System.Text.Json` + 源生成器的AOT兼容配置系统。
 
 ## 📜 配置系统架构
 

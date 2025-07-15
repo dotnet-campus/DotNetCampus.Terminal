@@ -183,12 +183,19 @@ sudo tail -f /var/log/secure      # CentOS/RHEL
 ## 项目中的应用建议
 
 ### 1. 配置存储
-在TOML配置中支持私钥路径：
-```toml
-[remote_device.auth]
-type = "key"
-private_key_path = "~/.ssh/id_rsa"
-passphrase = ""  # 可选，或从安全存储读取
+在JSON配置中支持私钥路径：
+```json
+{
+  "sshDevices": [
+    {
+      "auth": {
+        "type": "key",
+        "privateKeyPath": "~/.ssh/id_rsa",
+        "passphrase": ""
+      }
+    }
+  ]
+}
 ```
 
 ### 2. 认证流程优化
@@ -204,7 +211,6 @@ passphrase = ""  # 可选，或从安全存储读取
 
 - [SSH.NET 使用指南](SSH.NET-使用指南.md)
 - [SSH.NET 文件同步指南](SSH.NET-File-Sync-Guide.md)
-- [Terminal TOML 配置设计](Terminal-TOML-Configuration-Design.md)
 
 ---
 

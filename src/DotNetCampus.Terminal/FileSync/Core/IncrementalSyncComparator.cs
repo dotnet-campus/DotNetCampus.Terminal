@@ -9,6 +9,22 @@ namespace DotNetCampus.Terminal.FileSync.Core;
 public class IncrementalSyncComparator
 {
     /// <summary>
+    /// 时间戳比较的容差（秒），用于处理网络传输和文件系统的轻微时间差异
+    /// </summary>
+    private const int TimestampToleranceSeconds = 2;
+
+    /// <summary>
+    /// 判断两个时间戳是否实质性不同（超出容差范围）
+    /// </summary>
+    /// <param name="time1">时间1</param>
+    /// <param name="time2">时间2</param>
+    /// <returns>如果时间差异超出容差返回true，否则返回false</returns>
+    private static bool IsSignificantlyDifferent(DateTimeOffset time1, DateTimeOffset time2)
+    {
+        var timeDifference = Math.Abs((time1 - time2).TotalSeconds);
+        return timeDifference > TimestampToleranceSeconds;
+    }
+    /// <summary>
     /// 获取需要从本地同步到远程的文件列表
     /// </summary>
     public List<string> GetFilesToSyncLocalToRemote(
@@ -32,10 +48,11 @@ public class IncrementalSyncComparator
             else
             {
                 // 比较文件大小和修改时间
-                if (localFile.Size != remoteFile.Size || localFile.LastWriteTime > remoteFile.LastWriteTime)
+                if (localFile.Size != remoteFile.Size || 
+                    (localFile.LastWriteTime > remoteFile.LastWriteTime && IsSignificantlyDifferent(localFile.LastWriteTime, remoteFile.LastWriteTime)))
                 {
                     needSync = true;
-                    Log.Debug($"[FileSync] 文件已修改需要上传: {relativePath} (本地: {localFile.LastWriteTime}, 远程: {remoteFile.LastWriteTime})");
+                    Log.Debug($"[FileSync] 文件已修改需要上传: {relativePath} (本地: {localFile.LastWriteTime}, 远程: {remoteFile.LastWriteTime}, 大小差异: {localFile.Size != remoteFile.Size})");
                 }
             }
 
@@ -72,10 +89,11 @@ public class IncrementalSyncComparator
             else
             {
                 // 比较文件大小和修改时间
-                if (remoteFile.Size != localFile.Size || remoteFile.LastWriteTime > localFile.LastWriteTime)
+                if (remoteFile.Size != localFile.Size || 
+                    (remoteFile.LastWriteTime > localFile.LastWriteTime && IsSignificantlyDifferent(remoteFile.LastWriteTime, localFile.LastWriteTime)))
                 {
                     needSync = true;
-                    Log.Debug($"[FileSync] 文件已修改需要下载: {relativePath} (远程: {remoteFile.LastWriteTime}, 本地: {localFile.LastWriteTime})");
+                    Log.Debug($"[FileSync] 文件已修改需要下载: {relativePath} (远程: {remoteFile.LastWriteTime}, 本地: {localFile.LastWriteTime}, 大小差异: {remoteFile.Size != localFile.Size})");
                 }
             }
 

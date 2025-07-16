@@ -132,6 +132,9 @@ public class LocalToRemoteSyncOperation
                         });
                     }
 
+                    // 同步文件时间戳，确保远程文件的修改时间与本地文件一致
+                    _sftpHelper.SyncRemoteFileTimestamps(client, remoteFilePath, localFile);
+
                     processedFiles++;
 
                     // 报告总体进度

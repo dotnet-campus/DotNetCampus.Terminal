@@ -14,12 +14,14 @@ public class RemoteToLocalSyncOperation
     private readonly LocalFileInfoProvider _localFileProvider;
     private readonly RemoteFileInfoProvider _remoteFileProvider;
     private readonly IncrementalSyncComparator _syncComparator;
+    private readonly SftpOperationHelper _sftpHelper;
 
     public RemoteToLocalSyncOperation()
     {
         _localFileProvider = new LocalFileInfoProvider();
         _remoteFileProvider = new RemoteFileInfoProvider();
         _syncComparator = new IncrementalSyncComparator();
+        _sftpHelper = new SftpOperationHelper();
     }
 
     /// <summary>
@@ -139,6 +141,9 @@ public class RemoteToLocalSyncOperation
                             });
                         });
                     }
+
+                    // 同步文件时间戳，确保本地文件的修改时间与远程文件一致
+                    _sftpHelper.SyncLocalFileTimestamps(client, remoteFile, localFilePath);
 
                     processedFiles++;
 

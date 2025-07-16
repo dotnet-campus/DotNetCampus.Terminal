@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>DotNetCampus.Terminal</RootNamespace>
@@ -17,6 +17,7 @@
     <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Consolonia" />
     <PackageReference Include="DotNetCampus.Logger" />
+    <PackageReference Include="dotnetCampus.SourceLocalizations" />
     <PackageReference Include="SSH.NET" />
   </ItemGroup>
 

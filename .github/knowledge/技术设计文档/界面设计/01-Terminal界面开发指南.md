@@ -99,7 +99,7 @@ xmlns="https://github.com/avaloniaui"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 xmlns:console="https://github.com/jinek/consolonia"
 xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
-xmlns:views="clr-namespace:DotNetCampus.Terminal.Views"
+xmlns:views="using:DotNetCampus.Terminal.Views"
 ```
 
 ### 3. 数据绑定约定

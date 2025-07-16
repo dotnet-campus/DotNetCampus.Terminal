@@ -4,7 +4,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:console="https://github.com/jinek/consolonia"
         xmlns:views="using:DotNetCampus.Terminal.Views"
+        xmlns:l="using:DotNetCampus.Terminal.Localizations"
         x:Class="DotNetCampus.Terminal.Views.MainWindow"
-        Title="Consolonia">
+        Width="1280" Height="960" WindowStartupLocation="CenterScreen"
+        TransparencyLevelHint="Mica,AcrylicBlur,Blur"
+        ExtendClientAreaToDecorationsHint="True" ExtendClientAreaTitleBarHeightHint="40" Background="Transparent"
+        Title="{Binding Product.LocalizedName, Source={x:Static l:Lang.Current}}">
+
     <views:MainView />
+
 </Window>

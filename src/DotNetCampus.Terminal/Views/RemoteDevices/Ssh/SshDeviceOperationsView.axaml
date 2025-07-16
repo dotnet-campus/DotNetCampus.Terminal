@@ -3,8 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:console="https://github.com/jinek/consolonia"
-             xmlns:vm="clr-namespace:DotNetCampus.Terminal.ViewModels"
-             xmlns:converters="clr-namespace:DotNetCampus.Terminal.Views.Converters"
+             xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
+             xmlns:converters="using:DotNetCampus.Terminal.Views.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="DotNetCampus.Terminal.Views.RemoteDevices.Ssh.SshDeviceOperationsView"
              x:DataType="vm:SshRemoteDeviceInfoViewModel">

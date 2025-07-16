@@ -7,7 +7,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="1"
              x:Class="DotNetCampus.Terminal.Views.StatusTipView"
              x:DataType="vm:StatusTipViewModel"
-             Height="1">
+             Height="16">
 
     <Design.DataContext>
         <vm:StatusTipViewModel />

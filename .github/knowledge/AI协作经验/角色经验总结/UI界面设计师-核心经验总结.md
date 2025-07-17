@@ -63,63 +63,61 @@ Remove-Item "Views" -Recurse -Force
 - **使用绝对路径创建文件时要特别小心路径是否正确**
 - **遇到AXN0001错误时，首先检查文件位置是否正确**
 
-### 字符级测量单位错误
-**这是UI设计师最容易犯的致命错误！**
+### Avalonia XAML 语法要点
+**基于现代GUI框架的设计原则！**
 
-#### ❌ 错误的像素思维
+#### ✅ 标准像素单位思维
 ```xml
-<!-- 错误：这些数值在控制台中是字符单位！ -->
-<StackPanel Spacing="10" Margin="10">          <!-- 10个字符间距！太大了！ -->
-<Border Padding="10">                          <!-- 10个字符内边距！ -->
-<TextBox Width="300">                          <!-- 300个字符宽度！ -->
-<ProgressBar Height="8">                       <!-- 8个字符高度！ -->
-<Button Padding="15,5">                        <!-- 15个字符宽，5个字符高！ -->
-<TextBlock FontSize="16">                      <!-- 控制台中无意义！ -->
+<!-- 正确：Avalonia使用标准像素单位 -->
+<StackPanel Spacing="10" Margin="15">          <!-- 10像素间距，15像素边距 -->
+<Border Padding="12">                          <!-- 12像素内边距 -->
+<TextBox Width="300" Height="32">              <!-- 300像素宽，32像素高 -->
+<ProgressBar Height="6">                       <!-- 6像素高度 -->
+<Button Padding="16,8">                        <!-- 16像素宽，8像素高 -->
+<TextBlock FontSize="14">                      <!-- 14号字体 -->
 ```
 
-#### ✅ 正确的字符思维
-```xml
-<!-- 正确：以字符为单位思考 -->
-<StackPanel Spacing="1" Margin="1">            <!-- 1个字符间距 -->
-<Border Padding="1">                           <!-- 1个字符内边距 -->
-<TextBox Width="40">                           <!-- 40个字符宽度 -->
-<ProgressBar Height="1">                       <!-- 1个字符高度 -->
-<Button Padding="2 0">                         <!-- 左右2个字符，上下0个字符 -->
-<TextBlock>                                    <!-- 不设置FontSize -->
+#### 现代GUI尺寸参考表
 ```
-
-#### 字符级度量对照表
-```
-Spacing="1"   = 1个字符间距
-Margin="1"    = 1个字符边距
-Padding="1"   = 1个字符内边距
-Width="20"    = 20个字符宽度
-Height="1"    = 1个字符高度
-Margin="2 0"  = 左右2个字符，上下0个字符
-Padding="1 0" = 左右1个字符，上下0个字符
+Spacing="8"    = 紧密间距
+Spacing="12"   = 标准间距  
+Spacing="16"   = 宽松间距
+Margin="8"     = 小边距
+Margin="16"    = 标准边距
+Margin="24"    = 大边距
+Padding="8"    = 小内边距
+Padding="12"   = 标准内边距
+Padding="16"   = 大内边距
+Height="32"    = 标准控件高度
+Height="40"    = 大控件高度
+FontSize="12"  = 小字体
+FontSize="14"  = 标准字体
+FontSize="16"  = 大字体
 ```
 
 #### 常用尺寸参考
 ```xml
-<!-- 小组件 -->
-<Button Padding="1 0">短按钮</Button>
-<Button Padding="2 0">中等按钮</Button>
+<!-- 按钮设计 -->
+<Button Padding="16,8" MinHeight="32">标准按钮</Button>
+<Button Padding="12,6" MinHeight="28">小按钮</Button>
+<Button Padding="20,10" MinHeight="40">大按钮</Button>
 
 <!-- 输入框 -->
-<TextBox Width="20">短输入框</TextBox>
-<TextBox Width="40">中等输入框</TextBox>
-<TextBox Width="60">长输入框</TextBox>
+<TextBox Width="200" Height="32">短输入框</TextBox>
+<TextBox Width="300" Height="32">中等输入框</TextBox>
+<TextBox Width="400" Height="32">长输入框</TextBox>
 
 <!-- 布局间距 -->
-<StackPanel Spacing="0">紧密布局</StackPanel>
-<StackPanel Spacing="1">标准布局</StackPanel>
+<StackPanel Spacing="8">紧密布局</StackPanel>
+<StackPanel Spacing="12">标准布局</StackPanel>
+<StackPanel Spacing="16">宽松布局</StackPanel>
 
 <!-- 边框内边距 -->
-<Border Padding="1">标准内边距</Border>
-<Border Padding="2">宽松内边距</Border>
+<Border Padding="12">标准内边距</Border>
+<Border Padding="16">宽松内边距</Border>
 ```
 
-**记住：在Consolonia中，每个数字都是字符数量，不是像素！**
+**记住：Avalonia使用标准像素单位，可以精确控制界面美观度！**
 
 ## 核心技术栈速查
 
@@ -132,23 +130,24 @@ Padding="1 0" = 左右1个字符，上下0个字符
 - `AsyncCommand` - 异步命令，适用于I/O操作
 - `InteractiveCommand` - 交互式命令，用于需要用户确认的操作
 
-### Consolonia特殊语法 ⚠️ 已弃用
+### Avalonia XAML 核心语法
 ```xml
-<!-- 文件扩展名：Avalonia 和 Consolonia 都使用 .axaml -->
+<!-- 文件扩展名：.axaml -->
 *.axaml
 
-<!-- Consolonia 命名空间（已移除） -->
-xmlns:console="https://github.com/jinek/consolonia"
+<!-- Avalonia 标准命名空间 -->
+xmlns="https://github.com/avaloniaui"
 
-<!-- Button阴影禁用 (在Style中设置，不要在单个Button上设置) -->
-<UserControl.Styles>
-    <Style Selector="Button">
-        <Setter Property="console:ButtonExtensions.Shadow" Value="False" />
-    </Style>
-</UserControl.Styles>
+<!-- 使用 Fluent 主题 -->
+<Application.Styles>
+    <FluentTheme />
+</Application.Styles>
 
 <!-- 数据类型绑定 -->
 x:DataType="vm:SomeViewModel"
+
+<!-- 强类型资源引用 -->
+<Button Background="{DynamicResource SystemAccentColor}" />
 ```
 
 ### 集合绑定
@@ -195,25 +194,90 @@ public record SshRemoteDeviceInfoViewModel : RemoteDeviceInfoNode
 
 ### ❌ 错误做法
 - 使用 `class` 继承 `record` 类型
-- 在Button上直接设置 `console:ButtonExtensions.Shadow`
+- 使用已弃用的 Consolonia 特有语法
 - 使用 `SetProperty` 方法（不存在）
 - 使用 `RelayCommand`（项目中不存在）
 - 忘记设置 `x:DataType`
 
 ### ✅ 正确做法
 - 使用 `record` 继承 `record` 类型
-- 在Styles中统一设置Button样式
+- 使用标准 Avalonia XAML 语法
 - 根据基类使用 `SetField` 或 `SetFieldTrackingChanges`
 - 使用项目中的 `ActionCommand`、`AsyncCommand` 等
 - 始终设置强类型绑定 `x:DataType`
+
+## Avalonia GUI 设计模式
+
+### 现代布局容器
+```xml
+<!-- 网格布局 -->
+<Grid>
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <!-- 内容 -->
+</Grid>
+
+<!-- 停靠面板 -->
+<DockPanel>
+    <TextBlock DockPanel.Dock="Top" Text="标题" />
+    <StatusBar DockPanel.Dock="Bottom" />
+    <ContentPresenter />
+</DockPanel>
+
+<!-- 弹性包装面板 -->
+<WrapPanel Orientation="Horizontal" ItemWidth="200" ItemHeight="100">
+    <!-- 自动换行的项目 -->
+</WrapPanel>
+```
+
+### 数据模板和样式
+```xml
+<!-- 数据模板 -->
+<UserControl.Resources>
+    <DataTemplate x:Key="DeviceTemplate" x:DataType="vm:DeviceViewModel">
+        <Border Padding="8" Margin="4" Background="LightGray">
+            <StackPanel>
+                <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                <TextBlock Text="{Binding Status}" />
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+</UserControl.Resources>
+
+<!-- 样式定义 -->
+<UserControl.Styles>
+    <Style Selector="Button.primary">
+        <Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Padding" Value="16,8" />
+    </Style>
+</UserControl.Styles>
+```
+
+### 现代颜色和主题
+```xml
+<!-- 使用系统颜色 -->
+<Button Background="{DynamicResource SystemAccentColor}" />
+<TextBlock Foreground="{DynamicResource SystemBaseHighColor}" />
+
+<!-- 状态颜色 -->
+<Border Background="{DynamicResource SystemFillColorSuccess}">成功</Border>
+<Border Background="{DynamicResource SystemFillColorCaution}">警告</Border>
+<Border Background="{DynamicResource SystemFillColorCritical}">错误</Border>
+```
 
 ## 性能优化要点
 - 选择合适的绑定模式（OneTime/OneWay/TwoWay）
 - 大列表使用 `VirtualizingStackPanel`
 - 使用 `x:DataType` 实现编译时绑定检查
+- 使用硬件加速和GPU渲染
+- 合理使用缓存和资源管理
 
 ## 相关知识库文档
-- `Consolonia-Quick-Reference.md` - Consolonia核心语法
+- `Avalonia-快速参考指南.md` - Avalonia核心语法
 - `UI-Progress-And-Binding-Best-Practices.md` - 进度显示最佳实践
 - `ViewModel-重构最佳实践.md` - ViewModel架构指南
 - `Interactive-Command-Pattern-Guide.md` - 交互式命令模式
@@ -255,106 +319,97 @@ private void UpdateCommandStates()
 ```
 
 ### UI安全设计模式
-SSH密钥部署等安全敏感操作的UI设计要点：
+SSH密钥部署等安全敏感操作的GUI设计要点：
 
 1. **多步确认机制**：用户必须勾选"理解安全影响"
 2. **清晰的操作说明**：详细列出将执行的步骤
-3. **安全警告**：使用醒目颜色（Orange/Red）标识风险操作
+3. **状态可视化**：使用图标和颜色表示不同状态
 4. **进度反馈**：实时显示当前执行步骤和进度百分比
 5. **错误恢复**：提供重试和回滚功能
-6. **状态可视化**：不同阶段显示不同的UI区域（进度/错误/成功）
+6. **响应式设计**：适应不同窗口大小和分辨率
 
-### Consolonia布局最佳实践
+### Avalonia 现代界面设计
 ```xml
-<!-- 使用ScrollViewer包装长内容 -->
-<ScrollViewer>
-    <StackPanel Spacing="10" Margin="10">
-        <!-- 使用Border分组相关内容 -->
-        <Border BorderBrush="DimGray" BorderThickness="1" Padding="10">
-            <!-- 分组内容 -->
-        </Border>
+<!-- 使用卡片式设计 -->
+<Border Background="{DynamicResource SystemChromeLowColor}" 
+        CornerRadius="8" 
+        Padding="16" 
+        Margin="8">
+    <StackPanel Spacing="12">
+        <!-- 卡片内容 -->
     </StackPanel>
-</ScrollViewer>
-
-<!-- 安全警告使用橙色边框 -->
-<Border BorderBrush="Orange" BorderThickness="1" Padding="10">
-    <TextBlock Text="⚠ 安全须知" Foreground="Orange" />
 </Border>
+
+<!-- 状态指示器 -->
+<Grid>
+    <Ellipse Width="12" Height="12" 
+             Fill="{DynamicResource SystemFillColorSuccess}" 
+             IsVisible="{Binding IsConnected}" />
+    <Ellipse Width="12" Height="12" 
+             Fill="{DynamicResource SystemFillColorCritical}" 
+             IsVisible="{Binding !IsConnected}" />
+</Grid>
+
+<!-- 现代按钮组 -->
+<StackPanel Orientation="Horizontal" Spacing="8">
+    <Button Classes="primary" Command="{Binding ConnectCommand}">连接</Button>
+    <Button Classes="secondary" Command="{Binding DisconnectCommand}">断开</Button>
+    <Button Classes="danger" Command="{Binding DeleteCommand}">删除</Button>
+</StackPanel>
 ```
 
-## 📋 最新重构经验 (2025-07-09)
+## 📋 Avalonia GUI 迁移经验 (2025-07-17)
 
-### 全局功能键状态栏重构成功案例
+### 从 Consolonia TUI 到 Avalonia GUI 的关键变化
 
-#### 重构前问题
-- 功能键代码直接嵌入在MainView.axaml中，难以维护
-- 没有统一的命令绑定，功能键点击无实际响应
-- 功能键设计不够完整，缺少常用的TUI功能
+#### 界面设计理念转变
+- **从字符界面到像素界面**：使用标准像素单位而不是字符单位
+- **从单色到真彩色**：充分利用现代显示器的颜色表现能力
+- **从键盘导航到鼠标交互**：增加鼠标悬停、拖拽等现代交互
+- **从固定布局到响应式布局**：适应不同窗口大小和DPI缩放
 
-#### 重构后解决方案
-1. **创建专用状态栏控件**：`StatusBarView.axaml` + `StatusBarViewModel.cs`
-2. **完整的功能键设计**：F1-F10 覆盖所有常用TUI操作
-3. **统一的命令绑定**：每个功能键都有对应的命令实现
-4. **模块化设计**：状态栏可以独立维护和测试
+#### 技术架构变化
+1. **移除Consolonia特有语法**：
+   - 删除 `xmlns:console="https://github.com/jinek/consolonia"`
+   - 移除 `console:ButtonExtensions.Shadow="False"`
+   - 清理字符级别的尺寸设置
 
-#### TUI程序标准功能键设计
-```xml
-F1  - 帮助    (ShowHelpCommand)
-F2  - 连接    (ConnectCommand) 
-F3  - 同步    (StartSyncCommand)
-F4  - 新建    (NewDeviceCommand)
-F5  - 刷新    (RefreshCommand)
-F6  - 保存    (SaveConfigCommand)
-F7  - 终端    (OpenShellCommand)
-F8  - 搜索    (ToggleSearchCommand)
-F9  - 设置    (SettingsCommand)
-F10 - 退出    (ExitCommand)
-```
+2. **采用标准Avalonia特性**：
+   - 使用 `xmlns="https://github.com/avaloniaui"`
+   - 支持现代主题系统：FluentTheme
+   - 利用硬件加速和GPU渲染
+
+3. **保持业务逻辑不变**：
+   - ViewModels 层完全复用
+   - 命令绑定和数据绑定保持一致
+   - 服务层和配置系统无需修改
+
+#### 界面优化重点
+- **现代化视觉设计**：使用卡片式布局、圆角边框、阴影效果
+- **改进的状态反馈**：丰富的颜色状态、图标指示、动画过渡
+- **更好的信息密度**：摆脱字符界面限制，可以显示更多设备信息
+- **增强的交互体验**：鼠标悬停提示、右键菜单、拖拽操作
 
 #### 关键技术要点
-- **依赖注入集成**：StatusBarViewModel 需要注册到 Startup.cs
-- **命令类型选择**：同步用 ActionCommand，异步用 AsyncCommand
-- **日志标签规范**：使用 `[StatusBar]` 标签便于调试
-- **循环引用避免**：StatusBarViewModel 不能直接引用 ViewModels 命名空间
+- **XAML语法升级**：从TUI约束的布局到完整的GUI布局系统
+- **资源系统使用**：利用Avalonia的主题资源和样式系统
+- **响应式设计**：支持窗口缩放和多分辨率适配
+- **无障碍支持**：更好的屏幕阅读器支持和键盘导航
 
-### 全局状态提示栏集成
-#### 实现鼠标悬停状态提示
-- **删除ToolTip**：用鼠标悬停事件替代传统ToolTip
-- **Tag参数传递**：使用Button.Tag传递功能键信息格式为"F1,描述,是否启用"
-- **事件处理**：PointerEntered/PointerExited事件处理鼠标悬停
-- **状态栏集成**：通过StatusTipViewModel显示实时提示信息
+#### 兼容性保障
+- **ViewModels层100%复用**：所有属性绑定和命令绑定保持不变
+- **配置系统无变化**：JSON配置文件格式和存储位置不变
+- **业务逻辑不受影响**：SSH连接、文件同步等核心功能保持一致
 
-#### 美学优化技巧
-- **功能键淡化设计**：使用 `#606060` 前景色和 `#404040` 背景色让按钮更低调
-- **悬停突出显示**：鼠标悬停时恢复为White前景色，营造交互感
-- **TurboVisionDarkTheme适配**：颜色选择符合深色主题美学
-
-#### F1帮助功能实现
-- **GitHub仓库跳转**：使用 `Process.Start` 在默认浏览器打开仓库
-- **错误处理**：捕获异常并在状态栏显示错误信息
-- **状态反馈**：操作过程中提供实时状态更新
-
-#### 编译错误解决
-```csharp
-// ❌ 错误：循环引用
-using DotNetCampus.Terminal.ViewModels;
-
-// ✅ 正确：避免循环引用，使用 EnsureGet 扩展方法
-using DotNetCampus.Terminal.Framework.DependencyInjection;
-_mainViewModel = serviceProvider.EnsureGet<MainViewModel>();
-```
-
-#### 功能键响应状态管理
-**重要发现**：功能键的可用状态应该根据当前选中的设备/界面动态变化
-- F2(连接)、F3(同步)、F6(保存)、F7(终端) 需要选中设备时才可用
-- F1(帮助)、F4(新建)、F5(刷新)、F8(搜索)、F9(设置)、F10(退出) 始终可用
-
-**未来改进方向**：
-1. 实现功能键的动态可用状态管理
-2. 添加快捷键支持 (KeyBinding)
-3. 功能键标签的多语言支持
-4. 根据选中项类型显示不同的功能键组合
+### 迁移检查清单
+- [ ] ✅ 移除所有Consolonia命名空间引用
+- [ ] ✅ 更新为标准Avalonia XAML语法
+- [ ] ✅ 采用像素单位替代字符单位
+- [ ] ✅ 使用现代主题和颜色系统
+- [ ] ✅ 验证ViewModels绑定正常工作
+- [ ] ✅ 测试所有命令和交互功能
+- [ ] ✅ 确保响应式布局正常工作
 
 ---
-*最后更新：2025年7月9日*
-*下次更新时，请基于实际踩坑经验补充内容*
+*最后更新：2025年7月17日 - Avalonia GUI迁移版本*
+*下次更新时，请基于Avalonia GUI的实际开发经验补充内容*

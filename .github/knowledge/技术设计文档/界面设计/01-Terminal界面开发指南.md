@@ -1,19 +1,19 @@
-# DotNetCampus.Terminal UI 开发指南
+# DotNetCampus.Terminal Avalonia GUI 开发指南
 
 ## 项目UI现状分析
 
 ### 已实现的UI组件
 
 #### 1. 应用程序框架
-- ✅ **App.axaml**: 应用程序配置，使用 TurboVisionDarkTheme
-- ✅ **MainWindow.axaml**: 主窗口，包含缩放控制（保留用于可能的GUI迁移）
-- ✅ **MainView.axaml**: 主视图，包含完整的布局结构
+- ✅ **App.axaml**: 应用程序配置，使用 Fluent 主题系统
+- ✅ **MainWindow.axaml**: 主窗口，支持现代桌面应用特性
+- ✅ **MainView.axaml**: 主视图，包含完整的响应式布局结构
 
 #### 2. 核心视图组件
-- ✅ **设备管理界面**: 左侧设备树，右侧详细信息
-- ✅ **TabControl**: 设备和外壳两个标签页
-- ✅ **TreeView**: 分层显示设备组和设备信息
-- ✅ **StatusBar**: 底部功能键栏（F1-F10）
+- ✅ **设备管理界面**: 左侧设备树，右侧详细信息面板
+- ✅ **TabControl**: 设备和外壳两个标签页，支持现代标签切换
+- ✅ **TreeView**: 分层显示设备组和设备信息，支持展开/折叠
+- ✅ **StatusBar**: 底部状态栏，显示连接状态和操作提示
 
 #### 3. 专用视图
 - ✅ **CreateNewRemoteDeviceView**: 新设备创建界面
@@ -28,50 +28,79 @@
 ### 当前UI架构
 
 ```
-MainWindow (缩放控制)
-└── MainView (主要内容)
-    ├── TabControl
+MainWindow (现代桌面窗口，支持最大化/最小化/关闭)
+└── MainView (主要内容区域)
+    ├── TabControl (现代标签页控件)
     │   ├── 设备 Tab
-    │   │   ├── 搜索框 (已定义但未实现)
-    │   │   ├── 设备树 (TreeView)
+    │   │   ├── 搜索框 (TextBox with 搜索图标)
+    │   │   ├── 设备树 (TreeView with 现代展开图标)
     │   │   │   ├── 创建新设备节点
     │   │   │   ├── 收藏设备组
     │   │   │   └── 设备组 + 设备列表
-    │   │   └── 详细信息面板 (ContentControl)
-    │   └── 外壳 Tab (空)
-    └── 状态栏 (功能键)
+    │   │   └── 详细信息面板 (ContentControl with Card 样式)
+    │   └── 外壳 Tab (Terminal 集成面板)
+    └── 状态栏 (现代状态显示)
 ```
 
 ## 待完善的UI功能
 
 ### 1. 搜索功能
 ```xml
-<!-- 当前状态：只有UI占位 -->
-<TextBox Grid.Row="1" Background="Black" Padding="1 0" Watermark="搜索设备…" />
+<!-- 现代搜索框设计 -->
+<Grid ColumnDefinitions="*,Auto">
+    <TextBox Grid.Column="0" 
+             Background="{DynamicResource TextControlBackground}"
+             Watermark="搜索设备或组..." 
+             Text="{Binding SearchText, Mode=TwoWay}" />
+    <Button Grid.Column="1" Classes="icon" Command="{Binding SearchCommand}">
+        <PathIcon Data="{StaticResource SearchIcon}" />
+    </Button>
+</Grid>
 
-<!-- 需要实现：搜索逻辑和过滤功能 -->
+<!-- 需要实现：实时搜索过滤和高亮显示 -->
 ```
 
 ### 2. 外壳Tab内容
 ```xml
-<!-- 当前状态：空标签页 -->
+<!-- 现代终端集成设计 -->
 <TabItem Header="外壳">
+    <Grid RowDefinitions="Auto,*">
+        <ToolBar Grid.Row="0">
+            <Button Content="新建会话" Command="{Binding NewSessionCommand}" />
+            <Button Content="分割窗口" Command="{Binding SplitPaneCommand}" />
+            <Separator />
+            <ComboBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}" />
+        </ToolBar>
+        <Terminal:TerminalControl Grid.Row="1" Session="{Binding CurrentSession}" />
+    </Grid>
 </TabItem>
 
-<!-- 需要实现：Shell/Terminal相关功能 -->
+<!-- 需要实现：Terminal 控件集成和多会话管理 -->
 ```
 
-### 3. 功能键响应
+### 3. 工具栏和按钮
 ```xml
-<!-- 当前状态：只有UI显示 -->
-<Button>
-    <StackPanel Orientation="Horizontal">
-        <TextBlock Text="F2" Classes="Fn" />
-        <TextBlock Text="连接" />
-    </StackPanel>
-</Button>
+<!-- 现代工具栏设计 -->
+<ToolBar>
+    <Button Classes="primary" Command="{Binding ConnectCommand}">
+        <StackPanel Orientation="Horizontal">
+            <PathIcon Data="{StaticResource ConnectIcon}" />
+            <TextBlock Text="连接" Margin="8,0,0,0" />
+        </StackPanel>
+    </Button>
+    <Button Command="{Binding DisconnectCommand}">
+        <StackPanel Orientation="Horizontal">
+            <PathIcon Data="{StaticResource DisconnectIcon}" />
+            <TextBlock Text="断开" Margin="8,0,0,0" />
+        </StackPanel>
+    </Button>
+    <Separator />
+    <Button Command="{Binding RefreshCommand}">
+        <PathIcon Data="{StaticResource RefreshIcon}" />
+    </Button>
+</ToolBar>
 
-<!-- 需要实现：实际的功能键响应 -->
+<!-- 需要实现：完整的命令绑定和图标资源 -->
 ```
 
 ### 4. 收藏功能
@@ -97,9 +126,11 @@ private void FavoriteButton_IsCheckedChanged(object? sender, RoutedEventArgs e)
 ```xml
 xmlns="https://github.com/avaloniaui"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-xmlns:console="https://github.com/jinek/consolonia"
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
 xmlns:views="using:DotNetCampus.Terminal.Views"
+mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 ```
 
 ### 3. 数据绑定约定
@@ -112,6 +143,11 @@ xmlns:views="using:DotNetCampus.Terminal.Views"
 
 <!-- 用户输入使用 TwoWay -->
 <TextBox Text="{Binding SearchText, Mode=TwoWay}" />
+
+<!-- 强类型绑定（推荐） -->
+<UserControl x:DataType="vm:MainViewModel">
+    <TextBlock Text="{Binding DeviceName}" />
+</UserControl>
 ```
 
 ### 4. 样式定义约定
@@ -119,36 +155,41 @@ xmlns:views="using:DotNetCampus.Terminal.Views"
 <!-- 全局样式在 UserControl.Styles 中定义 -->
 <UserControl.Styles>
     <Style Selector="Button">
-        <!-- 通用样式 -->
+        <Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
+        <Setter Property="CornerRadius" Value="4" />
     </Style>
-    <Style Selector="#SpecificId>Button">
-        <!-- 特定区域样式 -->
+    <Style Selector="Button.primary">
+        <Setter Property="Background" Value="{DynamicResource AccentButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentButtonForeground}" />
+    </Style>
+    <Style Selector="Button:pointerover">
+        <Setter Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
     </Style>
 </UserControl.Styles>
 ```
 
 ## 关键UI设计原则
 
-### 1. 控制台美学
-- **颜色方案**: 深色背景，浅色文字
-- **边框样式**: 使用 `console:LineBrush` 创建控制台风格线条
-- **按钮样式**: 禁用阴影 (`console:ButtonExtensions.Shadow="False"`)
-- **间距控制**: 使用 `Padding="1 0"` 等字符级间距（TUI程序中1表示1个字符宽度）
+### 1. 现代桌面应用美学
+- **主题系统**: 使用 Fluent 设计语言，支持浅色/深色主题切换
+- **颜色方案**: 遵循系统主题，使用动态资源 `{DynamicResource}`
+- **阴影和深度**: 利用现代UI的层次感，适当使用阴影效果
+- **圆角设计**: 使用 `CornerRadius` 创建现代化的圆角界面元素
 
-### 2. 信息密度
-- **状态指示**: 使用单字符和颜色表示状态
-- **分层显示**: 通过缩进和边距体现层次
-- **紧凑布局**: 最大化信息显示效率
+### 2. 响应式布局
+- **自适应尺寸**: 支持窗口大小调整和不同屏幕分辨率
+- **网格布局**: 使用 Grid 实现复杂的响应式布局
+- **弹性容器**: 结合 StackPanel 和 DockPanel 实现灵活布局
 
-### 3. 交互反馈
-- **状态变化**: 连接状态的实时更新
-- **选择反馈**: 选中项的视觉变化
-- **悬停效果**: 鼠标悬停时的样式变化
+### 3. 交互体验
+- **平滑动画**: 使用 Avalonia 动画系统增强用户体验
+- **视觉反馈**: 悬停、按下、选中等状态的明确视觉反馈
+- **快捷键支持**: 完整的键盘导航和快捷键系统
 
-### 4. 可访问性
-- **键盘导航**: 支持Tab键导航
-- **功能键**: 提供快捷键操作
-- **状态提示**: 清晰的状态指示
+### 4. 可访问性和国际化
+- **多语言支持**: 使用资源文件实现界面国际化
+- **高对比度**: 支持高对比度模式和无障碍访问
+- **可缩放**: 支持 DPI 缩放和字体大小调整
 
 ## 开发工作流
 
@@ -187,15 +228,32 @@ public class NewFeatureViewModel : BindableRecord
 #### 步骤3: 设计XAML视图
 ```xml
 <UserControl x:Class="DotNetCampus.Terminal.Views.NewFeatureView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="300"
              x:DataType="vm:NewFeatureViewModel">
     <Design.DataContext>
         <vm:NewFeatureViewModel />
     </Design.DataContext>
     
-    <!-- 视图内容 - 记住所有尺寸都是字符级别的 -->
-    <Grid>
-        <TextBlock Text="示例" Padding="1 0" />  <!-- 左右各1个字符的填充 -->
-    </Grid>
+    <!-- 现代化视图内容 -->
+    <Border Background="{DynamicResource CardBackground}" 
+            BorderBrush="{DynamicResource CardBorderBrush}"
+            BorderThickness="1" 
+            CornerRadius="8" 
+            Padding="16">
+        <StackPanel Spacing="12">
+            <TextBlock Text="示例标题" 
+                       Classes="h3"
+                       Foreground="{DynamicResource TextFillColorPrimary}" />
+            <TextBlock Text="示例内容" 
+                       Classes="body"
+                       Foreground="{DynamicResource TextFillColorSecondary}" />
+        </StackPanel>
+    </Border>
 </UserControl>
 ```
 
@@ -225,22 +283,31 @@ public partial class NewFeatureView : UserControl
 #### 步骤1: 定义基础样式
 ```xml
 <Style Selector="NewControl">
-    <Setter Property="Background" Value="Black" />
-    <Setter Property="Foreground" Value="White" />
+    <Setter Property="Background" Value="{DynamicResource ControlBackground}" />
+    <Setter Property="Foreground" Value="{DynamicResource ControlForeground}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+    <Setter Property="CornerRadius" Value="4" />
+    <Setter Property="Padding" Value="8,4" />
 </Style>
 ```
 
 #### 步骤2: 添加状态样式
 ```xml
 <Style Selector="NewControl:selected">
-    <Setter Property="Background" Value="DarkBlue" />
+    <Setter Property="Background" Value="{DynamicResource AccentFillColorDefault}" />
+    <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimary}" />
 </Style>
 ```
 
 #### 步骤3: 定义交互样式
 ```xml
 <Style Selector="NewControl:pointerover">
-    <Setter Property="Background" Value="DarkGray" />
+    <Setter Property="Background" Value="{DynamicResource ControlFillColorSecondary}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefault}" />
+</Style>
+
+<Style Selector="NewControl:pressed">
+    <Setter Property="Background" Value="{DynamicResource ControlFillColorTertiary}" />
 </Style>
 ```
 
@@ -266,14 +333,27 @@ private void OnLoaded(object? sender, RoutedEventArgs e)
 
 ### 1. 使用 TreeView 显示分层数据
 ```xml
-<TreeView ItemsSource="{Binding Items}">
+<TreeView ItemsSource="{Binding Items}" 
+          SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
     <TreeView.ItemTemplate>
-        <TreeDataTemplate ItemsSource="{Binding Children}">
-            <ContentControl Content="{Binding}" />
+        <TreeDataTemplate ItemsSource="{Binding Children}" x:DataType="vm:ITreeNode">
+            <Border Background="Transparent" 
+                    CornerRadius="4" 
+                    Padding="8,4">
+                <ContentControl Content="{Binding}" />
+            </Border>
         </TreeDataTemplate>
     </TreeView.ItemTemplate>
     <TreeView.DataTemplates>
-        <!-- 为每种数据类型定义模板 -->
+        <!-- 为每种数据类型定义现代化模板 -->
+        <DataTemplate x:DataType="vm:DeviceGroupNode">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <PathIcon Data="{StaticResource FolderIcon}" 
+                          Width="16" Height="16" />
+                <TextBlock Text="{Binding Name}" 
+                           VerticalAlignment="Center" />
+            </StackPanel>
+        </DataTemplate>
     </TreeView.DataTemplates>
 </TreeView>
 ```
@@ -281,27 +361,37 @@ private void OnLoaded(object? sender, RoutedEventArgs e)
 ### 2. 使用 ContentControl 实现视图切换
 ```xml
 <ContentControl Content="{Binding SelectedItem}">
+    <ContentControl.ContentTransition>
+        <CrossFade Duration="0:0:0.25" />
+    </ContentControl.ContentTransition>
     <ContentControl.DataTemplates>
-        <DataTemplate x:DataType="vm:TypeA">
-            <views:ViewA />
+        <DataTemplate x:DataType="vm:SshDeviceViewModel">
+            <views:SshDeviceView />
         </DataTemplate>
-        <DataTemplate x:DataType="vm:TypeB">
-            <views:ViewB />
+        <DataTemplate x:DataType="vm:DeviceGroupViewModel">
+            <views:DeviceGroupView />
         </DataTemplate>
     </ContentControl.DataTemplates>
 </ContentControl>
 ```
 
-### 3. 使用转换器进行数据转换
+### 3. 使用转换器和主题资源
 ```xml
 <UserControl.Resources>
-    <converters:StateToColorConverter x:Key="StateToColorConverter"
-                                      Online="Green"
-                                      Offline="Red"
-                                      Default="Gray" />
+    <converters:ConnectionStateToColorConverter x:Key="StateToColorConverter" />
+    <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 </UserControl.Resources>
 
-<TextBlock Background="{Binding State, Converter={StaticResource StateToColorConverter}}" />
+<!-- 使用主题资源和转换器 -->
+<Border Background="{Binding ConnectionState, Converter={StaticResource StateToColorConverter}}"
+        CornerRadius="4" Padding="8,4">
+    <StackPanel Orientation="Horizontal" Spacing="8">
+        <Ellipse Width="8" Height="8" 
+                 Fill="{Binding IsConnected, Converter={StaticResource StateToColorConverter}}" />
+        <TextBlock Text="{Binding DeviceName}" 
+                   Foreground="{DynamicResource TextFillColorPrimary}" />
+    </StackPanel>
+</Border>
 ```
 
 ## 性能优化建议
@@ -317,11 +407,17 @@ private void OnLoaded(object? sender, RoutedEventArgs e)
 
 ### 2. 优化绑定性能
 ```xml
-<!-- 避免不必要的双向绑定 -->
-<TextBlock Text="{Binding ReadOnlyProperty, Mode=OneTime}" />
-
-<!-- 使用 OneWay 而不是 TwoWay -->
-<TextBlock Text="{Binding DisplayProperty, Mode=OneWay}" />
+<!-- 使用强类型绑定提高性能 -->
+<UserControl x:DataType="vm:DeviceViewModel">
+    <!-- 避免不必要的双向绑定 -->
+    <TextBlock Text="{Binding ReadOnlyProperty, Mode=OneTime}" />
+    
+    <!-- 使用 OneWay 而不是 TwoWay -->
+    <TextBlock Text="{Binding DisplayProperty, Mode=OneWay}" />
+    
+    <!-- 合理使用 CompiledBinding -->
+    <TextBlock Text="{CompiledBinding DeviceName}" />
+</UserControl>
 ```
 
 ### 3. 异步操作
@@ -389,39 +485,126 @@ public class SearchableTreeViewModel : BindableRecord
 ### 2. 外壳Tab功能
 ```xml
 <TabItem Header="外壳">
-    <Grid>
-        <!-- 终端相关功能 -->
-        <Terminal:TerminalControl />
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- 工具栏 -->
+        <ToolBar Grid.Row="0">
+            <Button Classes="icon" Command="{Binding NewTabCommand}" ToolTip.Tip="新建标签页">
+                <PathIcon Data="{StaticResource AddIcon}" />
+            </Button>
+            <Button Classes="icon" Command="{Binding SplitPaneCommand}" ToolTip.Tip="分割面板">
+                <PathIcon Data="{StaticResource SplitIcon}" />
+            </Button>
+            <Separator />
+            <ComboBox ItemsSource="{Binding Profiles}" 
+                      SelectedItem="{Binding SelectedProfile}"
+                      MinWidth="150" />
+        </ToolBar>
+        
+        <!-- 终端区域 -->
+        <TabControl Grid.Row="1" ItemsSource="{Binding TerminalTabs}">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="{Binding Title}" />
+                        <Button Classes="close" Command="{Binding CloseCommand}">
+                            <PathIcon Data="{StaticResource CloseIcon}" Width="12" Height="12" />
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <Terminal:TerminalControl Session="{Binding Session}" />
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+        
+        <!-- 状态栏 -->
+        <StatusBar Grid.Row="2">
+            <StatusBarItem>
+                <TextBlock Text="{Binding CurrentDirectory}" />
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock Text="{Binding ConnectionStatus}" />
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </TabItem>
 ```
 
-### 3. 功能键响应
+### 3. 快捷键和手势
 ```csharp
 private void MainView_KeyDown(object? sender, KeyEventArgs e)
 {
+    // 处理快捷键
+    var modifiers = e.KeyModifiers;
     switch (e.Key)
     {
-        case Key.F1:
-            ShowHelp();
-            break;
         case Key.F2:
             ConnectToDevice();
+            e.Handled = true;
             break;
-        // 其他功能键
+        case Key.F5:
+            RefreshDeviceList();
+            e.Handled = true;
+            break;
+        case Key.T when modifiers.HasFlag(KeyModifiers.Control):
+            NewTerminalTab();
+            e.Handled = true;
+            break;
+        case Key.W when modifiers.HasFlag(KeyModifiers.Control):
+            CloseCurrentTab();
+            e.Handled = true;
+            break;
+    }
+}
+
+// 处理鼠标手势
+private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
+{
+    if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
+    {
+        // 显示上下文菜单
+        ShowContextMenu(e.GetPosition(this));
     }
 }
 ```
 
-### 4. 上下文菜单
+### 4. 上下文菜单和工具提示
 ```xml
-<TreeView.ContextMenu>
-    <ContextMenu>
-        <MenuItem Header="连接" Command="{Binding ConnectCommand}" />
-        <MenuItem Header="编辑" Command="{Binding EditCommand}" />
-        <MenuItem Header="删除" Command="{Binding DeleteCommand}" />
-    </ContextMenu>
-</TreeView.ContextMenu>
+<!-- 现代化上下文菜单 -->
+<TreeView.ContextFlyout>
+    <MenuFlyout>
+        <MenuItem Header="连接" 
+                  Command="{Binding ConnectCommand}"
+                  InputGesture="F2">
+            <MenuItem.Icon>
+                <PathIcon Data="{StaticResource ConnectIcon}" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="编辑" 
+                  Command="{Binding EditCommand}"
+                  InputGesture="F4">
+            <MenuItem.Icon>
+                <PathIcon Data="{StaticResource EditIcon}" />
+            </MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem Header="删除" 
+                  Command="{Binding DeleteCommand}"
+                  InputGesture="Delete">
+            <MenuItem.Icon>
+                <PathIcon Data="{StaticResource DeleteIcon}" />
+            </MenuItem.Icon>
+        </MenuItem>
+    </MenuFlyout>
+</TreeView.ContextFlyout>
+
+<!-- 工具提示 -->
+<Button ToolTip.Tip="连接到远程设备" 
+        ToolTip.ShowDelay="500">
+    <PathIcon Data="{StaticResource ConnectIcon}" />
+</Button>
 ```
 
 这个开发指南为UI界面设计师提供了完整的项目背景和开发指导，包括现有代码的理解、开发规范、工作流程和常见问题的解决方案。

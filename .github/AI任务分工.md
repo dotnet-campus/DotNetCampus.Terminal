@@ -1,6 +1,23 @@
 # AI 任务分工
 
-DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连接管理工具。
+DotNetCampus Terminal 是一个基于 .NET 9.0 和 Avalonia 的远程设备连接管理工具。
+
+## ⚠️ 架构迁移说明
+
+**重要更新** (2025年7月17日)：项目已从 Consolonia TUI 迁移到 Avalonia GUI
+
+### 迁移原因
+- TUI 界面显示容量严重受限（设备列表显示问题）
+- 颜色表现能力不足（无法实现真彩色）
+- 美观度和用户体验存在局限
+- 功能扩展性受字符界面限制
+
+### 技术影响
+- ✅ **业务逻辑无变化**：ViewModels、服务层、配置系统完全复用
+- ✅ **数据兼容**：JSON 配置文件、SSH 连接、文件同步功能保持不变
+- ❌ **UI 层重写**：XAML 视图文件需要从 Consolonia 语法迁移到标准 Avalonia 语法
+
+📖 **详细说明**: `.github/knowledge/技术设计文档/架构迁移/UI架构迁移说明-Consolonia到Avalonia.md`
 
 ## 协作规则
 
@@ -90,6 +107,10 @@ DotNetCampus Terminal 是一个基于 .NET 9.0 和 Consolonia 的远程设备连
   - `技术设计文档/终端模拟器/01-终端模拟器核心实现要点.md` - 详细分析终端模拟器实现的所有技术要点 ✅
   - `技术设计文档/终端模拟器/02-DotNetCampus Terminal终端集成方案.md` - 针对项目具体需求的实现方案 ✅
   - `技术设计文档/终端模拟器/03-集成现有终端功能的实现方案.md` - 分析集成现有终端功能的四种方案，大幅降低开发成本 ✅
+- ✅ **UI架构迁移文档整理** (2025年7月17日)
+  - `技术设计文档/架构迁移/UI架构迁移说明-Consolonia到Avalonia.md` - 架构迁移背景和实施计划 ✅
+  - `AI协作经验/项目管理/Consolonia到Avalonia迁移文档整理任务分工.md` - 迁移任务分工方案 ✅
+  - 🔄 **进行中**: Consolonia 到 Avalonia 文档系统性整理（已分配给文档维护员同事们）
 - [ ] 自动化文档生成工具
 - [ ] 多语言文档支持
 - [ ] API文档自动更新

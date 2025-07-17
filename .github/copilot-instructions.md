@@ -4,7 +4,7 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 
 ## 项目概述
 
-基于 .NET 9.0 和 Consolonia 的远程设备连接管理工具，采用多AI协同开发模式。
+基于 .NET 9.0 和 Avalonia 的远程设备连接管理工具，采用多AI协同开发模式。
 
 **🤖 AI角色自动认领机制**：如果用户在提示词中指定了AI的角色（如"你是文档维护员"、"你是UI界面设计师"等），AI应该：
 1. 立即查看 `.github/AI任务分工.md` 文件认领对应职位
@@ -12,7 +12,7 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 3. 按照职位要求和经验总结执行后续行动
 4. 遵循该角色的技术规范和工作流程
 
-**技术栈**：.NET 9.0, Consolonia, SSH.NET, System.Text.Json, DotNetCampus.Logger
+**技术栈**：.NET 9.0, Avalonia, SSH.NET, System.Text.Json, DotNetCampus.Logger
 
 ## 核心编码规范
 
@@ -48,24 +48,25 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 - **例外情况**：超过600行但非常单一易懂的代码（如大型枚举）可以保留
 - 重构方式：拆分类、提取方法、分离职责
 
-## Consolonia 关键要点
+## Avalonia 关键要点
 
 ### 核心概念
-- **像素 = 字符**：每个像素对应一个控制台字符
-- **文件扩展名**：使用 `.axaml` 而不是 `.xaml`
-- **命名空间**：`xmlns:console="https://github.com/jinek/consolonia"`
-- **主题**：推荐使用 `TurboVisionDarkTheme`
+- **现代 GUI 框架**：基于 .NET 的跨平台桌面应用框架
+- **文件扩展名**：使用 `.axaml` 文件（Avalonia XAML）
+- **命名空间**：`xmlns="https://github.com/avaloniaui"`
+- **主题**：推荐使用 `Fluent` 主题系统
 
-### 重要差异
+### 重要特性
 - 使用 `AvaloniaList<T>` 替代 `ObservableCollection<T>`
-- 使用 `console:LineBrush` 配置边框样式
-- 按钮禁用阴影：`console:ButtonExtensions.Shadow="False"`
+- 支持现代 XAML 语法和样式系统
+- GPU 加速渲染和真彩色支持
 - 异步UI更新：`Dispatcher.UIThread.InvokeAsync`
 
 ### 性能优化
 - 使用 `VirtualizingStackPanel` 处理大数据集
 - 选择合适的绑定模式（OneTime/OneWay/TwoWay）
 - 使用 `x:DataType` 实现强类型绑定
+- 利用硬件加速和矢量图形优势
 
 ## 日志规范
 
@@ -110,10 +111,10 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 详细的技术资料已按照以下结构组织，AI可根据具体技术需求选择相应文档：
 
 #### 依赖库使用指南
-- `依赖库文档/Consolonia/01-快速参考指南.md` - Consolonia快速参考
-- `依赖库文档/Consolonia/02-架构核心要点.md` - 架构设计要点  
-- `依赖库文档/Consolonia/03-UI框架使用.md` - UI框架详细使用
-- `依赖库文档/Consolonia/04-UI设计模式最佳实践.md` - UI设计模式
+- `依赖库文档/Avalonia/01-快速参考指南.md` - Avalonia快速参考
+- `依赖库文档/Avalonia/02-架构核心要点.md` - 架构设计要点  
+- `依赖库文档/Avalonia/03-UI框架使用.md` - UI框架详细使用
+- `依赖库文档/Avalonia/04-UI设计模式最佳实践.md` - UI设计模式
 - `依赖库文档/DotNetCampus.Logger/01-日志框架使用指南.md` - 日志使用指南
 - `依赖库文档/SSH.NET/01-基础使用指南.md` - SSH.NET基础使用
 - `依赖库文档/SSH.NET/02-文件同步实现.md` - 文件同步指南
@@ -125,7 +126,7 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 - `技术设计文档/界面设计/02-SSH设备信息视图设计.md` - SSH设备视图设计
 - `技术设计文档/界面设计/03-进度显示和数据绑定.md` - 进度显示设计
 - `技术设计文档/界面设计/04-ViewModel重构最佳实践.md` - ViewModel重构
-- `技术设计文档/界面设计/05-TUI与Shell集成解决方案.md` - Shell集成方案
+- `技术设计文档/界面设计/05-GUI与Shell集成解决方案.md` - Shell集成方案
 - `技术设计文档/界面设计/06-交互式命令模式设计.md` - 交互式命令设计
 - `技术设计文档/配置管理/01-JSON配置系统架构设计.md` - 配置架构设计
 - `技术设计文档/配置管理/02-配置保存功能实现.md` - 配置保存实现

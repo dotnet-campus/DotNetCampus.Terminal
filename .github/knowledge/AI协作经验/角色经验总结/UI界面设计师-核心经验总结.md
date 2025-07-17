@@ -132,12 +132,12 @@ Padding="1 0" = 左右1个字符，上下0个字符
 - `AsyncCommand` - 异步命令，适用于I/O操作
 - `InteractiveCommand` - 交互式命令，用于需要用户确认的操作
 
-### Consolonia特殊语法
+### Consolonia特殊语法 ⚠️ 已弃用
 ```xml
-<!-- 文件扩展名 -->
-*.axaml (不是 .xaml)
+<!-- 文件扩展名：Avalonia 和 Consolonia 都使用 .axaml -->
+*.axaml
 
-<!-- 命名空间 -->
+<!-- Consolonia 命名空间（已移除） -->
 xmlns:console="https://github.com/jinek/consolonia"
 
 <!-- Button阴影禁用 (在Style中设置，不要在单个Button上设置) -->

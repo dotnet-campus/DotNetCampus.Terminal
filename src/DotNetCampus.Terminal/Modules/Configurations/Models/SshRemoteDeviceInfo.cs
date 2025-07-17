@@ -1,0 +1,90 @@
+﻿namespace DotNetCampus.Terminal.Modules.Configurations.Models;
+
+/// <summary>
+/// 表示一个通过 SSH 协议连接的远程设备信息。
+/// </summary>
+public record SshRemoteDeviceInfo : IRemoteDeviceInfo
+{
+    /// <summary>
+    /// 本地唯一标识符，用于在本地环境中唯一标识设备
+    /// </summary>
+    public required string LocalId { get; init; }
+
+    /// <summary>
+    /// 远程设备唯一标识符，目标设备如果部署了服务自发现，则也会有一个唯一标识符
+    /// </summary>
+    public string? RemoteId { get; init; }
+
+    public required string ConnectionName { get; init; }
+
+    public RemoteDeviceType DeviceType { get; } = RemoteDeviceType.LinuxSsh;
+
+    /// <summary>
+    /// 远程设备主机名或 IP 地址。
+    /// </summary>
+    public required string Host { get; init; }
+
+    /// <summary>
+    /// 远程设备端口号。
+    /// </summary>
+    public required int Port { get; init; }
+
+    /// <summary>
+    /// 远程设备的地址，格式为 "主机名:端口号"。当端口号为 22 时，仅返回主机名。
+    /// </summary>
+    public string Address => Port is 22
+        ? Host
+        : $"{Host}:{Port}";
+
+    /// <summary>
+    /// 远程连接所使用的用户名。
+    /// </summary>
+    public required string UserName { get; init; }
+
+    /// <summary>
+    /// 远程连接所使用的密码。
+    /// </summary>
+    public string? Password { get; init; }
+
+    /// <summary>
+    /// 同步目录配置列表
+    /// </summary>
+    public IReadOnlyList<DirectorySyncingModel> SyncDirectories { get; init; } = [];
+}
+
+/// <summary>
+/// 远程设备信息接口。
+/// </summary>
+public interface IRemoteDeviceInfo
+{
+    /// <summary>
+    /// 连接名。
+    /// </summary>
+    string ConnectionName { get; }
+
+    /// <summary>
+    /// 远程设备类型。
+    /// </summary>
+    RemoteDeviceType DeviceType { get; }
+
+    /// <summary>
+    /// 远程设备的地址，格式为 "主机名:端口号"。当端口号为默认时，仅返回主机名。
+    /// </summary>
+    string Address { get; }
+}
+
+/// <summary>
+/// 远程设备类型。不同的远程设备类型有不同的连接方式。
+/// </summary>
+public enum RemoteDeviceType
+{
+    /// <summary>
+    /// 使用 SSH 协议连接的远程设备。
+    /// </summary>
+    LinuxSsh,
+
+    /// <summary>
+    /// 对等设备，即目标设备上已安装本应用并已启用对等连接功能。
+    /// </summary>
+    PeerToPeer,
+}

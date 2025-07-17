@@ -1,0 +1,71 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:console="https://github.com/jinek/consolonia"
+             xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="DotNetCampus.Terminal.Views.RemoteDevices.Ssh.SshDeviceConfigView"
+             x:DataType="vm:SshRemoteDeviceInfoViewModel">
+
+    <Design.DataContext>
+        <vm:SshRemoteDeviceInfoViewModel />
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <Style Selector="UniformGrid TextBox">
+            <Setter Property="Margin" Value="0 0 0 1" />
+            <Style Selector="^:nth-last-child(1)">
+                <Setter Property="Margin" Value="0" />
+            </Style>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <Grid Grid.Row="0" RowDefinitions="*,Auto" ColumnDefinitions="Auto,*">
+            <!-- 连接名称标题 -->
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="连接名称" VerticalAlignment="Center" Width="8" />
+            <Border Grid.Row="0" Grid.Column="1" BorderThickness="1">
+                <Border.BorderBrush>
+                    <console:LineBrush LineStyle="Edge" Brush="DimGray" />
+                </Border.BorderBrush>
+                <TextBox Background="Transparent" Foreground="White"
+                         Text="{Binding ConnectionName, Mode=TwoWay}" />
+            </Border>
+
+            <!-- 保存与删除 -->
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Spacing="1" HorizontalAlignment="Right">
+                <Button Content="保存" Padding="2 0"
+                        Command="{Binding Commands.SaveConfigurationCommand}" />
+                <Button Content="删除" Background="DarkRed" Padding="2 0"
+                        Command="{Binding Commands.DeleteDeviceCommand}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- 主机地址/端口、用户名/密码分组 -->
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <UniformGrid Columns="2" VerticalAlignment="Top">
+                <!-- 主机地址+端口分组 -->
+                <Border BorderThickness="1" BorderBrush="DimGray">
+                    <StackPanel Margin="1">
+                        <TextBlock Text="主机地址" />
+                        <TextBox Text="{Binding Host, Mode=TwoWay}" />
+                        <TextBlock Text="端口" />
+                        <TextBox Text="{Binding Port, Mode=TwoWay}" />
+                    </StackPanel>
+                </Border>
+                <!-- 用户名+密码分组 -->
+                <Border BorderThickness="1" BorderBrush="DimGray">
+                    <StackPanel Margin="1">
+                        <TextBlock Text="用户名" />
+                        <TextBox Text="{Binding UserName, Mode=TwoWay}" />
+                        <TextBlock Text="密码" />
+                        <TextBox Text="{Binding Password, Mode=TwoWay}" />
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+        </ScrollViewer>
+
+    </Grid>
+</UserControl>

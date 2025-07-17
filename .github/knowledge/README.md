@@ -13,7 +13,7 @@ DotNetCampus Terminal 项目的技术文档和经验总结。
 ### 核心角色经验总结
 🎯 **开始任何工作前，必须先阅读对应角色的经验总结**：
 
-- **[UI界面设计师](AI协作经验/角色经验总结/UI界面设计师-核心经验总结.md)** - Consolonia UI设计和MVVM模式
+- **[UI界面设计师](AI协作经验/角色经验总结/UI界面设计师-核心经验总结.md)** - Avalonia GUI设计和MVVM模式
 - **[文件同步工程师](AI协作经验/角色经验总结/文件同步工程师-核心经验总结.md)** - SFTP同步和性能优化
 - **[配置管理专家](AI协作经验/角色经验总结/配置管理专家-核心经验总结.md)** - JSON配置系统和AOT兼容
 - **[SSH连接专家](AI协作经验/角色经验总结/SSH连接专家-核心经验总结.md)** - SSH.NET连接和密钥管理
@@ -28,7 +28,8 @@ DotNetCampus Terminal 项目的技术文档和经验总结。
 │   ├── 实现经验总结/         # 具体功能实现踩坑记录
 │   └── AI多角色协作开发经验.md
 ├── 📖 依赖库文档/           # 第三方库使用指南
-│   ├── Consolonia/          # 控制台UI框架
+│   ├── Avalonia/           # 跨平台GUI框架
+│   ├── Consolonia-历史参考/ # 历史TUI框架（仅参考）
 │   ├── SSH.NET/            # SSH连接库
 │   ├── DotNetCampus.Logger/ # 日志框架
 │   ├── System.Text.Json/   # JSON序列化
@@ -60,10 +61,10 @@ DotNetCampus Terminal 项目的技术文档和经验总结。
 ### 文件命名规范
 - 数字前缀排序：`01-`、`02-`、`03-`...
 - 中文描述内容，提高可读性
-- 保持库名原始格式：`Consolonia`、`SSH.NET`
+- 保持库名原始格式：`Avalonia`、`SSH.NET`
 
 ---
 
 💡 **提示**：完整的文档索引和编码规范请查看 [`.github/copilot-instructions.md`](../copilot-instructions.md)
 
-*维护者：文档维护员AI | 最后更新：2025年7月10日*
+*维护者：文档维护员AI | 最后更新：2025年7月17日*

@@ -1,8 +1,19 @@
 # DotNetCampus Terminal 中的终端模拟器集成方案
 
+## ⚠️ 架构迁移更新说明
+
+**更新日期**: 2025年7月17日  
+**迁移状态**: ✅ 已更新至 Avalonia GUI 架构
+
+本文档已从 Consolonia TUI 架构完全迁移到 Avalonia GUI 架构。主要变化：
+- **UI框架**: 从 Consolonia TUI → Avalonia GUI  
+- **渲染能力**: 从字符界面 → 真彩色图形界面
+- **控件系统**: 从 TUI 控件 → 现代 GUI 控件
+- **集成策略**: 充分利用 Avalonia 的现代 GUI 特性
+
 ## 概述
 
-基于前面的终端模拟器核心实现分析，本文档针对 DotNetCampus Terminal 项目的具体需求，提出终端模拟器集成的实现方案。
+基于前面的终端模拟器核心实现分析，本文档针对 DotNetCampus Terminal 项目的具体需求，提出基于 **Avalonia GUI** 的终端模拟器集成实现方案。
 
 ## 项目现状分析
 

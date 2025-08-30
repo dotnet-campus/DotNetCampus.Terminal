@@ -33,10 +33,12 @@
 
                     <!-- 连接名称 -->
                     <Grid Grid.Row="1" RowDefinitions="Auto,Auto" RowSpacing="8">
-                        <TextBlock Text="连接名称"
+                        <TextBlock Grid.Row="0"
+                                   Text="连接名称"
                                    FontWeight="Medium"
                                    Foreground="#CCCCCC" />
-                        <TextBox Text="{Binding ConnectionName, Mode=TwoWay}"
+                        <TextBox Grid.Row="1"
+                                 Text="{Binding ConnectionName, Mode=TwoWay}"
                                  Watermark="输入设备连接名称"
                                  Background="#2A2A2A"
                                  BorderBrush="#555555"
@@ -66,13 +68,15 @@
                     <Grid Grid.Row="1" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="16">
 
                         <!-- 主机地址和端口 -->
-                        <Grid ColumnDefinitions="2*,Auto,1*" ColumnSpacing="16">
+                        <Grid Grid.Row="0" ColumnDefinitions="2*,Auto,1*" ColumnSpacing="16">
                             <!-- 主机地址 -->
                             <Grid Grid.Column="0" RowDefinitions="Auto,Auto" RowSpacing="8">
-                                <TextBlock Text="主机地址"
+                                <TextBlock Grid.Row="0"
+                                           Text="主机地址"
                                            FontWeight="Medium"
                                            Foreground="#CCCCCC" />
-                                <TextBox Text="{Binding Host, Mode=TwoWay}"
+                                <TextBox Grid.Row="1"
+                                         Text="{Binding Host, Mode=TwoWay}"
                                          Watermark="输入主机IP或域名"
                                          Background="#2A2A2A"
                                          BorderBrush="#555555"
@@ -89,10 +93,12 @@
 
                             <!-- 端口 -->
                             <Grid Grid.Column="2" RowDefinitions="Auto,Auto" RowSpacing="8">
-                                <TextBlock Text="端口"
+                                <TextBlock Grid.Row="0"
+                                           Text="端口"
                                            FontWeight="Medium"
                                            Foreground="#CCCCCC" />
-                                <TextBox Text="{Binding Port, Mode=TwoWay}"
+                                <TextBox Grid.Row="1"
+                                         Text="{Binding Port, Mode=TwoWay}"
                                          Watermark="22"
                                          Background="#2A2A2A"
                                          BorderBrush="#555555"
@@ -103,13 +109,15 @@
                         </Grid>
 
                         <!-- 用户名和密码 -->
-                        <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="16">
+                        <Grid Grid.Row="1" ColumnDefinitions="*,Auto,*" ColumnSpacing="16">
                             <!-- 用户名 -->
                             <Grid Grid.Column="0" RowDefinitions="Auto,Auto" RowSpacing="8">
-                                <TextBlock Text="用户名"
+                                <TextBlock Grid.Row="0"
+                                           Text="用户名"
                                            FontWeight="Medium"
                                            Foreground="#CCCCCC" />
-                                <TextBox Text="{Binding UserName, Mode=TwoWay}"
+                                <TextBox Grid.Row="1"
+                                         Text="{Binding UserName, Mode=TwoWay}"
                                          Watermark="输入用户名"
                                          Background="#2A2A2A"
                                          BorderBrush="#555555"
@@ -126,10 +134,12 @@
 
                             <!-- 密码 -->
                             <Grid Grid.Column="2" RowDefinitions="Auto,Auto" RowSpacing="8">
-                                <TextBlock Text="密码"
+                                <TextBlock Grid.Row="0"
+                                           Text="密码"
                                            FontWeight="Medium"
                                            Foreground="#CCCCCC" />
-                                <TextBox Text="{Binding Password, Mode=TwoWay}"
+                                <TextBox Grid.Row="1"
+                                         Text="{Binding Password, Mode=TwoWay}"
                                          PasswordChar="●"
                                          Watermark="输入密码"
                                          Background="#2A2A2A"

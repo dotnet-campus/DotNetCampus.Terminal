@@ -19,7 +19,6 @@
         <Style Selector="Button">
             <Setter Property="Background" Value="Green" />
             <Setter Property="Padding" Value="1 0" />
-            <Setter Property="console:ButtonExtensions.Shadow" Value="False" />
             <Style Selector="^:pointerover">
                 <Setter Property="Background" Value="LightGreen" />
             </Style>

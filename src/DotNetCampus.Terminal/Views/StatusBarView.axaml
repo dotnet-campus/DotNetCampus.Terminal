@@ -40,7 +40,6 @@
             <Setter Property="Margin" Value="0" />
         </Style>
         <Style Selector="Button">
-            <Setter Property="console:ButtonExtensions.Shadow" Value="False" />
             <Setter Property="Foreground" Value="DimGray" />
             <Setter Property="Background" Value="Transparent" />
             <Style Selector="^.Hidden">

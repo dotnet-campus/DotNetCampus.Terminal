@@ -1,10 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
-using Consolonia.Core.Infrastructure;
-using DotNetCampus.Terminal.Modules.Configurations.Models;
 using DotNetCampus.Terminal.ViewModels;
 
 namespace DotNetCampus.Terminal.Views

@@ -22,9 +22,14 @@ public static class Program
     /// 此方法会被 Avalonia 设计器调用，请不要删除，可以在此方法中初始化设计时所需的数据
     /// </summary>
     public static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
+    {
+        var appBuilder = AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace()
             .UseContainerServices();
+        // 解除注释以调试 XAML 设计器。
+        // Debugger.Launch();
+        return appBuilder;
+    }
 }

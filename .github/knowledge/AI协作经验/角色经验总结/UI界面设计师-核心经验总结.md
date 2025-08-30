@@ -398,6 +398,184 @@ SSH密钥部署等安全敏感操作的GUI设计要点：
 
 #### 兼容性保障
 - **ViewModels层100%复用**：所有属性绑定和命令绑定保持不变
+
+## 📋 GUI界面优化实战经验 (2025-08-30)
+
+### 🎯 从TUI到GUI的界面适配项目
+
+#### 优化目标：右侧设备详情界面现代化
+完成了从控制台TUI风格到现代GUI设计的全面转换，遵循4的倍数间距和1像素边框的设计原则。
+
+#### 核心设计原则
+```xml
+<!-- 4的倍数间距系统 -->
+Spacing="8"     <!-- 紧密间距 -->
+Spacing="12"    <!-- 标准间距 -->
+Spacing="16"    <!-- 宽松间距 -->
+Spacing="20"    <!-- 卡片间距 -->
+
+<!-- 统一的内边距 -->
+Padding="12"    <!-- 小内边距 -->
+Padding="16"    <!-- 标准内边距 -->
+Padding="20"    <!-- 大内边距 -->
+
+<!-- 1像素边框 -->
+BorderThickness="1"
+```
+
+#### 色彩系统标准化
+```xml
+<!-- 背景层次 -->
+Background="#181818"    <!-- 主背景 -->
+Background="#202020"    <!-- 内容背景 -->
+Background="#252525"    <!-- 卡片背景 -->
+Background="#2A2A2A"    <!-- 输入框背景 -->
+
+<!-- 边框色彩 -->
+BorderBrush="#333333"   <!-- 主边框 -->
+BorderBrush="#404040"   <!-- 卡片边框 -->
+BorderBrush="#555555"   <!-- 输入框边框 -->
+
+<!-- 状态色彩 -->
+Foreground="#4CAF50"    <!-- 成功/在线 -->
+Foreground="#F44336"    <!-- 错误/离线 -->
+Foreground="#FF9800"    <!-- 警告/注意 -->
+Foreground="#3F51B5"    <!-- 信息/帮助 -->
+```
+
+#### 关键技术转换
+
+**1. 尺寸单位现代化**
+```xml
+<!-- ❌ TUI遗留设计 -->
+<TextBlock Width="8" />
+<Button Width="10" />
+
+<!-- ✅ GUI像素设计 -->
+<TextBlock MinWidth="80" />
+<Button MinWidth="100" Padding="16,8" />
+```
+
+**2. 布局系统升级**
+```xml
+<!-- ❌ 字符对齐布局 -->
+<Grid ColumnDefinitions="Auto,*,Auto">
+    <TextBlock Grid.Column="0" Width="8" />
+</Grid>
+
+<!-- ✅ 响应式布局 -->
+<Grid ColumnDefinitions="Auto,*,Auto" ColumnGap="12">
+    <TextBlock Grid.Column="0" FontWeight="SemiBold" />
+</Grid>
+```
+
+**3. 卡片式设计模式**
+```xml
+<!-- 标准卡片容器 -->
+<Border Background="#252525" 
+        BorderBrush="#404040" 
+        BorderThickness="1" 
+        CornerRadius="8" 
+        Padding="20">
+    <Grid RowDefinitions="Auto,Auto" RowGap="16">
+        <!-- 标题区域 -->
+        <TextBlock FontSize="16" FontWeight="SemiBold" />
+        <!-- 内容区域 -->
+        <StackPanel Spacing="12">
+            <!-- 具体内容 -->
+        </StackPanel>
+    </Grid>
+</Border>
+```
+
+#### 优化案例总结
+
+**1. MainView右侧区域** (`MainView.axaml`)
+- 添加分隔边框和内容容器
+- 使用圆角卡片增强层次感
+- 标准化边距：`Margin="16,32,16,16"`
+
+**2. 设备操作视图** (`SshDeviceOperationsView.axaml`)
+- 完全重构为卡片式布局
+- 状态指示器现代化：圆形代替字符符号
+- 进度条可视化：`Height="8"` + `CornerRadius="4"`
+
+**3. 配置视图** (`SshDeviceConfigView.axaml`)
+- 分组卡片设计：基本信息 + 连接配置 + 操作按钮
+- 表单标准化：标签 + 输入框 + 提示
+- 响应式列布局：主机/端口并排，用户名/密码并排
+
+**4. 部署视图** (`SshDeviceDeployView.axaml`)
+- 彩色主题卡片：橙色警告 + 绿色成功 + 红色错误
+- 工作流可视化：配置 → 确认 → 部署 → 结果
+- 安全操作UI模式：多步确认 + 清晰说明
+
+#### 设计模式最佳实践
+
+**1. 信息层次设计**
+```xml
+<!-- 三级信息层次 -->
+<StackPanel Spacing="20">
+    <!-- 一级：功能分组（卡片） -->
+    <Border Background="#252525" CornerRadius="8" Padding="20">
+        <!-- 二级：功能标题 -->
+        <TextBlock FontSize="16" FontWeight="SemiBold" />
+        <!-- 三级：具体内容 -->
+        <StackPanel Spacing="12">
+            <!-- 表单项、操作项等 -->
+        </StackPanel>
+    </Border>
+</StackPanel>
+```
+
+**2. 状态反馈设计**
+```xml
+<!-- 状态指示器 -->
+<Ellipse Width="12" Height="12" 
+         Fill="{Binding StatusColor}" />
+
+<!-- 进度可视化 -->
+<ProgressBar Height="8" 
+             Background="#404040"
+             Foreground="#4CAF50" 
+             CornerRadius="4" />
+
+<!-- 条件显示 -->
+<TextBlock IsVisible="{Binding HasError}"
+           Foreground="#F44336" />
+```
+
+**3. 响应式表单设计**
+```xml
+<!-- 自适应两列表单 -->
+<Grid ColumnDefinitions="*,Auto,*" ColumnGap="16">
+    <Grid Grid.Column="0" RowDefinitions="Auto,Auto" RowGap="8">
+        <TextBlock Text="标签" FontWeight="Medium" />
+        <TextBox Watermark="提示" Padding="12" CornerRadius="4" />
+    </Grid>
+    <Border Grid.Column="1" Width="1" Background="#404040" />
+    <Grid Grid.Column="2" RowDefinitions="Auto,Auto" RowGap="8">
+        <!-- 第二列内容 -->
+    </Grid>
+</Grid>
+```
+
+#### 性能和维护性改进
+
+**1. 样式标准化**
+- 提取重复样式为组件规范
+- 建立一致的色彩和间距系统
+- 统一组件尺寸和圆角半径
+
+**2. 代码可维护性**
+- 清晰的XAML结构和命名
+- 合理的布局容器选择
+- 最小化嵌套层次
+
+**3. 用户体验提升**
+- 清晰的视觉层次
+- 一致的交互模式
+- 合理的信息密度
 - **配置系统无变化**：JSON配置文件格式和存储位置不变
 - **业务逻辑不受影响**：SSH连接、文件同步等核心功能保持一致
 

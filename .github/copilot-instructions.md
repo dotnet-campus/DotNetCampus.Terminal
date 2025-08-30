@@ -161,3 +161,15 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 1. 🔥 开始任务前，必须先阅读对应角色的经验总结文档
 2. 📚 遇到技术问题先查阅知识库，避免重复踩坑
 3. 💡 将新的踩坑经验及时更新到经验总结文档中
+
+## �️ 推荐开发工具
+
+### Context7 MCP工具
+Context7 MCP服务器提供强大的技术文档查询功能，特别适合查询官方文档和最佳实践：
+- **Avalonia UI**：3894个代码片段，涵盖MVVM、数据绑定、UI控件
+- **.NET生态**：177943个代码示例，覆盖核心技术栈
+- **网络库**：FluentFTP等文件传输库的官方示例
+
+使用方法：`mcp_context7_resolve-library-id` 解析库ID，`mcp_context7_get-library-docs` 获取文档。详细使用指南见 `.github/knowledge/AI协作经验/Context7-MCP服务器使用指南.md`。
+
+**使用建议**：遇到技术难题时可优先查询官方文档，但要平衡查询时间和实际开发进度。

@@ -43,8 +43,25 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 **以下是AI同事经常犯的错误，必须避免**：
 1. **日志命名空间**：使用 `DotNetCampus.Logging` 而不是 `DotNetCampus.Logger`（前者是命名空间，后者是库名称）
 2. **日志方法名**：使用 `Log.Warn` 而不是 `Log.Warning`
-3. **编译文件占用**：`dotnet build` 提示文件被占用时，这是正常现象（VS Code的bug），不要报错
+3. **编译命令**：使用 `dotnet build -t:Rebuild` 而不是 `dotnet build`，避免缓存问题
 4. **SSH.NET引用**：确保添加 `using Renci.SshNet;`
+
+## 编译和构建经验
+
+### 正确的构建命令
+```powershell
+# 推荐使用 Rebuild 避免缓存问题
+dotnet build -t:Rebuild
+
+# 万能进程清理命令（文件被占用时使用）
+Get-Process | Where-Object { $_.ProcessName -match "dotnet|DotNetCampus\.Terminal" } | Stop-Process -Force -ErrorAction SilentlyContinue
+dotnet build -t:Rebuild
+```
+
+**重要**：
+- **避免缓存问题**：使用 `-t:Rebuild` 而不是普通的 `dotnet build`
+- **文件占用处理**：编译时如提示文件被占用，执行万能进程清理命令即可
+- **大范围重构后必用**：AXAML修改、ViewModel重构等情况下必须使用Rebuild
 
 ### 兼容性原则
 **重要：本项目不需要考虑兼容性问题**
@@ -105,8 +122,6 @@ DotNetCampus Terminal 项目的 AI 协作开发指南。
 - 复杂的泛型推断失败
 - 平台特定显示问题
 - **反复犯错**：如果发现自己在重复犯同样的错误
-
-**注意**：`dotnet build` 文件占用问题是VS Code的已知bug，属于正常现象，无需求助。
 
 ## 技术文档索引
 

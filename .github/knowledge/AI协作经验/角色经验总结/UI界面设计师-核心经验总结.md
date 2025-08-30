@@ -5,6 +5,90 @@
 
 ## ❗ 致命错误避坑
 
+### 编译命令经验
+**⚠️ 重要：使用正确的构建命令**
+
+### UI特定编译要点
+**⚠️ UI开发时的特殊注意事项**
+
+#### UI重构后必须重新编译
+- **AXAML文件修改**：修改.axaml文件后必须使用 `dotnet build -t:Rebuild`
+- **ViewModel重构**：大范围重构ViewModel时推荐使用Rebuild
+- **x:Name生成问题**：如遇到AXN0001错误，检查文件位置后重新Rebuild
+
+#### 常见UI编译错误
+```
+CSC : error AXN0001: Avalonia x:Name generator was unable to generate names
+```
+**解决方案**：
+1. 检查AXAML文件和C#文件是否在同一个项目中
+2. 使用 `dotnet build -t:Rebuild` 重新编译
+
+**记忆要点**：
+- UI组件修改后，缓存问题比其他模块更容易出现
+- Avalonia的x:Name生成器对文件位置敏感，重构后必须Rebuild
+
+### TUI到现代GUI的设计迁移错误
+**⚠️ 我犯的严重设计错误！**
+
+#### ❌ 错误：保留TUI思维的F1-F12功能键
+```xml
+<!-- 错误的设计：这还是TUI时代的遗留 -->
+<Button Command="{Binding ShowHelpCommand}">
+    <StackPanel Orientation="Horizontal">
+        <TextBlock Text="F1" Classes="Fn" />
+        <TextBlock Text="帮助" />
+    </StackPanel>
+</Button>
+```
+
+**错误原因**：
+- **F1-F12功能键**: 这是TUI时代的操作方式，现代GUI不应该这样设计
+- **用户体验差**: 现代用户不习惯记忆功能键组合
+- **界面过时**: 看起来像是从终端界面直接搬过来的
+
+#### ✅ 正确：现代GUI状态栏设计
+```xml
+<!-- 正确的现代化设计 -->
+<Border Classes="StatusBarContainer">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!-- 左侧：状态信息 -->
+        <StackPanel Grid.Column="0" Orientation="Horizontal">
+            <TextBlock Text="就绪" FontWeight="Medium" />
+            <Rectangle Classes="Separator" />
+            <Ellipse Fill="LimeGreen" Width="8" Height="8" />
+            <TextBlock Text="0 台设备已连接" />
+        </StackPanel>
+
+        <!-- 右侧：工具按钮 -->
+        <StackPanel Grid.Column="1" Orientation="Horizontal">
+            <Button Classes="StatusBarButton" ToolTip.Tip="刷新设备列表">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="🔄" />
+                    <TextBlock Text="刷新" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Border>
+```
+
+**现代化设计原则**：
+- **左侧显示状态**: 当前操作状态、设备连接状态、同步状态
+- **右侧显示工具**: 常用操作按钮，使用图标+文字组合
+- **使用ToolTip**: 而不是功能键提示
+- **状态驱动**: 状态栏内容根据应用状态动态更新
+
+**记忆要点**：
+- **摒弃TUI思维**: 不要把终端界面的设计模式搬到GUI中
+- **遵循现代模式**: 参考VS Code、Visual Studio等现代应用的状态栏设计
+- **用户体验优先**: 现代用户更习惯点击按钮而不是按功能键
+
 ### 文件位置错误导致编译失败
 **这是UI设计师容易犯的文件组织错误！**
 

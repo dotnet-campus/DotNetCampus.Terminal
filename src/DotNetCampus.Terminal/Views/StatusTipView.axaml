@@ -13,27 +13,32 @@
     </Design.DataContext>
 
     <UserControl.Styles>
-        <!-- 正常状态样式 -->
+        <!-- 现代状态提示栏样式 -->
         <Style Selector="Border.StatusTip">
-            <Setter Property="Background" Value="Black" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="1 0" />
+            <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+            <Setter Property="BorderThickness" Value="0,1,0,0" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlBorderBaseLowBrush}" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="MinHeight" Value="32" />
         </Style>
 
         <!-- 错误状态样式 -->
         <Style Selector="Border.StatusTip.Error">
-            <Setter Property="Background" Value="Red" />
+            <Setter Property="Background" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorCriticalBrush}" />
         </Style>
 
         <!-- 警告状态样式 -->
         <Style Selector="Border.StatusTip.Warning">
-            <Setter Property="Background" Value="Yellow" />
+            <Setter Property="Background" Value="{DynamicResource SystemFillColorCautionBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemFillColorCautionBrush}" />
         </Style>
 
         <!-- 提示文本样式 -->
         <Style Selector="TextBlock.StatusText">
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="12" />
         </Style>
 
         <!-- 错误状态文本样式 -->
@@ -43,7 +48,22 @@
 
         <!-- 警告状态文本样式 -->
         <Style Selector="Border.Warning TextBlock.StatusText">
-            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        </Style>
+        
+        <!-- 状态指示器样式 -->
+        <Style Selector="Ellipse.StatusIndicator">
+            <Setter Property="Width" Value="8" />
+            <Setter Property="Height" Value="8" />
+            <Setter Property="Margin" Value="8,0,0,0" />
+        </Style>
+        
+        <!-- 状态图标样式 -->
+        <Style Selector="TextBlock.StatusIcon">
+            <Setter Property="FontFamily" Value="Segoe Fluent Icons" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,8,0" />
         </Style>
     </UserControl.Styles>
 
@@ -52,31 +72,55 @@
             Classes.Warning="{Binding IsWarning}">
         <Grid>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- 主要提示信息 -->
+            <!-- 状态图标 -->
             <TextBlock Grid.Column="0"
+                       Classes="StatusIcon"
+                       Text="&#xE946;"
+                       IsVisible="{Binding IsNormal}" />
+            
+            <TextBlock Grid.Column="0"
+                       Classes="StatusIcon"
+                       Text="&#xE783;"
+                       Foreground="Red"
+                       IsVisible="{Binding IsError}" />
+            
+            <TextBlock Grid.Column="0"
+                       Classes="StatusIcon"
+                       Text="&#xE7BA;"
+                       Foreground="Orange"
+                       IsVisible="{Binding IsWarning}" />
+
+            <!-- 主要提示信息 -->
+            <TextBlock Grid.Column="1"
                        Text="{Binding CurrentTip}"
-                       Classes="StatusText" />
+                       Classes="StatusText"
+                       TextTrimming="CharacterEllipsis" />
 
             <!-- 右侧状态指示器 -->
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="0">
+            <StackPanel Grid.Column="2" 
+                        Orientation="Horizontal" 
+                        Spacing="4"
+                        VerticalAlignment="Center">
+                
+                <!-- 正常状态指示器 -->
+                <Ellipse Classes="StatusIndicator"
+                         Fill="LimeGreen"
+                         IsVisible="{Binding IsNormal}" />
+
                 <!-- 错误指示器 -->
-                <TextBlock Text="●"
-                           Foreground="Red"
-                           IsVisible="{Binding IsError}" />
+                <Ellipse Classes="StatusIndicator"
+                         Fill="Red"
+                         IsVisible="{Binding IsError}" />
 
                 <!-- 警告指示器 -->
-                <TextBlock Text="▲"
-                           Foreground="Yellow"
-                           IsVisible="{Binding IsWarning}" />
-
-                <!-- 正常状态指示器 -->
-                <TextBlock Text="●"
-                           Foreground="Green"
-                           IsVisible="{Binding IsNormal}" />
+                <Ellipse Classes="StatusIndicator"
+                         Fill="Orange"
+                         IsVisible="{Binding IsWarning}" />
             </StackPanel>
         </Grid>
     </Border>

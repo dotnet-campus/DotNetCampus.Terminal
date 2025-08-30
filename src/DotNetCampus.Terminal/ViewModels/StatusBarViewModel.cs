@@ -5,7 +5,7 @@ using DotNetCampus.Logging;
 namespace DotNetCampus.Terminal.ViewModels;
 
 /// <summary>
-/// 状态栏ViewModel，提供全局功能键的命令绑定
+/// 现代化状态栏ViewModel
 /// </summary>
 public record StatusBarViewModel : BindableRecord
 {
@@ -26,57 +26,17 @@ public record StatusBarViewModel : BindableRecord
     /// </summary>
     public StatusTipViewModel StatusTip { get; }
 
-    #region 命令属性
+    #region 现代化状态栏命令
 
     /// <summary>
-    /// F1 - 显示帮助
-    /// </summary>
-    public ActionCommand ShowHelpCommand { get; private set; } = null!;
-
-    /// <summary>
-    /// F2 - 连接到当前选中的设备
-    /// </summary>
-    public ActionCommand ConnectCommand { get; private set; } = null!;
-
-    /// <summary>
-    /// F3 - 开始同步当前选中的设备
-    /// </summary>
-    public AsyncCommand StartSyncCommand { get; private set; } = null!;
-
-    /// <summary>
-    /// F4 - 创建新设备
-    /// </summary>
-    public ActionCommand NewDeviceCommand { get; private set; } = null!;
-
-    /// <summary>
-    /// F5 - 刷新设备列表
+    /// 刷新命令
     /// </summary>
     public AsyncCommand RefreshCommand { get; private set; } = null!;
 
     /// <summary>
-    /// F6 - 保存当前配置
+    /// 显示帮助命令
     /// </summary>
-    public AsyncCommand SaveConfigCommand { get; private set; } = null!;
-
-    /// <summary>
-    /// F7 - 打开终端到当前选中的设备
-    /// </summary>
-    public AsyncCommand OpenShellCommand { get; private set; } = null!;
-
-    /// <summary>
-    /// F8 - 切换搜索模式
-    /// </summary>
-    public ActionCommand ToggleSearchCommand { get; private set; } = null!;
-
-    /// <summary>
-    /// F9 - 打开设置
-    /// </summary>
-    public ActionCommand SettingsCommand { get; private set; } = null!;
-
-    /// <summary>
-    /// F10 - 退出应用程序
-    /// </summary>
-    public ActionCommand ExitCommand { get; private set; } = null!;
+    public ActionCommand ShowHelpCommand { get; private set; } = null!;
 
     #endregion
 
@@ -84,22 +44,22 @@ public record StatusBarViewModel : BindableRecord
 
     private void InitializeCommands()
     {
-        ShowHelpCommand = new ActionCommand(OnShowHelp);
-        ConnectCommand = new ActionCommand(OnConnect);
-        StartSyncCommand = new AsyncCommand(OnStartSyncAsync);
-        NewDeviceCommand = new ActionCommand(OnNewDevice);
         RefreshCommand = new AsyncCommand(OnRefreshAsync);
-        SaveConfigCommand = new AsyncCommand(OnSaveConfigAsync);
-        OpenShellCommand = new AsyncCommand(OnOpenShellAsync);
-        ToggleSearchCommand = new ActionCommand(OnToggleSearch);
-        SettingsCommand = new ActionCommand(OnSettings);
-        ExitCommand = new ActionCommand(OnExit);
+        ShowHelpCommand = new ActionCommand(OnShowHelp);
+    }
+
+    private async Task OnRefreshAsync()
+    {
+        Log.Info("[StatusBar] 刷新设备列表");
+        StatusTip.ShowOperationStatus("刷新设备列表", true);
+        await _mainViewModel.ReloadDevicesCommand.ExecuteAsync();
+        StatusTip.ShowOperationStatus("刷新设备列表");
     }
 
     private void OnShowHelp()
     {
-        Log.Info("[StatusBar] F1 - 显示帮助");
-        StatusTip.ShowTip("F1 - 正在打开GitHub仓库...");
+        Log.Info("[StatusBar] 显示帮助");
+        StatusTip.ShowTip("正在打开GitHub仓库...");
 
         try
         {
@@ -111,103 +71,13 @@ public record StatusBarViewModel : BindableRecord
                 UseShellExecute = true,
             });
 
-            StatusTip.ShowTip("F1 - 已在浏览器中打开GitHub仓库");
+            StatusTip.ShowTip("已在浏览器中打开GitHub仓库");
         }
         catch (Exception ex)
         {
             Log.Error($"[StatusBar] 打开GitHub仓库失败: {ex.Message}");
             StatusTip.ShowError("打开GitHub仓库失败，请手动访问: https://github.com/dotnet-campus/dotnetCampus.Terminal");
         }
-    }
-
-    private void OnConnect()
-    {
-        Log.Info("[StatusBar] F2 - 连接到设备");
-        StatusTip.ShowOperationStatus("测试连接", true);
-        // TODO: 连接到当前选中的设备
-        // 需要从MainViewModel获取当前选中的设备并执行连接
-    }
-
-    private async Task OnStartSyncAsync()
-    {
-        Log.Info("[StatusBar] F3 - 开始同步");
-        StatusTip.ShowOperationStatus("同步", true);
-        // TODO: 对当前选中的设备执行同步操作
-        // 需要从MainViewModel获取当前选中的设备并执行同步
-    }
-
-    private void OnNewDevice()
-    {
-        Log.Info("[StatusBar] F4 - 创建新设备");
-        StatusTip.ShowTip("F4 - 切换到创建新设备界面");
-        // TODO: 切换到创建新设备界面
-        // 可以通过MainViewModel选择"创建新设备"节点
-    }
-
-    private async Task OnRefreshAsync()
-    {
-        Log.Info("[StatusBar] F5 - 刷新设备列表");
-        StatusTip.ShowOperationStatus("刷新设备列表", true);
-        await _mainViewModel.ReloadDevicesCommand.ExecuteAsync();
-        StatusTip.ShowOperationStatus("刷新设备列表");
-    }
-
-    private async Task OnSaveConfigAsync()
-    {
-        Log.Info("[StatusBar] F6 - 保存配置");
-        StatusTip.ShowOperationStatus("保存配置", true);
-        // TODO: 保存当前选中设备的配置
-        // 需要从MainViewModel获取当前选中的设备并执行保存
-    }
-
-    private async Task OnOpenShellAsync()
-    {
-        Log.Info("[StatusBar] F7 - 打开终端");
-        StatusTip.ShowOperationStatus("打开SSH终端", true);
-        // TODO: 打开终端到当前选中的设备
-        // 需要从MainViewModel获取当前选中的设备并打开Shell
-    }
-
-    private void OnToggleSearch()
-    {
-        Log.Info("[StatusBar] F8 - 切换搜索模式");
-        StatusTip.ShowTip("F8 - 切换搜索框焦点 (功能开发中)");
-        // TODO: 切换搜索框的焦点或显示/隐藏搜索功能
-    }
-
-    private void OnSettings()
-    {
-        Log.Info("[StatusBar] F9 - 打开设置");
-        StatusTip.ShowTip("F9 - 打开应用程序设置 (功能开发中)");
-        // TODO: 打开应用程序设置界面
-    }
-
-    private void OnExit()
-    {
-        Log.Info("[StatusBar] F10 - 退出应用程序");
-        StatusTip.ShowTip("F10 - 正在安全退出应用程序...");
-        // TODO: 安全退出应用程序
-        Environment.Exit(0);
-    }
-
-    #endregion
-
-    #region 鼠标悬停处理
-
-    /// <summary>
-    /// 处理功能键按钮的鼠标悬停事件
-    /// </summary>
-    public void OnFunctionKeyHover(string functionKey, string description, bool isEnabled = true)
-    {
-        StatusTip.ShowFunctionKeyTip(functionKey, description, isEnabled);
-    }
-
-    /// <summary>
-    /// 处理鼠标离开功能键按钮事件
-    /// </summary>
-    public void OnFunctionKeyLeave()
-    {
-        StatusTip.Reset();
     }
 
     #endregion

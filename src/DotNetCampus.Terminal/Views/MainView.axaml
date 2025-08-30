@@ -39,7 +39,7 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid RowDefinitions="32,*" ColumnDefinitions="*,2*">
+    <Grid RowDefinitions="32,*,Auto" ColumnDefinitions="*,2*">
 
         <!-- 顶部标题栏 -->
         <Border Grid.Row="0" Grid.Column="0" x:Name="TitleBarBorder"
@@ -186,13 +186,14 @@
             </Border>
         </Grid>
 
-        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
+        <!-- 底部状态栏区域 -->
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" RowDefinitions="Auto,Auto">
             <!-- 状态提示栏 -->
-            <views:StatusTipView DataContext="{Binding StatusTip}" />
+            <views:StatusTipView Grid.Row="0" DataContext="{Binding StatusTip}" />
 
-            <!-- 功能键状态栏 -->
-            <views:StatusBarView DataContext="{Binding StatusBar}" />
-        </StackPanel>
+            <!-- 现代化状态栏 -->
+            <views:StatusBarView Grid.Row="1" DataContext="{Binding StatusBar}" />
+        </Grid>
 
     </Grid>
 </UserControl>

@@ -41,100 +41,208 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid RowDefinitions="Auto,Auto,Auto,*">
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Padding="16">
+        <StackPanel Spacing="16">
 
-        <!-- 连接状态 -->
-        <Grid Grid.Row="0" Margin="0 1 0 0" ColumnDefinitions="Auto,*,Auto">
-            <TextBlock Grid.Column="0" Text="设备状态" Width="8" />
-            <TextBlock Grid.Column="1" Width="2" Margin="2 0 0 0" HorizontalAlignment="Left"
-                       Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToSymbolConverter}, Mode=OneWay}"
-                       Foreground="{Binding ConnectionState, Converter={StaticResource ConnectionStateToForegroundConverter}, Mode=OneWay}" />
-            <TextBlock Grid.Column="1" Width="8" Margin="4 0 0 0" HorizontalAlignment="Left"
-                       Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToStringConverter}, Mode=OneWay}" />
-            <Button Grid.Column="2" Content="连接主机" Width="10" Command="{Binding Commands.OpenShellCommand}" />
-        </Grid>
+            <!-- 连接状态卡片 -->
+            <Border Background="#252525"
+                    BorderBrush="#404040"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                    <TextBlock Grid.Column="0"
+                               Text="设备状态"
+                               FontWeight="SemiBold"
+                               Foreground="#CCCCCC"
+                               VerticalAlignment="Center" />
 
-        <!-- 全局同步进度条 -->
-        <Grid Grid.Row="1" Margin="0 1 0 0" RowDefinitions="*,*,*" ColumnDefinitions="Auto,*,Auto">
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="同步进度" Width="8" />
-            <ProgressBar Grid.Row="0" Grid.Column="1"
-                         Value="{Binding Sync.GlobalSyncProgress}"
-                         Minimum="0" Maximum="100" Margin="1 0" Height="1"
-                         Background="DimGray"
-                         Foreground="Green" />
-            <Button Grid.Row="0" Grid.Column="2" Content="立即同步"
-                    IsEnabled="{Binding !Sync.IsGlobalSyncing}"
-                    Command="{Binding Commands.SyncAllCommand}" />
-            <TextBlock Grid.Row="1" Grid.Column="1" Margin="1 0" Foreground="Green"
-                       Text="正在同步…"
-                       IsVisible="{Binding Sync.IsGlobalSyncing, Mode=OneWay}" />
-            <TextBlock Grid.Row="1" Grid.Column="1" Margin="1 0"
-                       IsVisible="{Binding !Sync.IsGlobalSyncing, Mode=OneWay}">
-                <Run Foreground="DimGray" Text="最近同步于" />
-                <Run Text="{Binding Sync.LastSyncTime, Converter={StaticResource DateTimeToStringConverter}, Mode=OneWay}" />
-            </TextBlock>
-            <TextBlock Grid.Row="2" Grid.Column="1" Margin="1 0"
-                       Foreground="Red" TextWrapping="WrapWithOverflow"
-                       Text="{Binding Sync.LastSyncErrorMessage, Mode=OneWay}"
-                       ToolTip.Tip="{Binding Sync.DetailedDiagnostics, Mode=OneWay}" />
-        </Grid>
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal"
+                                Spacing="8"
+                                VerticalAlignment="Center">
+                        <Ellipse Width="12" Height="12"
+                                 Fill="{Binding ConnectionState, Converter={StaticResource ConnectionStateToBackgroundConverter}, Mode=OneWay}" />
+                        <TextBlock Text="{Binding ConnectionState, Converter={StaticResource ConnectionStateToStringConverter}, Mode=OneWay}"
+                                   Foreground="{Binding ConnectionState, Converter={StaticResource ConnectionStateToForegroundConverter}, Mode=OneWay}" />
+                    </StackPanel>
 
-        <!-- 操作按钮 -->
-        <Grid Grid.Row="2" Margin="0 1 0 0" ColumnDefinitions="Auto,*,Auto,1,Auto"
-              IsEnabled="{Binding !Sync.IsGlobalSyncing}">
-            <Button Grid.Column="0" Content="+ 同步新目录" />
-            <Button Grid.Column="2" Content="全部禁用" Background="DarkOrange"
-                    Command="{Binding Commands.DisableAllCommand}" />
-            <Button Grid.Column="4" Content="全部启用"
-                    Command="{Binding Commands.EnableAllCommand}" />
-        </Grid>
+                    <Button Grid.Column="2"
+                            Content="连接主机"
+                            Classes="Primary"
+                            MinWidth="100"
+                            Command="{Binding Commands.OpenShellCommand}" />
+                </Grid>
+            </Border>
 
-        <!-- 目录同步列表 -->
-        <ItemsControl Grid.Row="3" BorderThickness="0"
-                      IsEnabled="{Binding !Sync.IsGlobalSyncing}"
-                      ItemsSource="{Binding Sync.DirectorySyncingList}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <VirtualizingStackPanel Margin="0 1 0 0" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate x:DataType="vm:DirectorySyncingViewModel">
-                    <Border Margin="0 -1 0 0" BorderThickness="0 1 0 1" BorderBrush="DimGray">
-                        <StackPanel>
-                            <!-- 目录同步名称和状态 -->
-                            <Grid ColumnDefinitions="3,Auto,*,Auto,Auto,Auto">
-                                <TextBlock Grid.Column="0" Width="3"
-                                           TextAlignment="Center"
-                                           Text="{Binding StatusSymbol}"
-                                           Foreground="{Binding StatusColor}" />
-                                <TextBlock Grid.Column="1" FontWeight="Bold" Text="{Binding Name}" />
-                                <TextBlock Grid.Column="2" FontStyle="Italic" Foreground="DimGray" Text="{Binding StatusText}"
-                                           Margin="1,0,0,0" />
-                                <ToggleSwitch Grid.Column="3" Margin="0 0 1 0"
-                                              OnContent="已启用" OffContent="已禁用"
-                                              IsChecked="{Binding IsEnabled}" />
-                                <Button Grid.Column="4" Content="编辑" Margin="0 0 1 0" />
-                                <Button Grid.Column="5" Content="同步" Margin="0"
-                                        Command="{Binding SyncCommand}" />
-                            </Grid>
-                            <TextBlock Margin="0 1 0 0" Foreground="Gray">
-                                <!-- 远程路径 -->
-                                <Run Text="🌐" />
-                                <Run Foreground="DarkCyan" Text="{Binding RemotePath}" />
-                                <!-- 同步方向 -->
-                                <LineBreak />
-                                <Run Text="  " />
-                                <Run Foreground="DimGray" Text="{Binding DirectionSymbol}" />
-                                <LineBreak />
-                                <!-- 本地路径 -->
-                                <Run Text="📁" />
-                                <Run Foreground="DarkOrange" Text="{Binding LocalPath}" />
-                            </TextBlock>
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </Grid>
+            <!-- 同步进度卡片 -->
+            <Border Background="#252525"
+                    BorderBrush="#404040"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16">
+                <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="8">
+                    <!-- 标题和按钮 -->
+                    <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <TextBlock Grid.Column="0"
+                                   Text="同步进度"
+                                   FontWeight="SemiBold"
+                                   Foreground="#CCCCCC"
+                                   VerticalAlignment="Center" />
+                        <Button Grid.Column="2"
+                                Content="立即同步"
+                                MinWidth="100"
+                                IsEnabled="{Binding !Sync.IsGlobalSyncing}"
+                                Command="{Binding Commands.SyncAllCommand}" />
+                    </Grid>
+
+                    <!-- 进度条 -->
+                    <ProgressBar Grid.Row="1"
+                                 Value="{Binding Sync.GlobalSyncProgress}"
+                                 Minimum="0" Maximum="100"
+                                 Height="8"
+                                 Background="#404040"
+                                 Foreground="#4CAF50"
+                                 CornerRadius="4" />
+
+                    <!-- 状态信息 -->
+                    <Grid Grid.Row="2">
+                        <TextBlock Foreground="#4CAF50"
+                                   Text="正在同步…"
+                                   IsVisible="{Binding Sync.IsGlobalSyncing, Mode=OneWay}" />
+                        <TextBlock IsVisible="{Binding !Sync.IsGlobalSyncing, Mode=OneWay}"
+                                   Foreground="#999999">
+                            <Run Text="最近同步于" />
+                            <Run Text="{Binding Sync.LastSyncTime, Converter={StaticResource DateTimeToStringConverter}, Mode=OneWay}" />
+                        </TextBlock>
+                        <TextBlock Foreground="#FF5722"
+                                   TextWrapping="Wrap"
+                                   Text="{Binding Sync.LastSyncErrorMessage, Mode=OneWay}"
+                                   ToolTip.Tip="{Binding Sync.DetailedDiagnostics, Mode=OneWay}"
+                                   IsVisible="{Binding Sync.LastSyncErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- 操作按钮区域 -->
+            <Border Background="#252525"
+                    BorderBrush="#404040"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    IsEnabled="{Binding !Sync.IsGlobalSyncing}">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
+                    <Button Grid.Column="0"
+                            Content="+ 同步新目录"
+                            Classes="Primary" />
+                    <Button Grid.Column="2"
+                            Content="全部禁用"
+                            Background="#FF9800"
+                            MinWidth="80"
+                            Command="{Binding Commands.DisableAllCommand}" />
+                    <Button Grid.Column="3"
+                            Content="全部启用"
+                            Classes="Primary"
+                            MinWidth="80"
+                            Command="{Binding Commands.EnableAllCommand}" />
+                </Grid>
+            </Border>
+
+            <!-- 目录同步列表 -->
+            <Border Background="#252525"
+                    BorderBrush="#404040"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="16"
+                    IsEnabled="{Binding !Sync.IsGlobalSyncing}">
+                <Grid RowDefinitions="Auto,*" RowSpacing="12">
+                    <TextBlock Grid.Row="0"
+                               Text="同步目录"
+                               FontWeight="SemiBold"
+                               Foreground="#CCCCCC" />
+
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto"
+                                  MaxHeight="400">
+                        <ItemsControl ItemsSource="{Binding Sync.DirectorySyncingList}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Spacing="8" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:DirectorySyncingViewModel">
+                                    <Border Background="#2A2A2A"
+                                            BorderBrush="#404040"
+                                            BorderThickness="1"
+                                            CornerRadius="4"
+                                            Padding="12"
+                                            Margin="0,0,0,8">
+                                        <Grid RowDefinitions="Auto,Auto" RowSpacing="8">
+                                            <!-- 目录同步名称和状态 -->
+                                            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto,Auto" ColumnSpacing="8">
+                                                <Ellipse Grid.Column="0"
+                                                         Width="8" Height="8"
+                                                         Fill="{Binding StatusColor}"
+                                                         VerticalAlignment="Center" />
+                                                <TextBlock Grid.Column="1"
+                                                           FontWeight="SemiBold"
+                                                           Text="{Binding Name}"
+                                                           Foreground="#EEEEEE"
+                                                           VerticalAlignment="Center" />
+                                                <ToggleSwitch Grid.Column="2"
+                                                              OnContent="启用" OffContent="禁用"
+                                                              IsChecked="{Binding IsEnabled}" />
+                                                <Button Grid.Column="3"
+                                                        Content="编辑"
+                                                        Classes="Secondary"
+                                                        MinWidth="60" />
+                                                <Button Grid.Column="4"
+                                                        Content="同步"
+                                                        Classes="Primary"
+                                                        MinWidth="60"
+                                                        Command="{Binding SyncCommand}" />
+                                            </Grid>
+
+                                            <!-- 路径信息 -->
+                                            <StackPanel Grid.Row="1" Spacing="4">
+                                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                                    <TextBlock Grid.Column="0" Text="🌐" FontSize="12" />
+                                                    <TextBlock Grid.Column="1"
+                                                               Text="{Binding RemotePath}"
+                                                               Foreground="#4DD0E1"
+                                                               FontFamily="Consolas"
+                                                               FontSize="12" />
+                                                </Grid>
+                                                <TextBlock Text="{Binding DirectionSymbol}"
+                                                           Foreground="#999999"
+                                                           FontSize="12"
+                                                           HorizontalAlignment="Center" />
+                                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                                    <TextBlock Grid.Column="0" Text="📁" FontSize="12" />
+                                                    <TextBlock Grid.Column="1"
+                                                               Text="{Binding LocalPath}"
+                                                               Foreground="#FFB74D"
+                                                               FontFamily="Consolas"
+                                                               FontSize="12" />
+                                                </Grid>
+                                                <TextBlock Text="{Binding StatusText}"
+                                                           FontStyle="Italic"
+                                                           Foreground="#999999"
+                                                           FontSize="11"
+                                                           IsVisible="{Binding StatusText, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

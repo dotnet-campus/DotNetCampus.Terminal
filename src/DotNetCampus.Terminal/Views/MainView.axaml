@@ -158,20 +158,33 @@
         <!-- 右侧设备详情 -->
         <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"
               DataContext="{Binding #DeviceTreeView.SelectedItem}">
-            <Border Background="#181818" IsHitTestVisible="False" />
-            <ContentControl Content="{Binding Mode=OneWay}" Margin="0 32 0 0">
-                <ContentControl.DataTemplates>
-                    <DataTemplate x:DataType="vm:CreateNewRemoteDeviceNode">
-                        <views:CreateNewRemoteDeviceView />
-                    </DataTemplate>
-                    <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
-                        <views:RemoteDeviceGroupView DataContext="{Binding Info, Mode=OneWay}" />
-                    </DataTemplate>
-                    <DataTemplate x:DataType="vm:SshRemoteDeviceInfoViewModel">
-                        <views:SshRemoteDeviceInfoView DataContext="{Binding Mode=OneWay}" />
-                    </DataTemplate>
-                </ContentControl.DataTemplates>
-            </ContentControl>
+            <!-- 背景区域 -->
+            <Border Background="#181818" 
+                    BorderBrush="#2A2A2A" 
+                    BorderThickness="1,0,0,0" 
+                    IsHitTestVisible="False" />
+            
+            <!-- 内容区域 - 优化边距和布局 -->
+            <Border Margin="16,32,16,16" 
+                    Background="#202020" 
+                    BorderBrush="#333333" 
+                    BorderThickness="1" 
+                    CornerRadius="8">
+                <ContentControl Content="{Binding Mode=OneWay}" 
+                                Margin="16">
+                    <ContentControl.DataTemplates>
+                        <DataTemplate x:DataType="vm:CreateNewRemoteDeviceNode">
+                            <views:CreateNewRemoteDeviceView />
+                        </DataTemplate>
+                        <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
+                            <views:RemoteDeviceGroupView DataContext="{Binding Info, Mode=OneWay}" />
+                        </DataTemplate>
+                        <DataTemplate x:DataType="vm:SshRemoteDeviceInfoViewModel">
+                            <views:SshRemoteDeviceInfoView DataContext="{Binding Mode=OneWay}" />
+                        </DataTemplate>
+                    </ContentControl.DataTemplates>
+                </ContentControl>
+            </Border>
         </Grid>
 
         <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom">

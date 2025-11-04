@@ -138,13 +138,13 @@
                             Classes="Primary" />
                     <Button Grid.Column="2"
                             Content="全部禁用"
-                            Background="#FF9800"
-                            MinWidth="80"
+                            Classes="Caution"
+                            MinWidth="100"
                             Command="{Binding Commands.DisableAllCommand}" />
                     <Button Grid.Column="3"
                             Content="全部启用"
                             Classes="Primary"
-                            MinWidth="80"
+                            MinWidth="100"
                             Command="{Binding Commands.EnableAllCommand}" />
                 </Grid>
             </Border>
@@ -213,7 +213,10 @@
                                                                Text="{Binding RemotePath}"
                                                                Foreground="#4DD0E1"
                                                                FontFamily="Consolas"
-                                                               FontSize="12" />
+                                                               FontSize="12"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               TextWrapping="NoWrap"
+                                                               ToolTip.Tip="{Binding RemotePath}" />
                                                 </Grid>
                                                 <TextBlock Text="{Binding DirectionSymbol}"
                                                            Foreground="#999999"
@@ -225,7 +228,10 @@
                                                                Text="{Binding LocalPath}"
                                                                Foreground="#FFB74D"
                                                                FontFamily="Consolas"
-                                                               FontSize="12" />
+                                                               FontSize="12"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               TextWrapping="NoWrap"
+                                                               ToolTip.Tip="{Binding LocalPath}" />
                                                 </Grid>
                                                 <TextBlock Text="{Binding StatusText}"
                                                            FontStyle="Italic"

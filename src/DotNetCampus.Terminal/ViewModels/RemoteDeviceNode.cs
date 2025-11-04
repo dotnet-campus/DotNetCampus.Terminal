@@ -31,7 +31,28 @@ public interface IRemoteDeviceNode
 
 public record CreateNewRemoteDeviceNode : IRemoteDeviceNode
 {
+    private CreateNewRemoteDeviceViewModel? _viewModel;
+
+    public IServiceProvider ServiceProvider { get; init; }
+    public MainViewModel MainViewModel { get; init; }
+
+    public CreateNewRemoteDeviceNode(IServiceProvider serviceProvider, MainViewModel mainViewModel)
+    {
+        ServiceProvider = serviceProvider;
+        MainViewModel = mainViewModel;
+    }
+
+    [Obsolete("仅供设计器使用", true)]
+    public CreateNewRemoteDeviceNode() : this(null!, null!)
+    {
+    }
+
     public IReadOnlyList<IRemoteDeviceNode> Children { get; } = [];
+
+    /// <summary>
+    /// 获取或创建ViewModel实例
+    /// </summary>
+    public CreateNewRemoteDeviceViewModel ViewModel => _viewModel ??= new CreateNewRemoteDeviceViewModel(ServiceProvider, MainViewModel);
 }
 
 public record FavoriteDeviceGroupNode : IRemoteDeviceNode

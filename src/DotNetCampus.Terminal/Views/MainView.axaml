@@ -173,7 +173,7 @@
                                 Margin="16">
                     <ContentControl.DataTemplates>
                         <DataTemplate x:DataType="vm:CreateNewRemoteDeviceNode">
-                            <views:CreateNewRemoteDeviceView />
+                            <views:CreateNewRemoteDeviceView DataContext="{Binding ViewModel, Mode=OneWay}" />
                         </DataTemplate>
                         <DataTemplate x:DataType="vm:RemoteDeviceGroupNode">
                             <views:RemoteDeviceGroupView DataContext="{Binding Info, Mode=OneWay}" />

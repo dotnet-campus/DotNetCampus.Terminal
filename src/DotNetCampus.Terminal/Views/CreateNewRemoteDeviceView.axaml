@@ -2,49 +2,289 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="DotNetCampus.Terminal.Views.CreateNewRemoteDeviceView">
+             xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="DotNetCampus.Terminal.Views.CreateNewRemoteDeviceView"
+             x:DataType="vm:CreateNewRemoteDeviceViewModel">
 
-    <Grid RowDefinitions="Auto,*"
-          Margin="0">
-        <!-- 标题区域 -->
-        <Border Grid.Row="0"
-                Background="#2A2A2A"
-                BorderBrush="#404040"
-                BorderThickness="0,0,0,1"
-                Padding="16,12"
-                CornerRadius="4,4,0,0">
-            <TextBlock Text="连接到新设备"
-                       FontSize="16"
-                       FontWeight="SemiBold"
-                       Foreground="#EEEEEE" />
-        </Border>
+    <Design.DataContext>
+        <vm:CreateNewRemoteDeviceViewModel />
+    </Design.DataContext>
 
-        <!-- 内容区域 -->
-        <Border Grid.Row="1"
-                Background="#1E1E1E"
-                Padding="16">
-            <Grid RowDefinitions="Auto,*" RowSpacing="16">
-                <!-- 说明文字 -->
-                <TextBlock Grid.Row="0"
-                           Text="选择连接类型以添加新的远程设备"
-                           FontSize="14"
-                           Foreground="#CCCCCC"
-                           TextAlignment="Center" />
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid RowDefinitions="Auto,*" Margin="0">
+            <!-- 标题区域 -->
+            <Border Grid.Row="0"
+                    Background="#2A2A2A"
+                    BorderBrush="#404040"
+                    BorderThickness="0,0,0,1"
+                    Padding="20,16">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="连接到新设备"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#EEEEEE" />
+                    <TextBlock Text="配置SSH设备的连接信息"
+                               FontSize="13"
+                               Foreground="#999999" />
+                </StackPanel>
+            </Border>
 
-                <!-- 展示图片 -->
-                <Border Grid.Row="1"
-                        Background="#252525"
-                        BorderBrush="#404040"
-                        BorderThickness="1"
-                        CornerRadius="8"
-                        Padding="16">
-                    <Image Stretch="Uniform"
-                           Source="avares://DotNetCampus.Terminal/Assets/Resources/happy.jpg"
-                           MaxHeight="300" />
-                </Border>
-            </Grid>
-        </Border>
-    </Grid>
+            <!-- 表单内容区域 -->
+            <Border Grid.Row="1"
+                    Background="#1E1E1E"
+                    Padding="24">
+                <StackPanel Spacing="20" MaxWidth="600" HorizontalAlignment="Center">
+
+                    <!-- 基本信息卡片 -->
+                    <Border Background="#252525"
+                            BorderBrush="#404040"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="20">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="基本信息"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"
+                                       Foreground="#EEEEEE" />
+
+                            <!-- 连接名称 -->
+                            <Grid RowDefinitions="Auto,Auto">
+                                <TextBlock Grid.Row="0"
+                                           Text="连接名称 *"
+                                           FontWeight="Medium"
+                                           Foreground="#CCCCCC"
+                                           Margin="0,0,0,8" />
+                                <TextBox Grid.Row="1"
+                                         Text="{Binding ConnectionName}"
+                                         Watermark="例如：生产服务器、测试环境等"
+                                         Background="#2A2A2A"
+                                         BorderBrush="#555555"
+                                         BorderThickness="1"
+                                         Padding="12"
+                                         CornerRadius="4" />
+                            </Grid>
+
+                            <!-- 主机和端口 -->
+                            <Grid ColumnDefinitions="2*,Auto,*">
+                                <!-- 主机地址 -->
+                                <Grid Grid.Column="0" RowDefinitions="Auto,Auto" Margin="0,0,8,0">
+                                    <TextBlock Grid.Row="0"
+                                               Text="主机地址 *"
+                                               FontWeight="Medium"
+                                               Foreground="#CCCCCC"
+                                               Margin="0,0,0,8" />
+                                    <TextBox Grid.Row="1"
+                                             Text="{Binding Host}"
+                                             Watermark="IP地址或域名"
+                                             Background="#2A2A2A"
+                                             BorderBrush="#555555"
+                                             BorderThickness="1"
+                                             Padding="12"
+                                             CornerRadius="4" />
+                                </Grid>
+
+                                <Border Grid.Column="1" Width="1" Background="#404040" Margin="8,24,8,0" />
+
+                                <!-- 端口号 -->
+                                <Grid Grid.Column="2" RowDefinitions="Auto,Auto" Margin="8,0,0,0">
+                                    <TextBlock Grid.Row="0"
+                                               Text="端口 *"
+                                               FontWeight="Medium"
+                                               Foreground="#CCCCCC"
+                                               Margin="0,0,0,8" />
+                                    <TextBox Grid.Row="1"
+                                             Text="{Binding Port}"
+                                             Watermark="22"
+                                             Background="#2A2A2A"
+                                             BorderBrush="#555555"
+                                             BorderThickness="1"
+                                             Padding="12"
+                                             CornerRadius="4" />
+                                </Grid>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 认证信息卡片 -->
+                    <Border Background="#252525"
+                            BorderBrush="#404040"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="20">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="认证信息"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"
+                                       Foreground="#EEEEEE" />
+
+                            <!-- 用户名和密码 -->
+                            <Grid ColumnDefinitions="*,Auto,*">
+                                <!-- 用户名 -->
+                                <Grid Grid.Column="0" RowDefinitions="Auto,Auto" Margin="0,0,8,0">
+                                    <TextBlock Grid.Row="0"
+                                               Text="用户名 *"
+                                               FontWeight="Medium"
+                                               Foreground="#CCCCCC"
+                                               Margin="0,0,0,8" />
+                                    <TextBox Grid.Row="1"
+                                             Text="{Binding UserName}"
+                                             Watermark="SSH用户名"
+                                             Background="#2A2A2A"
+                                             BorderBrush="#555555"
+                                             BorderThickness="1"
+                                             Padding="12"
+                                             CornerRadius="4" />
+                                </Grid>
+
+                                <Border Grid.Column="1" Width="1" Background="#404040" Margin="8,24,8,0" />
+
+                                <!-- 密码 -->
+                                <Grid Grid.Column="2" RowDefinitions="Auto,Auto" Margin="8,0,0,0">
+                                    <TextBlock Grid.Row="0"
+                                               Text="密码"
+                                               FontWeight="Medium"
+                                               Foreground="#CCCCCC"
+                                               Margin="0,0,0,8" />
+                                    <TextBox Grid.Row="1"
+                                             Text="{Binding Password}"
+                                             PasswordChar="●"
+                                             Watermark="可选，推荐使用密钥"
+                                             Background="#2A2A2A"
+                                             BorderBrush="#555555"
+                                             BorderThickness="1"
+                                             Padding="12"
+                                             CornerRadius="4" />
+                                </Grid>
+                            </Grid>
+
+                            <!-- 提示信息 -->
+                            <Border Background="#2A3A4A"
+                                    BorderBrush="#3F51B5"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="12">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="ℹ️"
+                                               FontSize="14"
+                                               VerticalAlignment="Top" />
+                                    <TextBlock Text="推荐使用SSH密钥认证以提高安全性。保存设备后可在设备详情页面部署密钥。"
+                                               FontSize="12"
+                                               Foreground="#90CAF9"
+                                               TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 测试连接卡片 -->
+                    <Border Background="#252525"
+                            BorderBrush="#404040"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="20">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="测试连接"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"
+                                       Foreground="#EEEEEE" />
+
+                            <!-- 测试按钮 -->
+                            <Button Command="{Binding TestConnectionCommand}"
+                                    IsEnabled="{Binding CanTestConnection}"
+                                    Background="#3F51B5"
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    Padding="20,10"
+                                    CornerRadius="4"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="🔗" FontSize="14" IsVisible="{Binding !IsTesting}" />
+                                    <TextBlock Text="⏳" FontSize="14" IsVisible="{Binding IsTesting}" />
+                                    <TextBlock Text="测试连接" FontWeight="Medium" IsVisible="{Binding !IsTesting}" />
+                                    <TextBlock Text="正在测试..." FontWeight="Medium" IsVisible="{Binding IsTesting}" />
+                                </StackPanel>
+                            </Button>
+
+                            <!-- 测试结果 - 成功 -->
+                            <Border IsVisible="{Binding TestResultSuccess}"
+                                    Background="#1B5E20"
+                                    BorderBrush="#4CAF50"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="12">
+                                <TextBlock Text="{Binding TestResultMessage}"
+                                           Foreground="#A5D6A7"
+                                           TextWrapping="Wrap" />
+                            </Border>
+
+                            <!-- 测试结果 - 失败 -->
+                            <Border>
+                                <Border.IsVisible>
+                                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                        <Binding Path="TestResultMessage" Converter="{x:Static ObjectConverters.IsNotNull}" />
+                                        <Binding Path="!TestResultSuccess" />
+                                    </MultiBinding>
+                                </Border.IsVisible>
+                                <Border Background="#B71C1C"
+                                        BorderBrush="#F44336"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Padding="12">
+                                    <TextBlock Text="{Binding TestResultMessage}"
+                                               Foreground="#FFCDD2"
+                                               TextWrapping="Wrap" />
+                                </Border>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 操作按钮 -->
+                    <Grid ColumnDefinitions="*,12,*">
+                        <!-- 取消按钮 -->
+                        <Button Grid.Column="0"
+                                Command="{Binding CancelCommand}"
+                                Background="#404040"
+                                Foreground="#CCCCCC"
+                                BorderThickness="0"
+                                Padding="20,10"
+                                CornerRadius="4"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center">
+                            <TextBlock Text="取消"
+                                       FontWeight="Medium" />
+                        </Button>
+
+                        <!-- 保存按钮 -->
+                        <Button Grid.Column="2"
+                                Command="{Binding SaveCommand}"
+                                IsEnabled="{Binding CanSave}"
+                                Background="#4CAF50"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Padding="20,10"
+                                CornerRadius="4"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="💾" FontSize="14" IsVisible="{Binding !IsSaving}" />
+                                <TextBlock Text="⏳" FontSize="14" IsVisible="{Binding IsSaving}" />
+                                <TextBlock Text="保存设备" FontWeight="Medium" IsVisible="{Binding !IsSaving}" />
+                                <TextBlock Text="正在保存..." FontWeight="Medium" IsVisible="{Binding IsSaving}" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <!-- 底部提示 -->
+                    <TextBlock Text="* 标记为必填项"
+                               FontSize="12"
+                               Foreground="#777777"
+                               HorizontalAlignment="Center" />
+
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
 
 </UserControl>

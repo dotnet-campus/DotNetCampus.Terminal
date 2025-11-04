@@ -17,7 +17,7 @@ public class MainViewModel
         StatusTip = new StatusTipViewModel();
         StatusBar = new StatusBarViewModel(this, serviceProvider);
 
-        RemoteDevices.Add(new CreateNewRemoteDeviceNode());
+        RemoteDevices.Add(new CreateNewRemoteDeviceNode(serviceProvider, this));
         RemoteDevices.Add(new FavoriteDeviceGroupNode());
 
         ReloadDevicesCommand = new AsyncCommand(OnReloadDevices);

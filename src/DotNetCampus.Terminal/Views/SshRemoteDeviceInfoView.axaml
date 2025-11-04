@@ -12,7 +12,30 @@
         <vm:SshRemoteDeviceInfoViewModel />
     </Design.DataContext>
 
-    <TabControl BorderThickness="0 1 0 0">
+    <TabControl BorderThickness="0"
+                Padding="0"
+                Classes="OperationsTabs">
+
+        <TabControl.Styles>
+            <Style Selector="TabControl.OperationsTabs">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="TabStripPlacement" Value="Top" />
+            </Style>
+            <Style Selector="TabControl.OperationsTabs > TabItem">
+                <Setter Property="Padding" Value="16,8" />
+                <Setter Property="Margin" Value="0,0,12,0" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Foreground" Value="#8C8C8C" />
+            </Style>
+            <Style Selector="TabControl.OperationsTabs > TabItem:selected">
+                <Setter Property="Foreground" Value="{DynamicResource SystemAccentColor}" />
+            </Style>
+            <Style Selector="TabControl.OperationsTabs > TabItem:selected /template/ Border#PART_SelectedContentBorder">
+                <Setter Property="Background" Value="#252525" />
+                <Setter Property="CornerRadius" Value="8,8,0,0" />
+            </Style>
+        </TabControl.Styles>
 
         <TabItem Header="操作">
             <sshViews:SshDeviceOperationsView DataContext="{Binding}" />

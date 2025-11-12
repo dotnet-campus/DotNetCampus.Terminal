@@ -1,0 +1,86 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="DotNetCampus.Terminal.App"
+             RequestedThemeVariant="Dark">
+
+    <Application.Styles>
+        <FluentTheme />
+        <Style Selector="Border.GroupBox">
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="DimGray" />
+            <Style Selector="^ TextBlock.GroupBoxHeader">
+                <Setter Property="Margin" Value="1 -1 1 0" />
+            </Style>
+            <Style Selector="^ TextBox.GroupBoxHeader">
+                <Setter Property="Margin" Value="1 -1 1 0" />
+            </Style>
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#33373F" />
+            <Setter Property="Foreground" Value="#F0F0F0" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="#3E4450" />
+            </Style>
+            <Style Selector="^:pressed">
+                <Setter Property="Background" Value="#2B2F37" />
+            </Style>
+            <Style Selector="^:disabled">
+                <Setter Property="Opacity" Value="0.6" />
+            </Style>
+        </Style>
+
+        <Style Selector="Button.Primary">
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemBaseHighColor}" />
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="{DynamicResource SystemAccentColorDark1}" />
+            </Style>
+            <Style Selector="^:pressed">
+                <Setter Property="Background" Value="{DynamicResource SystemAccentColorDark2}" />
+            </Style>
+        </Style>
+
+        <Style Selector="Button.Secondary">
+            <Setter Property="Background" Value="#2B2F37" />
+            <Setter Property="Foreground" Value="#D0D0D0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="#3F4450" />
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="#333842" />
+            </Style>
+            <Style Selector="^:pressed">
+                <Setter Property="Background" Value="#262A32" />
+            </Style>
+        </Style>
+
+        <Style Selector="Button.Caution">
+            <Setter Property="Background" Value="{DynamicResource SystemFillColorCaution}" />
+            <Setter Property="Foreground" Value="#1F1F1F" />
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="#FFB648" />
+            </Style>
+            <Style Selector="^:pressed">
+                <Setter Property="Background" Value="#E59400" />
+            </Style>
+        </Style>
+
+        <Style Selector="Button.Danger">
+            <Setter Property="Background" Value="{DynamicResource SystemFillColorCritical}" />
+            <Setter Property="Foreground" Value="#1F1F1F" />
+            <Style Selector="^:pointerover">
+                <Setter Property="Background" Value="#FF4A4A" />
+            </Style>
+            <Style Selector="^:pressed">
+                <Setter Property="Background" Value="#E52F2F" />
+            </Style>
+        </Style>
+    </Application.Styles>
+
+</Application>

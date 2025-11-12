@@ -1,0 +1,170 @@
+name: Release
+
+on: 
+  push:
+    tags:
+    - '*'
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            runtime: win-x64
+            artifact-name: DotNetCampus.Terminal-win-x64
+            path-separator: '\'
+          - os: ubuntu-latest
+            runtime: linux-x64
+            artifact-name: DotNetCampus.Terminal-linux-x64
+            path-separator: '/'
+          - os: macos-latest
+            runtime: osx-x64
+            artifact-name: DotNetCampus.Terminal-osx-x64
+            path-separator: '/'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Install dotnet tool TagToVersion
+      run: dotnet tool install -g dotnetCampus.TagToVersion
+      
+    - name: Set tag to version
+      run: dotnet TagToVersion -t ${{ github.ref }}
+      
+    - name: Extract version from tag
+      id: get_version
+      run: |
+        # Extract version from tag (remove 'v' prefix if present)
+        VERSION="${{ github.ref_name }}"
+        VERSION=${VERSION#v}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Extracted version: $VERSION"
+      shell: bash
+      
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Publish (Windows)
+      if: matrix.os == 'windows-latest'
+      run: dotnet publish .\src\DotNetCampus.Terminal\ -p:PublishAot=true -r ${{ matrix.runtime }} --configuration Release --output .\publish\${{ matrix.runtime }}
+      
+    - name: Publish (Unix)
+      if: matrix.os != 'windows-latest'
+      run: dotnet publish ./src/DotNetCampus.Terminal/ -p:PublishAot=true -r ${{ matrix.runtime }} --configuration Release --output ./publish/${{ matrix.runtime }}
+      
+    - name: Clean debug files and create release package (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        # 创建临时文件夹
+        New-Item -ItemType Directory -Path ".\temp-release" -Force
+        # 复制所有发布文件，排除调试文件
+        Get-ChildItem -Path ".\publish\${{ matrix.runtime }}" -Recurse | 
+          Where-Object { $_.Extension -notin @('.pdb', '.dbg') } |
+          Copy-Item -Destination { Join-Path ".\temp-release" $_.FullName.Substring("$((Get-Location).Path)\publish\${{ matrix.runtime }}".Length) } -Force
+        # 创建带版本号的 zip 包 (使用 . 分割)
+        $zipName = "DotNetCampus.Terminal.${{ matrix.runtime }}.${{ steps.get_version.outputs.version }}.zip"
+        Compress-Archive -Path ".\temp-release\*" -DestinationPath ".\$zipName"
+        echo "zip_name=$zipName" >> $env:GITHUB_OUTPUT
+      shell: pwsh
+      id: package_windows
+      
+    - name: Clean debug files and create release package (Unix)
+      if: matrix.os != 'windows-latest'
+      run: |
+        # 创建临时文件夹
+        mkdir -p ./temp-release
+        # 使用 rsync 保留文件夹结构，排除调试文件
+        rsync -av --exclude='*.pdb' --exclude='*.dbg' --exclude='*.dsym' ./publish/${{ matrix.runtime }}/ ./temp-release/
+        # 创建带版本号的 zip 包 (使用 . 分割)
+        zip_name="DotNetCampus.Terminal.${{ matrix.runtime }}.${{ steps.get_version.outputs.version }}.zip"
+        cd temp-release && zip -r ../$zip_name * && cd ..
+        echo "zip_name=$zip_name" >> $GITHUB_OUTPUT
+      id: package_unix
+      
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact-name }}
+        path: ${{ steps.package_windows.outputs.zip_name || steps.package_unix.outputs.zip_name }}
+        if-no-files-found: error
+        retention-days: 7
+        
+  create-release:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ./artifacts
+        
+    - name: List downloaded artifacts (debug)
+      run: |
+        echo "Artifacts directory structure:"
+        ls -la ./artifacts/
+        find ./artifacts -type f -name "*.zip" | head -10
+        
+    - name: Extract version from tag
+      id: get_version
+      run: |
+        # Extract version from tag (remove 'v' prefix if present)
+        VERSION="${{ github.ref_name }}"
+        VERSION=${VERSION#v}
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Extracted version: $VERSION"
+      shell: bash
+        
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Release ${{ github.ref_name }}
+        body: |
+          ## 🚀 Release ${{ github.ref_name }}
+          
+          ### 📦 Downloads
+          
+          Download the appropriate platform package and extract to run.
+          
+          | Platform | File | Description |
+          |----------|------|-------------|
+          | Windows (x64) | `DotNetCampus.Terminal.win-x64.${{ steps.get_version.outputs.version }}.zip` | Windows 64-bit version |
+          | Linux (x64) | `DotNetCampus.Terminal.linux-x64.${{ steps.get_version.outputs.version }}.zip` | Linux 64-bit version |
+          | macOS (x64) | `DotNetCampus.Terminal.osx-x64.${{ steps.get_version.outputs.version }}.zip` | macOS 64-bit version |
+          
+          ### 🔧 Installation
+          
+          **Windows:**
+          ```bash
+          # Extract the zip file
+          # Double-click to run DotNetCampus.Terminal.exe
+          ```
+          
+          **Linux/macOS:**
+          ```bash
+          # Extract the zip file
+          unzip DotNetCampus.Terminal-*.zip
+          # Make executable and run
+          chmod +x DotNetCampus.Terminal
+          ./DotNetCampus.Terminal
+          ```
+          
+          ### 📝 What's Changed
+          
+          See [CHANGELOG.md](https://github.com/dotnet-campus/DotNetCampus.Terminal/blob/main/CHANGELOG.md) for detailed changes.
+          
+        files: |
+          ./artifacts/DotNetCampus.Terminal-win-x64/DotNetCampus.Terminal.win-x64.${{ steps.get_version.outputs.version }}.zip
+          ./artifacts/DotNetCampus.Terminal-linux-x64/DotNetCampus.Terminal.linux-x64.${{ steps.get_version.outputs.version }}.zip
+          ./artifacts/DotNetCampus.Terminal-osx-x64/DotNetCampus.Terminal.osx-x64.${{ steps.get_version.outputs.version }}.zip
+        draft: false
+        prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macos-latest ]
+        
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      
+    - name: Test
+      run: dotnet test --configuration Release --no-build --verbosity normal
+      
+    - name: Verify publish (Windows)
+      if: matrix.os == 'windows-latest'
+      run: dotnet publish .\src\DotNetCampus.Terminal\ -p:PublishAot=true -r win-x64 --configuration Release
+      
+    - name: Verify publish (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: dotnet publish ./src/DotNetCampus.Terminal/ -p:PublishAot=true -r linux-x64 --configuration Release
+      
+    - name: Verify publish (macOS)
+      if: matrix.os == 'macos-latest'
+      run: dotnet publish ./src/DotNetCampus.Terminal/ -p:PublishAot=true -r osx-x64 --configuration Release

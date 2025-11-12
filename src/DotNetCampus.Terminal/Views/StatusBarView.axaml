@@ -1,0 +1,144 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="32"
+             x:Class="DotNetCampus.Terminal.Views.StatusBarView"
+             x:DataType="vm:StatusBarViewModel"
+             Height="32">
+
+    <Design.DataContext>
+        <vm:StatusBarViewModel />
+    </Design.DataContext>
+
+    <!--
+    现代化状态栏设计说明:
+    - 不再使用F1-F12功能键，这是TUI时代的遗留
+    - 采用现代GUI应用的状态栏设计模式
+    - 左侧显示当前状态和操作信息
+    - 右侧显示工具按钮和系统信息
+    - 使用图标和文字结合的方式，提升用户体验
+    -->
+
+    <UserControl.Styles>
+        <!-- 现代状态栏容器样式 -->
+        <Style Selector="Border.StatusBarContainer">
+            <Setter Property="Background" Value="{DynamicResource SystemControlAcrylicWindowBrush}" />
+            <Setter Property="BorderThickness" Value="0,1,0,0" />
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemControlBorderBaseLowBrush}" />
+            <Setter Property="Padding" Value="12,6" />
+        </Style>
+        
+        <!-- 状态栏按钮样式 -->
+        <Style Selector="Button.StatusBarButton">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Margin" Value="4,0" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="FontSize" Value="11" />
+        </Style>
+        
+        <Style Selector="Button.StatusBarButton:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
+        </Style>
+        
+        <Style Selector="Button.StatusBarButton:pressed">
+            <Setter Property="Background" Value="{DynamicResource SystemControlHighlightListMediumBrush}" />
+        </Style>
+        
+        <!-- 状态文本样式 -->
+        <Style Selector="TextBlock.StatusText">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="FontSize" Value="11" />
+        </Style>
+        
+        <!-- 分隔符样式 -->
+        <Style Selector="Rectangle.Separator">
+            <Setter Property="Width" Value="1" />
+            <Setter Property="Fill" Value="{DynamicResource SystemControlBorderBaseLowBrush}" />
+            <Setter Property="Margin" Value="8,4" />
+        </Style>
+    </UserControl.Styles>
+
+    <!-- 现代化状态栏布局 -->
+    <Border Classes="StatusBarContainer">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧状态信息区域 -->
+            <StackPanel Grid.Column="0" 
+                        Orientation="Horizontal" 
+                        Spacing="8"
+                        VerticalAlignment="Center">
+                
+                <!-- 当前操作状态 -->
+                <TextBlock Classes="StatusText"
+                           Text="就绪"
+                           FontWeight="Medium" />
+                
+                <Rectangle Classes="Separator" />
+                
+                <!-- 设备连接状态 -->
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <Ellipse Width="8" Height="8" 
+                             Fill="LimeGreen" 
+                             VerticalAlignment="Center" />
+                    <TextBlock Classes="StatusText" 
+                               Text="0 台设备已连接" />
+                </StackPanel>
+                
+                <Rectangle Classes="Separator" />
+                
+                <!-- 同步状态 -->
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Classes="StatusText" 
+                               Text="同步:" />
+                    <TextBlock Classes="StatusText" 
+                               Text="空闲"
+                               Foreground="Gray" />
+                </StackPanel>
+            </StackPanel>
+
+            <!-- 右侧工具按钮区域 -->
+            <StackPanel Grid.Column="1" 
+                        Orientation="Horizontal" 
+                        Spacing="0"
+                        VerticalAlignment="Center">
+                
+                <!-- 快速操作按钮 -->
+                <Button Classes="StatusBarButton"
+                        Command="{Binding RefreshCommand}"
+                        ToolTip.Tip="刷新设备列表">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="🔄" FontSize="12" />
+                        <TextBlock Text="刷新" Classes="StatusText" />
+                    </StackPanel>
+                </Button>
+                
+                <Button Classes="StatusBarButton"
+                        Command="{Binding ShowHelpCommand}"
+                        ToolTip.Tip="打开帮助文档">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="❓" FontSize="12" />
+                        <TextBlock Text="帮助" Classes="StatusText" />
+                    </StackPanel>
+                </Button>
+                
+                <Rectangle Classes="Separator" />
+                
+                <!-- 应用信息 -->
+                <TextBlock Classes="StatusText" 
+                           Text="DotNetCampus Terminal v1.0"
+                           Foreground="Gray"
+                           Margin="8,0" />
+            </StackPanel>
+        </Grid>
+    </Border>
+
+</UserControl>

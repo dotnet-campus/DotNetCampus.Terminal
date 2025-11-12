@@ -1,0 +1,285 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:DotNetCampus.Terminal.ViewModels.RemoteDevices.Ssh"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="DotNetCampus.Terminal.Views.RemoteDevices.Ssh.SshDeviceDeployView"
+             x:DataType="vm:SshDeviceDeployViewModel">
+
+    <Design.DataContext>
+        <vm:SshDeviceDeployViewModel />
+    </Design.DataContext>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Padding="16">
+        <StackPanel Spacing="20">
+
+            <!-- 标题和说明卡片 -->
+            <Border Background="#252525"
+                    BorderBrush="#404040"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20">
+                <Grid RowDefinitions="Auto,Auto" RowSpacing="12">
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="🔐" FontSize="18" />
+                        <TextBlock Text="一键部署SSH密钥对"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Foreground="#EEEEEE" />
+                    </StackPanel>
+                    <TextBlock Grid.Row="1"
+                               Text="此功能将生成全局SSH密钥对并部署到远程设备，提高连接安全性"
+                               TextWrapping="Wrap"
+                               Foreground="#BBBBBB"
+                               FontSize="14" />
+                </Grid>
+            </Border>
+
+            <!-- 安全须知卡片 -->
+            <Border Background="#2A1800"
+                    BorderBrush="#FF9800"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20">
+                <Grid RowDefinitions="Auto,Auto" RowSpacing="12">
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="⚠" FontSize="16" Foreground="#FF9800" />
+                        <TextBlock Text="安全须知"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="#FF9800" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Spacing="8">
+                        <TextBlock Text="此操作将执行以下步骤："
+                                   Foreground="#DDDDDD" />
+                        <StackPanel Spacing="4" Margin="16,0,0,0">
+                            <TextBlock Text="• 检查或生成新的SSH密钥对"
+                                       Foreground="#CCCCCC" />
+                            <TextBlock Text="• 将公钥部署到远程设备的 ~/.ssh/authorized_keys"
+                                       Foreground="#CCCCCC" />
+                            <TextBlock Text="• 验证密钥认证是否正常工作"
+                                       Foreground="#CCCCCC" />
+                            <TextBlock Text="• 可选：禁用设备密码认证（提高安全性）"
+                                       Foreground="#FF9800" />
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 配置选项卡片 -->
+            <Border Background="#252525"
+                    BorderBrush="#404040"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20">
+                <Grid RowDefinitions="Auto,Auto" RowSpacing="16">
+                    <TextBlock Grid.Row="0"
+                               Text="配置选项"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="#EEEEEE" />
+
+                    <StackPanel Grid.Row="1" Spacing="16">
+                        <!-- SSH密钥密码短语 -->
+                        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="8">
+                            <TextBlock Text="SSH密钥密码短语（可选）"
+                                       FontWeight="Medium"
+                                       Foreground="#CCCCCC" />
+                            <TextBox Text="{Binding Passphrase}"
+                                     PasswordChar="●"
+                                     Watermark="留空表示不设置密码短语"
+                                     Background="#2A2A2A"
+                                     BorderBrush="#555555"
+                                     BorderThickness="1"
+                                     Padding="12"
+                                     CornerRadius="4"
+                                     MaxWidth="300"
+                                     HorizontalAlignment="Left" />
+                            <TextBlock Text="建议：为提高安全性，请设置密码短语"
+                                       Foreground="#999999"
+                                       FontSize="12" />
+                        </Grid>
+
+                        <!-- 安全选项 -->
+                        <CheckBox IsChecked="{Binding DisablePasswordAuth}"
+                                  Content="部署成功后禁用密码认证（推荐）"
+                                  Foreground="#FF9800" />
+
+                        <!-- 用户确认 -->
+                        <CheckBox IsChecked="{Binding ConfirmOperation}"
+                                  Content="我理解此操作的安全影响并同意继续"
+                                  FontWeight="SemiBold"
+                                  Foreground="#EEEEEE" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 部署进度卡片 -->
+            <Border Background="#1A2E1A"
+                    BorderBrush="#4CAF50"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20"
+                    IsVisible="{Binding IsDeploying}">
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="🔄" FontSize="16" />
+                        <TextBlock Text="部署进度"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="#4CAF50" />
+                    </StackPanel>
+                    <TextBlock Grid.Row="1"
+                               Text="{Binding CurrentStep}"
+                               Foreground="#DDDDDD" />
+                    <ProgressBar Grid.Row="2"
+                                 Value="{Binding ProgressPercent}"
+                                 Maximum="100"
+                                 Height="8"
+                                 Background="#404040"
+                                 Foreground="#4CAF50"
+                                 CornerRadius="4" />
+                    <TextBlock Grid.Row="3"
+                               Text="{Binding ProgressPercent, StringFormat={}{0}%}"
+                               HorizontalAlignment="Center"
+                               Foreground="#4CAF50"
+                               FontWeight="Medium" />
+                </Grid>
+            </Border>
+
+            <!-- 错误信息卡片 -->
+            <Border Background="#2A1A1A"
+                    BorderBrush="#F44336"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20"
+                    IsVisible="{Binding HasError}">
+                <Grid RowDefinitions="Auto,Auto" RowSpacing="12">
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="❌" FontSize="16" />
+                        <TextBlock Text="部署失败"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="#F44336" />
+                    </StackPanel>
+                    <TextBlock Grid.Row="1"
+                               Text="{Binding ErrorMessage}"
+                               TextWrapping="Wrap"
+                               Foreground="#F44336" />
+                </Grid>
+            </Border>
+
+            <!-- 成功信息卡片 -->
+            <Border Background="#1A2E1A"
+                    BorderBrush="#4CAF50"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20"
+                    IsVisible="{Binding CanRollback}">
+                <Grid RowDefinitions="Auto,Auto" RowSpacing="12">
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="✅" FontSize="16" />
+                        <TextBlock Text="部署成功"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="#4CAF50" />
+                    </StackPanel>
+                    <TextBlock Grid.Row="1"
+                               Text="SSH密钥已成功部署，您现在可以使用密钥认证连接到远程设备"
+                               TextWrapping="Wrap"
+                               Foreground="#4CAF50" />
+                </Grid>
+            </Border>
+
+            <!-- 操作按钮卡片 -->
+            <Border Background="#252525"
+                    BorderBrush="#404040"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20">
+                <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" ColumnSpacing="12">
+
+                    <!-- 说明文字 -->
+                    <TextBlock Grid.Column="0"
+                               Text="请确认配置无误后开始部署"
+                               Foreground="#999999"
+                               VerticalAlignment="Center" />
+
+                    <!-- 开始部署按钮 -->
+                    <Button Grid.Column="1"
+                            Content="开始部署"
+                            Command="{Binding DeployKeyCommand}"
+                            IsVisible="{Binding !IsDeploying}"
+                            Background="#1976D2"
+                            Foreground="White"
+                            MinWidth="100"
+                            Padding="16,8"
+                            CornerRadius="4" />
+
+                    <!-- 重试按钮 -->
+                    <Button Grid.Column="2"
+                            Content="重试部署"
+                            Command="{Binding RetryDeployCommand}"
+                            IsVisible="{Binding CanRetry}"
+                            Background="#FF9800"
+                            Foreground="White"
+                            MinWidth="100"
+                            Padding="16,8"
+                            CornerRadius="4" />
+
+                    <!-- 回滚按钮 -->
+                    <Button Grid.Column="3"
+                            Content="回滚操作"
+                            Command="{Binding RollbackCommand}"
+                            IsVisible="{Binding CanRollback}"
+                            Background="#D32F2F"
+                            Foreground="White"
+                            MinWidth="100"
+                            Padding="16,8"
+                            CornerRadius="4" />
+
+                    <!-- 清除错误按钮 -->
+                    <Button Grid.Column="4"
+                            Content="清除错误"
+                            Command="{Binding ClearErrorCommand}"
+                            IsVisible="{Binding HasError}"
+                            Classes="Secondary"
+                            MinWidth="100"
+                            Padding="16,8"
+                            CornerRadius="4" />
+                </Grid>
+            </Border>
+
+            <!-- 帮助信息卡片 -->
+            <Border Background="#1A1A2E"
+                    BorderBrush="#3F51B5"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20">
+                <Grid RowDefinitions="Auto,Auto" RowSpacing="12">
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="💡" FontSize="16" />
+                        <TextBlock Text="使用提示"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="#3F51B5" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Spacing="6">
+                        <TextBlock Text="• 首次部署需要输入远程设备的用户密码"
+                                   Foreground="#CCCCCC" />
+                        <TextBlock Text="• 部署成功后将自动切换为密钥认证"
+                                   Foreground="#CCCCCC" />
+                        <TextBlock Text="• 如果遇到问题，可以使用回滚功能恢复密码认证"
+                                   Foreground="#CCCCCC" />
+                        <TextBlock Text="• 全局密钥将用于所有已配置的SSH设备"
+                                   Foreground="#CCCCCC" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

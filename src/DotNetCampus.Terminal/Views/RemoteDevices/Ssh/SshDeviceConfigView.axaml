@@ -1,0 +1,194 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="DotNetCampus.Terminal.Views.RemoteDevices.Ssh.SshDeviceConfigView"
+             x:DataType="vm:SshRemoteDeviceInfoViewModel">
+
+    <Design.DataContext>
+        <vm:SshRemoteDeviceInfoViewModel />
+    </Design.DataContext>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Padding="16">
+        <StackPanel Spacing="20">
+
+            <!-- 设备基本信息卡片 -->
+            <Border Background="#252525"
+                    BorderBrush="#404040"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20">
+                <Grid RowDefinitions="Auto,Auto" RowSpacing="16">
+
+                    <!-- 标题 -->
+                    <TextBlock Grid.Row="0"
+                               Text="设备基本信息"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="#EEEEEE" />
+
+                    <!-- 连接名称 -->
+                    <Grid Grid.Row="1" RowDefinitions="Auto,Auto" RowSpacing="8">
+                        <TextBlock Grid.Row="0"
+                                   Text="连接名称"
+                                   FontWeight="Medium"
+                                   Foreground="#CCCCCC" />
+                        <TextBox Grid.Row="1"
+                                 Text="{Binding ConnectionName, Mode=TwoWay}"
+                                 Watermark="输入设备连接名称"
+                                 Background="#2A2A2A"
+                                 BorderBrush="#555555"
+                                 BorderThickness="1"
+                                 Padding="12"
+                                 CornerRadius="4" />
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- 连接配置卡片 -->
+            <Border Background="#252525"
+                    BorderBrush="#404040"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20">
+                <Grid RowDefinitions="Auto,Auto" RowSpacing="16">
+
+                    <!-- 标题 -->
+                    <TextBlock Grid.Row="0"
+                               Text="连接配置"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="#EEEEEE" />
+
+                    <!-- 配置表单 -->
+                    <Grid Grid.Row="1" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="16">
+
+                        <!-- 主机地址和端口 -->
+                        <Grid Grid.Row="0" ColumnDefinitions="2*,Auto,1*" ColumnSpacing="16">
+                            <!-- 主机地址 -->
+                            <Grid Grid.Column="0" RowDefinitions="Auto,Auto" RowSpacing="8">
+                                <TextBlock Grid.Row="0"
+                                           Text="主机地址"
+                                           FontWeight="Medium"
+                                           Foreground="#CCCCCC" />
+                                <TextBox Grid.Row="1"
+                                         Text="{Binding Host, Mode=TwoWay}"
+                                         Watermark="输入主机IP或域名"
+                                         Background="#2A2A2A"
+                                         BorderBrush="#555555"
+                                         BorderThickness="1"
+                                         Padding="12"
+                                         CornerRadius="4" />
+                            </Grid>
+
+                            <!-- 分隔线 -->
+                            <Border Grid.Column="1"
+                                    Width="1"
+                                    Background="#404040"
+                                    Margin="0,24,0,0" />
+
+                            <!-- 端口 -->
+                            <Grid Grid.Column="2" RowDefinitions="Auto,Auto" RowSpacing="8">
+                                <TextBlock Grid.Row="0"
+                                           Text="端口"
+                                           FontWeight="Medium"
+                                           Foreground="#CCCCCC" />
+                                <TextBox Grid.Row="1"
+                                         Text="{Binding Port, Mode=TwoWay}"
+                                         Watermark="22"
+                                         Background="#2A2A2A"
+                                         BorderBrush="#555555"
+                                         BorderThickness="1"
+                                         Padding="12"
+                                         CornerRadius="4" />
+                            </Grid>
+                        </Grid>
+
+                        <!-- 用户名和密码 -->
+                        <Grid Grid.Row="1" ColumnDefinitions="*,Auto,*" ColumnSpacing="16">
+                            <!-- 用户名 -->
+                            <Grid Grid.Column="0" RowDefinitions="Auto,Auto" RowSpacing="8">
+                                <TextBlock Grid.Row="0"
+                                           Text="用户名"
+                                           FontWeight="Medium"
+                                           Foreground="#CCCCCC" />
+                                <TextBox Grid.Row="1"
+                                         Text="{Binding UserName, Mode=TwoWay}"
+                                         Watermark="输入用户名"
+                                         Background="#2A2A2A"
+                                         BorderBrush="#555555"
+                                         BorderThickness="1"
+                                         Padding="12"
+                                         CornerRadius="4" />
+                            </Grid>
+
+                            <!-- 分隔线 -->
+                            <Border Grid.Column="1"
+                                    Width="1"
+                                    Background="#404040"
+                                    Margin="0,24,0,0" />
+
+                            <!-- 密码 -->
+                            <Grid Grid.Column="2" RowDefinitions="Auto,Auto" RowSpacing="8">
+                                <TextBlock Grid.Row="0"
+                                           Text="密码"
+                                           FontWeight="Medium"
+                                           Foreground="#CCCCCC" />
+                                <TextBox Grid.Row="1"
+                                         Text="{Binding Password, Mode=TwoWay}"
+                                         PasswordChar="●"
+                                         Watermark="输入密码"
+                                         Background="#2A2A2A"
+                                         BorderBrush="#555555"
+                                         BorderThickness="1"
+                                         Padding="12"
+                                         CornerRadius="4" />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- 操作按钮卡片 -->
+            <Border Background="#252525"
+                    BorderBrush="#404040"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="20">
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+
+                    <!-- 说明文字 -->
+                    <TextBlock Grid.Column="0"
+                               Text="确认配置无误后，请保存设置"
+                               Foreground="#999999"
+                               VerticalAlignment="Center" />
+
+                    <!-- 删除按钮 -->
+                    <Button Grid.Column="1"
+                            Content="删除设备"
+                            Background="#D32F2F"
+                            Foreground="White"
+                            BorderBrush="#B71C1C"
+                            MinWidth="100"
+                            Padding="16,8"
+                            CornerRadius="4"
+                            Command="{Binding Commands.DeleteDeviceCommand}" />
+
+                    <!-- 保存按钮 -->
+                    <Button Grid.Column="2"
+                            Content="保存配置"
+                            Classes="Primary"
+                            MinWidth="100"
+                            Padding="16,8"
+                            CornerRadius="4"
+                            Command="{Binding Commands.SaveConfigurationCommand}" />
+                </Grid>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

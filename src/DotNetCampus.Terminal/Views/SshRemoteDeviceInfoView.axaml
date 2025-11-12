@@ -1,0 +1,53 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:DotNetCampus.Terminal.ViewModels"
+             xmlns:sshViews="using:DotNetCampus.Terminal.Views.RemoteDevices.Ssh"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="DotNetCampus.Terminal.Views.SshRemoteDeviceInfoView"
+             x:DataType="vm:SshRemoteDeviceInfoViewModel">
+
+    <Design.DataContext>
+        <vm:SshRemoteDeviceInfoViewModel />
+    </Design.DataContext>
+
+    <TabControl BorderThickness="0"
+                Padding="0"
+                Classes="OperationsTabs">
+
+        <TabControl.Styles>
+            <Style Selector="TabControl.OperationsTabs">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="TabStripPlacement" Value="Top" />
+            </Style>
+            <Style Selector="TabControl.OperationsTabs > TabItem">
+                <Setter Property="Padding" Value="16,8" />
+                <Setter Property="Margin" Value="0,0,12,0" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="Foreground" Value="#8C8C8C" />
+            </Style>
+            <Style Selector="TabControl.OperationsTabs > TabItem:selected">
+                <Setter Property="Foreground" Value="{DynamicResource SystemAccentColor}" />
+            </Style>
+            <Style Selector="TabControl.OperationsTabs > TabItem:selected /template/ Border#PART_SelectedContentBorder">
+                <Setter Property="Background" Value="#252525" />
+                <Setter Property="CornerRadius" Value="8,8,0,0" />
+            </Style>
+        </TabControl.Styles>
+
+        <TabItem Header="操作">
+            <sshViews:SshDeviceOperationsView DataContext="{Binding}" />
+        </TabItem>
+
+        <TabItem Header="配置">
+            <sshViews:SshDeviceConfigView DataContext="{Binding}" />
+        </TabItem>
+
+        <TabItem Header="部署">
+            <sshViews:SshDeviceDeployView DataContext="{Binding Deploy}" />
+        </TabItem>
+
+    </TabControl>
+</UserControl>

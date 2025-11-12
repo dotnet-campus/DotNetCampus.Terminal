@@ -1,0 +1,59 @@
+{
+  // SSH设备配置文件
+  // 支持注释和尾随逗号，便于手动编辑
+  "sshDevices": [
+    {
+      // 本地唯一标识符，自动生成，不要手动修改
+      "localId": "device_example_001",
+      // 显示名称，可以随时修改
+      "connectionName": "开发服务器",
+      // 服务器地址
+      "host": "192.168.1.100",
+      // SSH端口，默认22
+      "port": 22,
+      // 登录用户名
+      "userName": "developer",
+      // 登录密码（可选，建议使用SSH密钥）
+      "password": "123",
+      // 同步目录配置
+      "syncDirectories": [
+        {
+          // 同步目录名称
+          "name": "项目产物",
+          // 远程目录路径
+          "remotePath": "/home/developer/projects",
+          // 本地目录路径
+          "localPath": "C:\\Projects\\Artifacts",
+          // 是否启用此同步目录
+          "enabled": true,
+          // 同步方向：RemoteToLocal (远程→本地) 或 LocalToRemote (本地→远程)
+          "direction": "RemoteToLocal"
+        },
+        {
+          "name": "日志文件",
+          "remotePath": "/var/log/myapp",
+          "localPath": "C:\\Logs",
+          "enabled": false,
+          "direction": "RemoteToLocal"
+        }
+      ]
+    },
+    {
+      "localId": "device_example_002", 
+      "connectionName": "测试环境",
+      "host": "test.example.com",
+      "port": 2222,
+      "userName": "testuser",
+      "password": "123456",
+      "syncDirectories": [
+        {
+          "name": "测试数据",
+          "remotePath": "/opt/testdata",
+          "localPath": "D:\\TestData",
+          "enabled": true,
+          "direction": "RemoteToLocal"
+        }
+      ]
+    }
+  ]
+}

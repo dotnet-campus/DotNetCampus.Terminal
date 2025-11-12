@@ -12,15 +12,28 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!--
+      DCL101: 命令行库自己的警告，是为了给库的用户报告的；而本仓库要测这些，所以不能放一堆警告破窗。
+      NU1507: 没有指定包源映射
+    -->
+    <NoWarn>$(NoWarn);DCL101;NU1507</NoWarn>
+    <!--
+      CA1416: 平台兼容性警告
+    -->
+    <WarningsAsErrors>$(WarningAsErrors);CA1416</WarningsAsErrors>
+  </PropertyGroup>
+
   <!--库信息 -->
   <PropertyGroup>
-    <Description>walterlv 的专属终端。</Description>
-    <Authors>walterlv</Authors>
+    <Description>dotnet-campus 组织出品的终端，优势在于在大量的 Linux 设备间调试你的跨平台项目。</Description>
+    <Authors>dotnet-campus</Authors>
     <Company>dotnet campus（.NET 职业技术学院）</Company>
     <Copyright>Copyright $([System.DateTime]::Now.ToString(`yyyy`)) &#169; dotnet campus, All Rights Reserved.</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/walterlv/Walterlv.Terminal</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/walterlv/Walterlv.Terminal</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dotnet-campus/DotNetCampus.Terminal</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/dotnet-campus/DotNetCampus.Terminal</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>
